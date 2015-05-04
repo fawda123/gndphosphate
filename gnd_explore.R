@@ -1,21 +1,29 @@
+######
+# some exploratory stuff for Grand Bay wq
+# May 2015, M. Beck
+
 # first event - heavy rain - April 2005
 # second event - hurricane Isaac - August 2012
 # for nuts: PO4H, NO23, NH4, CHLA
 
-# load libraries to use, mostly for cleanup
+# load libraries
+# install.packages(c('dplyr', 'tidyr', 'ggplot2', 'agricolae'))
 library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(agricolae)
 
+# import
 nut_data <- read.csv('PO4modified2005-2013grabs.csv', stringsAsFactors = F)
 
-# format the data with dplyr
-# select columns of interest then...
-# format date columns, create year column, floor by det limit for PO4, NO23, NH4, log-transform
+# format the data with dplyr....
+# select columns of interest
+# format date columns, create year column, floor by det limit for PO4, NO23, NH4
 # cleanup station code, set factor levels for Epoch for correct plotting order,
 # remove CR station
-# make the nutrient variables long formaty with tidyr
+# make the nutrient variables long format with tidyr
+# log transform variables
+# combine station, nutrient column for later analysis
 nut_data <- select(nut_data, StationCode, Date, Epoch, PO4F, NH4F, NO23F, CHLA_N) %>% 
   mutate(
     Date = as.Date(Date, format= "%m/%d/%Y"),
@@ -34,6 +42,7 @@ nut_data <- select(nut_data, StationCode, Date, Epoch, PO4F, NH4F, NO23F, CHLA_N
 # combine the empty variable with ME1
 levels(nut_data$Epoch) <- c('ME1', 'ME1', 'PE1', 'QY', 'ME2', 'PE2')
 
+##
 # boxplots
 p1 <- ggplot(nut_data, aes(x = Epoch, y = value)) +
   geom_boxplot() + 
@@ -42,6 +51,7 @@ p1 <- ggplot(nut_data, aes(x = Epoch, y = value)) +
   theme_bw()
 p1
 
+##
 # line plots
 p2 <- ggplot(nut_data, aes(x = Date, y = value)) +
   geom_line() + 
@@ -51,13 +61,17 @@ p2 <- ggplot(nut_data, aes(x = Date, y = value)) +
 p2 
 
 ##
-# barplots with 95 CI
+# barplots with 95 CI, these are ugly and not very informative
 # have to create a new dataset
+
+# confidence interval funciton
 ci_fun <- function(x, alpha = 0.05){
   me <- sd(x, na.rm = T)/sqrt(length(x))
   quant <- qt(1 - alpha/2, length(x) - 1)
   me * quant
 }
+
+# create dataset with dplyr
 bar_data <- group_by(nut_data, StationCode, Epoch, nutrient) %>% 
   summarize(
     meanvalue = mean(value, na.rm = T),
@@ -75,12 +89,13 @@ p3 <- ggplot(bar_data, aes(x = Epoch, y = meanvalue)) +
   theme_bw()
 p3
 
-
-
 ######
 # some analyses
+
+# split data by unique station/nutrient variable
 sep_data <- split(nut_data, nut_data$stat_nut)
 
+# run a Tukey multiple comparison for each station, nutrient variable combo
 res <- lapply(sep_data, function(x){
 
   mod <- aov(logvalue ~ Epoch, data = x)
@@ -91,6 +106,7 @@ res <- lapply(sep_data, function(x){
   
   })
 
+# combine results for plotting
 res <- do.call('rbind', res) %>% 
   mutate(
     stat_nut = gsub('\\.[0-9]', '', row.names(.)),
@@ -100,5 +116,8 @@ res <- do.call('rbind', res) %>%
 ylocs <- data.frame(nutrient = c('PO4F', 'NH4F', 'NO23F', 'CHLA_N'), ylims = c(10, 10, 1, 100))
 res <- left_join(res, ylocs, by = 'nutrient')
 
+# the boxplots but with letters above each box indicating different groups
+pdf('boxcomp.pdf', width = 10, height = 8, family = 'serif')
 p1 + geom_text(data = res, aes(x = Epoch, y = ylims, label = M))
+dev.off()
 
