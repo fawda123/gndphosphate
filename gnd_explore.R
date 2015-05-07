@@ -15,6 +15,7 @@ library(agricolae)
 
 # import
 nut_data <- read.csv('PO4modified2005-2013grabs.csv', stringsAsFactors = F)
+epochs <- c('E1A', 'E1C', 'NIY', 'E2A')
 
 # format the data with dplyr....
 # select columns of interest
@@ -32,15 +33,12 @@ nut_data <- select(nut_data, StationCode, Date, Epoch, PO4F, NH4F, NO23F, CHLA_N
     NH4F = pmax(0.01, NH4F),
     NO23F = pmax(0.01, NO23F),
     StationCode = toupper(gsub('gnd|nut| *', '', StationCode)),
-    Epoch = factor(Epoch, levels = c('', 'ME1', 'PE1', 'QY', 'ME2', 'PE2'))
+    Epoch = factor(Epoch, levels = epochs, labels = epochs)
   ) %>% 
   filter(StationCode != 'CR') %>% 
   gather('nutrient', 'value', PO4F:CHLA_N) %>% 
   mutate(logvalue = log(value, exp(10))) %>% 
   unite(stat_nut, StationCode, nutrient, sep = ' ', remove = F)
-
-# combine the empty variable with ME1
-levels(nut_data$Epoch) <- c('ME1', 'ME1', 'PE1', 'QY', 'ME2', 'PE2')
 
 ##
 # boxplots
@@ -101,8 +99,7 @@ res <- lapply(sep_data, function(x){
   mod <- aov(logvalue ~ Epoch, data = x)
   tuk_mod <- HSD.test(mod, 'Epoch', group = T)
   grps <- tuk_mod$groups
-  levels(grps$trt) <- c('ME1', 'PE1', 'QY', 'ME2', 'PE2')
-  grps[order(grps$trt), ]
+  grps
   
   })
 
@@ -121,3 +118,9 @@ pdf('boxcomp.pdf', width = 10, height = 8, family = 'serif')
 p1 + geom_text(data = res, aes(x = Epoch, y = ylims, label = M))
 dev.off()
 
+#####
+
+# some nonsense
+tmp <- filter(nut_data, StationCode == 'BN' & nutrient == 'PO4F')
+tmp$lags <- c(NA, diff(tmp$logvalue))
+mod <- lm(logvalue ~ Date + lags, data = tmp)
