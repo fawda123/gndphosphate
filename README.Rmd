@@ -1,0 +1,6 @@
+To do:
+
+* get salinity, pH, DO for GND, take daily averages (or other), exploratory plots
+* more about changepoint analysis (medians?)
+* remove nitrite/nitrate from nutrient analysis
+* types of analyses and the questions they could address
