@@ -1,0 +1,159 @@
+\documentclass[letterpaper,12pt]{article}
+\usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}
+\usepackage{setspace}
+\usepackage[colorlinks=true,urlcolor=blue,citecolor=blue,linkcolor=blue]{hyperref}
+\usepackage{indentfirst}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage[final]{animate}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{rotating}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{subfig} 
+\usepackage[noae]{Sweave}
+\usepackage{cleveref}
+\usepackage[figureposition=bottom]{caption}
+\usepackage{paralist}
+\usepackage{acronym}
+\usepackage{outlines}
+\usepackage{pdflscape}
+
+% knitr options
+<<setup, echo = FALSE, cache = F>>=
+library(knitr)
+# set global chunk options
+opts_chunk$set(fig.path = 'figs/', fig.align = 'center', fig.show = 'hold',message = F, results = 'asis',dev = 'pdf',dev.args=list(family='serif'), fig.pos = '!ht', warning = F, tangle = TRUE)
+options(replace.assign=TRUE,width=90)
+@
+
+<<echo = FALSE, message = FALSE>>=
+# libraries to use
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(SWMPr)
+library(agricolae)
+
+# load data
+load('wq_dat.RData')
+load('met_dat.RData')
+load('nut_dat.RData')
+@
+
+\begin{document}
+
+\begin{landscape}
+\centering\vspace*{\fill}
+<<tsplot, fig.width = 9.5, fig.height = 5.7, echo = FALSE, fig.cap = 'Time series of total precipitation, salinity, pH, and phosphate for Bangs Lake, Grand Bay reserve.  Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.  Salinity and pH include a loess smooth to reduce variability.'>>=
+# ts plots for BL
+# first get cumulative daily precipitation for met
+# then combine wq and met, take daily ave, make long form
+
+# met process for totprcp
+met_proc <- mutate(met_dat, datetimestamp = as.Date(datetimestamp)) %>% 
+  rename(date = datetimestamp) %>% 
+  select(-TimeFrame) %>% 
+  group_by(date) %>% 
+  summarize(totprcp = sum(totprcp, na.rm = TRUE))
+
+# nutrients process for BL phosphorus 
+nut_proc <- filter(nut_dat, nutrient == 'PO4F' & StationCode == 'BL') %>% 
+  select(-nutrient, -value, -TimeFrame, -stat_nut, -StationCode) %>% 
+  rename(logP = logvalue)
+  
+# combine wq with met and nut
+toplo <- filter(wq_dat, StationCode == 'BL') %>% 
+  select(-StationCode) %>% 
+  mutate(datetimestamp = as.Date(datetimestamp)) %>% 
+  rename(date = datetimestamp) %>% 
+  group_by(date, TimeFrame) %>% 
+  summarise_each(funs(mean(., na.rm = TRUE))) %>% 
+  full_join(met_proc, by = 'date') %>% 
+  full_join(nut_proc, by = 'date') %>% 
+  select(-TimeFrame) %>% 
+  gather('variable', 'value', sal:logP) %>% 
+  mutate(variable = factor(variable, 
+    levels = c('totprcp', 'sal', 'ph', 'logP'),
+    labels = c('Total precipitation (mm/d)', 'Salinity (ppt)', 'pH', 'log-Orthophosphate (mg/L)')
+    ))
+
+# event dates
+events <- c('2005-04-01', '2012-08-01')
+events <- as.Date(events)
+
+# the plot
+p <- ggplot(toplo, aes(x = date, y = value)) + 
+  geom_line() +
+  geom_vline(xintercept = as.numeric(events), colour = 'lightgreen', alpha = 0.6, size = 3) +
+  geom_line() +
+  geom_point(data = filter(toplo, variable == 'log-Orthophosphate (mg/L)'), alpha = 0.8, size = 2) + 
+  facet_wrap(~variable, scales = 'free_y', ncol = 1) +
+  theme_bw() +
+  theme(
+    axis.title.x = element_blank(), 
+    axis.title.y = element_blank()
+    ) +
+  stat_smooth(data = filter(toplo, variable %in% c('Salinity (ppt)', 'pH')),
+    method = 'loess', span = 0.1, n = 2000, se = FALSE, size = 1, colour = 'lightblue')
+p
+@
+\end{landscape}
+\clearpage
+
+<<tukey, fig.width = 6, fig.height = 7, echo = FALSE, fig.cap = 'Boxplot summaries of nutrient data at Bangs Lake, Grand Bay grouped by events.  Letters indicate events for each nutrient with significantly different observations based on Tukey multiple comparison analysis.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). E1A: event 1 acute, E2A: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
+# BL station 
+nut_proc <- filter(nut_dat, StationCode == 'BL') %>% 
+  select(-StationCode, -stat_nut) 
+
+# split data by unique station/nutrient variable
+sep_data <- split(nut_proc, nut_proc$nutrient)
+
+# run a Tukey multiple comparison for each station, nutrient variable combo
+res <- lapply(sep_data, function(x){
+
+  mod <- aov(logvalue ~ TimeFrame, data = x)
+  tuk_mod <- HSD.test(mod, 'TimeFrame', group = T)
+  grps <- tuk_mod$groups
+  grps$trt <- gsub('[[:space:]].*$', '', grps$trt)
+  grps
+  
+  })
+
+# combine results for plotting
+res <- do.call('rbind', res) %>% 
+  mutate(
+    nutrient = gsub('\\.[0-9]', '', row.names(.))
+  ) %>% 
+  rename(TimeFrame = trt)
+ylocs <- data.frame(nutrient = c('PO4F', 'NH4F', 'NO23F', 'CHLA_N'), ylims = c(10, 10, 1, 100))
+res <- left_join(res, ylocs, by = 'nutrient')
+timeframes <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
+res$TimeFrame <- factor(res$TimeFrame, levels = timeframes, labels = timeframes)
+
+nut_proc$nutrient <- factor(nut_proc$nutrient, 
+  levels = c('PO4F', 'NH4F', 'NO23F', 'CHLA_N'), 
+  labels = c('Orthophosphate (mg/L)', 'Ammonium (mg/L)', 'Nitrite + Nitrate (mg/L)', 'Chlorophyll a (ug/L)')
+)
+res$nutrient <- factor(res$nutrient, 
+  levels = c('PO4F', 'NH4F', 'NO23F', 'CHLA_N'), 
+  labels = c('Orthophosphate (mg/L)', 'Ammonium (mg/L)', 'Nitrite + Nitrate (mg/L)', 'Chlorophyll a (ug/L)')
+)
+
+# the boxplots but with letters above each box indicating different groups
+p <- ggplot(nut_proc, aes(x = TimeFrame, y = value)) +
+  geom_boxplot(fill = 'lightblue') + 
+  facet_wrap(~ nutrient, ncol =1, scales = 'free_y') +
+  scale_y_log10('Log-value', expand = c(0, 0.3)) +
+  theme_bw() +
+  scale_x_discrete('Event') +
+  geom_text(data = res, aes(x = TimeFrame, y = ylims, label = M))
+  
+p
+
+@
+\clearpage
+
+
+\end{document}
