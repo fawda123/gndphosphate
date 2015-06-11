@@ -102,7 +102,7 @@ p
 \end{landscape}
 \clearpage
 
-<<tukey, fig.width = 6, fig.height = 7, echo = FALSE, fig.cap = 'Boxplot summaries of nutrient data at Bangs Lake, Grand Bay grouped by events.  Letters indicate events for each nutrient with significantly different observations based on Tukey multiple comparison analysis.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). E1A: event 1 acute, E2A: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
+<<tukey, fig.width = 6, fig.height = 7, echo = FALSE, fig.cap = 'Boxplot summaries of nutrient data at Bangs Lake, Grand Bay grouped by events.  Letters indicate events for each nutrient with significantly different observations based on Tukey multiple comparison analysis.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
 # BL station 
 nut_proc <- filter(nut_dat, StationCode == 'BL') %>% 
   select(-StationCode, -stat_nut) 
@@ -155,5 +155,124 @@ p
 @
 \clearpage
 
+<<phvsal1, fig.width = 9, fig.height = 6, echo = FALSE, fig.cap = 'Scatterplots of pH versus salinity for each of the time frames, grouped by station.  Observations are daily averages from the continuous time series. E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
+
+# select BL, BC, PC, split by station
+wq_proc <- filter(wq_dat, StationCode %in% c('BL', 'PC', 'BC')) %>% 
+  mutate(datetimestamp = as.Date(datetimestamp)) %>% 
+  rename(date = datetimestamp) %>% 
+  group_by(date, StationCode, TimeFrame) %>% 
+  summarise_each(funs(mean(., na.rm = TRUE))) %>% 
+  rename(Station = StationCode)
+
+p1 <- ggplot(wq_proc, aes(x = sal, y = ph, colour = Station, group = Station)) + 
+  geom_point(alpha = 0.6, size = 4) + 
+  theme_bw() + 
+  scale_x_continuous('Salinity (ppt)') + 
+  scale_y_continuous('pH') +
+  theme(legend.position = c(0.83, 0.25)) + 
+  facet_wrap(~TimeFrame)
+p1 
+@
+\clearpage
+
+<<phvsal2, fig.width = 9, fig.height = 3, echo = FALSE, fig.cap = 'Scatterplots of pH versus salinity for one month following the two acute exposure events (E1A, E2A) and 2010 during the non-impact (NI) time frame.  Values are thirty-minute observations at each station. E1A: event 1 acute, NI: non-impact, E2A: event 2 acute.'>>=
+
+# select BL, BC, PC, split by station
+wq_proc <- filter(wq_dat, StationCode %in% c('BL', 'PC', 'BC')) %>% 
+  split(., .$StationCode)
+
+# get all obs within one month of the beginning of each time frame
+wq_proc <- lapply(wq_proc, function(x){
+  
+  # get within a time period from epochs
+  sel_dates <- as.POSIXct(
+    c('04-01-2005 0:0', '05-01-2005 0:0', '01-01-2010 0:0', '01-01-2011 0:0', 
+      '9-01-2012 0:0', '10-01-2012 0:0'), 
+    format = '%m-%d-%Y %H:%M', tz = 'America/Regina'
+    )
+  inds <- with(x, 
+      datetimestamp >= sel_dates[1] & datetimestamp <= sel_dates[2] |
+      datetimestamp >= sel_dates[3] & datetimestamp <= sel_dates[4] |
+      datetimestamp >= sel_dates[5] & datetimestamp <= sel_dates[6]
+    )
+
+  x[inds, ]
+})
+
+# recombine for plotting
+wq_proc <- do.call('rbind', wq_proc) %>% 
+  data.frame(., row.names = 1:nrow(.)) %>% 
+  filter(TimeFrame %in% c('E1A', 'NI', 'E2A')) %>% 
+  rename(Station = StationCode) %>% 
+  mutate(TimeFrame = factor(TimeFrame, levels = c('E1A', 'NI', 'E2A'), 
+    labels = c('E1A (one month)', 'NI (one year)', 'E2A (one month)')
+  ))
+
+p <- ggplot(wq_proc, aes(x = sal, y = ph, colour = Station, group = Station)) + 
+  geom_point(alpha = 0.4, size = 2) + 
+  theme_bw() + 
+  scale_x_continuous('Salinity (ppt)') + 
+  scale_y_continuous('pH') +
+  facet_wrap(~TimeFrame)
+p 
+@
+\clearpage
+
+<<ccf, echo = FALSE, eval = FALSE>>=
+# pre-process wq for stations, timeframe and equal lags
+wq_proc <- filter(wq_dat, StationCode %in% c('BL', 'PC', 'BC')) %>% 
+  filter(TimeFrame %in% c('E1A', 'E2A')) %>% 
+  rename(Station = StationCode) %>% 
+  filter(strftime(datetimestamp, '%M') %in% c('00', '30')) # this has to be done to make lags valid
+
+# pre-process nut for stations, timeframe
+nut_proc <- filter(nut_dat, StationCode %in% c('BL', 'PC', 'BC')) %>% 
+  filter(TimeFrame %in% c('E1A', 'E2A')) %>% 
+  rename(Station = StationCode) %>% 
+  select(-stat_nut, -value)
+
+wq_ccf <- function(dat_in, stats){
+  
+  # filter dat_in for station data, reformat for analysis
+  toproc <- filter(dat_in, Station %in% stats) %>% 
+    gather(variable, value, sal:ph) %>% 
+    spread(Station, value) %>% 
+    mutate(TimeFrame = factor(TimeFrame, levels = c('E1A', 'E2A')))
+  toproc <- split(toproc, f = list(toproc$TimeFrame, toproc$variable))
+  
+  # ccf for timeframe, wq var combos
+  toproc <- lapply(toproc, function(x){
+    cors <- ccf(x[, stats[1]], x[, stats[2]], plot = FALSE, na.action = na.pass)
+    ind <- which.max(cors$acf)
+    with(cors, c(lag[ind], acf[ind]))
+  })
+
+  return(toproc)
+  
+}
+nut_ccf <- function(dat_in, stats){
+  
+  # filter dat_in for station data, reformat for analysis
+  toproc <- filter(dat_in, Station %in% stats) %>% 
+    spread(Station, logvalue) %>% 
+    mutate(TimeFrame = factor(TimeFrame, levels = c('E1A', 'E2A')))
+  toproc <- split(toproc, f = list(toproc$TimeFrame, toproc$nutrient))
+  
+  # ccf for timeframe, wq var combos
+  toproc <- lapply(toproc, function(x){
+    cors <- ccf(x[, stats[1]], x[, stats[2]], plot = FALSE, na.action = na.pass)
+    ind <- which.max(cors$acf)
+    with(cors, c(lag[ind], acf[ind]))
+  })
+
+  return(toproc)
+  
+}
+
+wq_ccf(wq_proc, c('BL', 'BC'))
+
+@
+\clearpage
 
 \end{document}
