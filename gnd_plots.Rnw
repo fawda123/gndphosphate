@@ -58,7 +58,7 @@ met_proc <- mutate(met_dat, datetimestamp = as.Date(datetimestamp)) %>%
   rename(date = datetimestamp) %>% 
   select(-TimeFrame) %>% 
   group_by(date) %>% 
-  summarize(totprcp = sum(totprcp, na.rm = TRUE))
+  summarise(totprcp = sum(totprcp, na.rm = TRUE))
 
 # nutrients process for BL phosphorus 
 nut_proc <- filter(nut_dat, nutrient == 'PO4F' & StationCode == 'BL') %>% 
