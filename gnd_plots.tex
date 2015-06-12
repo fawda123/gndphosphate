@@ -79,16 +79,16 @@
 
 \begin{landscape}
 \centering\vspace*{\fill}
-\begin{figure}[!ht]
-
-{\centering \includegraphics[width=\maxwidth]{figs/tsplot-1} 
-
-}
-
-\caption[Time series of total precipitation, salinity, pH, and phosphate for Bangs Lake, Grand Bay reserve]{Time series of total precipitation, salinity, pH, and phosphate for Bangs Lake, Grand Bay reserve.  Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.  Salinity and pH include a loess smooth to reduce variability.}\label{fig:tsplot}
-\end{figure}
+\begin{kframe}
 
 
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in summarize(., totprcp = sum(totprcp, na.rm = TRUE)): argument "{}by"{} is missing, with no default}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in is.data.frame(y): object 'met\_proc' not found}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in ggplot(toplo, aes(x = date, y = value)): object 'toplo' not found}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): object 'p' not found}}\end{kframe}
 \end{landscape}
 \clearpage
 
@@ -128,7 +128,65 @@
 
 \clearpage
 
+%latex.default(totab, file = "", rowlabel = "Site comparisons",     caption = cap.val, caption.loc = "top", rgroup = rgroups,     n.rgroup = rep(3, 2), cgroup = c("First acute event (E1A)",         "Second acute event (E2A)"), n.cgroup = c(2, 2), rowname = wqres$L1,     label = "tab:ccfwq", insert.bottom = foot.val, col.just = c("r",         "c", "r", "c"))%
+\begin{table}[!tbp]
+\caption{Results of cross-correlation analyses comparing water quality time series between sites at Grand Bay during the two acute event periods.  Values for pH and salinity (ppt) are the lags in the compared time series between sites at which the maximum correlation was observed.  Negative lags indicate observations were leading at the first site relative to the second, whereas positive lags indicate observations lagged at the first site relative to the second.  One lag is thirty minutes.\label{tab:ccfwq}} 
+\begin{center}
+\begin{tabular}{lrccrc}
+\hline\hline
+\multicolumn{1}{l}{\bfseries Site comparisons}&\multicolumn{2}{c}{\bfseries First acute event (E1A)}&\multicolumn{1}{c}{\bfseries }&\multicolumn{2}{c}{\bfseries Second acute event (E2A)}\tabularnewline
+\cline{2-3} \cline{5-6}
+\multicolumn{1}{l}{}&\multicolumn{1}{c}{Lag}&\multicolumn{1}{c}{Correlation}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Lag}&\multicolumn{1}{c}{Correlation}\tabularnewline
+\hline
+{\bfseries pH}&&&&&\tabularnewline
+~~BC - PC&$ 1$&$0.25$&&$ 1$&$0.40$\tabularnewline
+~~BL - BC&$-1$&$0.58$&&$ 0$&$0.54$\tabularnewline
+~~BL - PC&$ 0$&$0.57$&&$ 1$&$0.54$\tabularnewline
+\hline
+{\bfseries Salinity}&&&&&\tabularnewline
+~~BC - PC&$ 1$&$0.47$&&$40$&$0.70$\tabularnewline
+~~BL - BC&$ 0$&$0.86$&&$ 0$&$0.92$\tabularnewline
+~~BL - PC&$ 5$&$0.73$&&$40$&$0.87$\tabularnewline
+\hline
+\end{tabular}\end{center}
+
+\footnotesize BC: Bayou Cumbest, BL: Bangs Lake, PC: Point aux Chenes\end{table}
 
 \clearpage
+
+%latex.default(totab, file = "", rowlabel = "Site comparisons",     caption = cap.val, caption.loc = "top", rgroup = rgroups,     n.rgroup = rep(3, 4), cgroup = c("First acute event (E1A)",         "Second acute event (E2A)"), n.cgroup = rep(2, 2), rowname = nutres$L1,     label = "tab:ccfnut", insert.bottom = foot.val, col.just = c("r",         "c", "r", "c"))%
+\begin{table}[!tbp]
+\caption{Results of cross-correlation analyses comparing nutrient time series between sites at Grand Bay during the two acute event periods.  Values are the lags for each nutrient varialbe in the compared time series between sites at which the maximum correlation was observed.  Negative lags indicate observations were leading at the first site relative to the second, whereas positive lags indicate observations lagged at the first site relative to the second.  One lag is one month.\label{tab:ccfnut}} 
+\begin{center}
+\begin{tabular}{lrccrc}
+\hline\hline
+\multicolumn{1}{l}{\bfseries Site comparisons}&\multicolumn{2}{c}{\bfseries First acute event (E1A)}&\multicolumn{1}{c}{\bfseries }&\multicolumn{2}{c}{\bfseries Second acute event (E2A)}\tabularnewline
+\cline{2-3} \cline{5-6}
+\multicolumn{1}{l}{}&\multicolumn{1}{c}{Lag}&\multicolumn{1}{c}{Correlation}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Lag}&\multicolumn{1}{c}{Correlation}\tabularnewline
+\hline
+{\bfseries Chlorophyll a}&&&&&\tabularnewline
+~~BC - PC&$ 0$&$0.63$&&$-1$&$0.52$\tabularnewline
+~~BL - BC&$ 0$&$0.49$&&$ 1$&$0.49$\tabularnewline
+~~BL - PC&$ 0$&$0.92$&&$ 0$&$0.87$\tabularnewline
+\hline
+{\bfseries Ammonium}&&&&&\tabularnewline
+~~BC - PC&$ 0$&$0.99$&&$-4$&$0.38$\tabularnewline
+~~BL - BC&$ 0$&$0.96$&&$ 2$&$0.57$\tabularnewline
+~~BL - PC&$ 0$&$0.89$&&$ 0$&$0.71$\tabularnewline
+\hline
+{\bfseries Nitrite + Nitrate}&&&&&\tabularnewline
+~~BC - PC&$ 0$&$0.70$&&$ 6$&$0.94$\tabularnewline
+~~BL - BC&$ 0$&$0.81$&&$ 0$&$0.11$\tabularnewline
+~~BL - PC&$-3$&$0.55$&&$-5$&$0.98$\tabularnewline
+\hline
+{\bfseries Orthophosphate}&&&&&\tabularnewline
+~~BC - PC&$-6$&$0.60$&&$ 1$&$0.78$\tabularnewline
+~~BL - BC&$ 0$&$0.62$&&$-1$&$0.79$\tabularnewline
+~~BL - PC&$-6$&$0.49$&&$ 0$&$0.82$\tabularnewline
+\hline
+\end{tabular}\end{center}
+
+\footnotesize BC: Bayou Cumbest, BL: Bangs Lake, PC: Point aux Chenes\end{table}
+
 
 \end{document}

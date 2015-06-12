@@ -35,6 +35,8 @@ library(tidyr)
 library(ggplot2)
 library(SWMPr)
 library(agricolae)
+library(reshape2)
+library(Hmisc)
 
 # load data
 load('wq_dat.RData')
@@ -219,19 +221,14 @@ p
 @
 \clearpage
 
-<<ccf, echo = FALSE, eval = FALSE>>=
+<<ccfwq, echo = FALSE, eval = TRUE>>=
 # pre-process wq for stations, timeframe and equal lags
 wq_proc <- filter(wq_dat, StationCode %in% c('BL', 'PC', 'BC')) %>% 
   filter(TimeFrame %in% c('E1A', 'E2A')) %>% 
   rename(Station = StationCode) %>% 
   filter(strftime(datetimestamp, '%M') %in% c('00', '30')) # this has to be done to make lags valid
 
-# pre-process nut for stations, timeframe
-nut_proc <- filter(nut_dat, StationCode %in% c('BL', 'PC', 'BC')) %>% 
-  filter(TimeFrame %in% c('E1A', 'E2A')) %>% 
-  rename(Station = StationCode) %>% 
-  select(-stat_nut, -value)
-
+#ccf functions
 wq_ccf <- function(dat_in, stats){
   
   # filter dat_in for station data, reformat for analysis
@@ -245,12 +242,71 @@ wq_ccf <- function(dat_in, stats){
   toproc <- lapply(toproc, function(x){
     cors <- ccf(x[, stats[1]], x[, stats[2]], plot = FALSE, na.action = na.pass)
     ind <- which.max(cors$acf)
-    with(cors, c(lag[ind], acf[ind]))
+    out <- with(cors, c(lag[ind], acf[ind]))
+    names(out) <- c('lag', 'cor')
+    return(out)
   })
-
+  
   return(toproc)
   
 }
+
+# get station combos
+combs <- combn(unique(wq_proc$Station), 2, simplify = F)
+
+# get ccf results
+wqres <- lapply(combs, function(x) wq_ccf(wq_proc, x))
+combs <- unlist(lapply(combs, paste, collapse = ' - '))
+names(wqres) <- combs
+
+# format for table
+wqres <- lapply(wqres, function(x) do.call('rbind', x)) %>% 
+  melt(.) %>% 
+  separate(Var1, c('Event', 'wqvar')) %>% 
+  unite('comb', Event, Var2) %>% 
+  spread(comb, value)
+  
+nms <- c('wqvar', 'L1', 'E1A_lag', 'E1A_cor', 'E2A_lag', 'E2A_cor')
+wqres <- wqres[, nms]
+  
+# table output
+totab <- wqres[, -c(1:2)]
+totab <- round(totab, 2)
+names(totab) <- c('Lag', 'Correlation', 'Lag', 'Correlation')
+
+cap.val <- 'Results of cross-correlation analyses comparing water quality time series between sites at Grand Bay during the two acute event periods.  Values for pH and salinity (ppt) are the lags in the compared time series between sites at which the maximum correlation was observed.  Negative lags indicate observations were leading at the first site relative to the second, whereas positive lags indicate observations lagged at the first site relative to the second.  One lag is thirty minutes.'
+rgroups <- unique(wqres$wqvar) %>% 
+  factor(., levels = c('ph', 'sal'), labels = c('pH', 'Salinity'))
+
+foot.val <- '\\footnotesize BC: Bayou Cumbest, BL: Bangs Lake, PC: Point aux Chenes' 
+
+latex( 
+  totab,
+  file = '',
+  rowlabel = 'Site comparisons',
+  caption = cap.val,
+  caption.loc = 'top',
+  rgroup = rgroups,
+  n.rgroup = rep(3, 2),
+  cgroup = c('First acute event (E1A)', 'Second acute event (E2A)'),
+  n.cgroup = c(2, 2),
+  rowname = wqres$L1,
+  label = 'tab:ccfwq',
+  insert.bottom = foot.val,
+  col.just = c('r', 'c', 'r', 'c')
+  )
+
+@
+\clearpage
+
+<<ccfnut, echo = FALSE, eval = TRUE>>=
+# pre-process nut for stations, timeframe
+nut_proc <- filter(nut_dat, StationCode %in% c('BL', 'PC', 'BC')) %>% 
+  filter(TimeFrame %in% c('E1A', 'E2A')) %>% 
+  rename(Station = StationCode) %>% 
+  select(-stat_nut, -value)
+
+#ccf functions
 nut_ccf <- function(dat_in, stats){
   
   # filter dat_in for station data, reformat for analysis
@@ -263,16 +319,63 @@ nut_ccf <- function(dat_in, stats){
   toproc <- lapply(toproc, function(x){
     cors <- ccf(x[, stats[1]], x[, stats[2]], plot = FALSE, na.action = na.pass)
     ind <- which.max(cors$acf)
-    with(cors, c(lag[ind], acf[ind]))
+    out <- with(cors, c(lag[ind], acf[ind]))
+    names(out) <- c('lag', 'cor')
+    return(out)
   })
 
   return(toproc)
   
 }
 
-wq_ccf(wq_proc, c('BL', 'BC'))
+# get station combos
+combs <- combn(unique(wq_proc$Station), 2, simplify = F)
+
+# get ccf results
+nutres <- lapply(combs, function(x) nut_ccf(nut_proc, x))
+combs <- unlist(lapply(combs, paste, collapse = ' - '))
+names(nutres) <- combs
+
+# format for table
+nutres <- lapply(nutres, function(x) do.call('rbind', x)) %>% 
+  melt(.) %>% 
+  separate(Var1, c('Event', 'nutvar'), sep = '\\.') %>% 
+  unite('comb', Event, Var2) %>% 
+  spread(comb, value)
+  
+nms <- c('nutvar', 'L1', 'E1A_lag', 'E1A_cor', 'E2A_lag', 'E2A_cor')
+nutres <- nutres[, nms]
+  
+# table output
+totab <- nutres[, -c(1:2)]
+totab <- round(totab, 2)
+names(totab) <- c('Lag', 'Correlation', 'Lag', 'Correlation')
+
+cap.val <- 'Results of cross-correlation analyses comparing nutrient time series between sites at Grand Bay during the two acute event periods.  Values are the lags for each nutrient varialbe in the compared time series between sites at which the maximum correlation was observed.  Negative lags indicate observations were leading at the first site relative to the second, whereas positive lags indicate observations lagged at the first site relative to the second.  One lag is one month.'
+rgroups <- unique(nutres$nutvar) %>% 
+  factor(., levels = c('CHLA_N', 'NH4F', 'NO23F', 'PO4F'), 
+    labels = c('Chlorophyll a', 'Ammonium', 'Nitrite + Nitrate', 'Orthophosphate')
+  )
+
+foot.val <- '\\footnotesize BC: Bayou Cumbest, BL: Bangs Lake, PC: Point aux Chenes' 
+
+latex( 
+  totab,
+  file = '',
+  rowlabel = 'Site comparisons',
+  caption = cap.val,
+  caption.loc = 'top',
+  rgroup = rgroups,
+  n.rgroup = rep(3, 4),
+  cgroup = c('First acute event (E1A)', 'Second acute event (E2A)'),
+  n.cgroup = rep(2, 2),
+  rowname = nutres$L1,
+  label = 'tab:ccfnut',
+  insert.bottom = foot.val, 
+  col.just = c('r', 'c', 'r', 'c')
+  )
+
 
 @
-\clearpage
 
 \end{document}
