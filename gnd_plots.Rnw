@@ -30,6 +30,7 @@ options(replace.assign=TRUE,width=90)
 
 <<echo = FALSE, message = FALSE>>=
 # libraries to use
+library(ggord)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -37,6 +38,7 @@ library(SWMPr)
 library(agricolae)
 library(reshape2)
 library(Hmisc)
+library(gridExtra)
 
 # load data
 load('wq_dat.RData')
@@ -46,9 +48,20 @@ load('nut_dat.RData')
 
 \begin{document}
 
+My comments/interpretations:
+\begin{itemize}
+\item \Cref{fig:tsplot} - time series plot of variables at Bangs Lake.  Nothing too surprising here, but there are noticeable changes in salinity/pH with each event.  Let me know if you like the format, want to add/remove any variables, etc.  
+\item \Cref{fig:tukey} - multiple comparison bar plots by event.  These are the same as before, but for Bangs Lake only.  Do we want to include all of these variables?
+\item \Cref{fig:phvsal1} - ph v salinity - daily averages of observations grouped by event/stations.  I'm not seeing anything too striking here, at least not like what Jane had in her powerpoint.  My interpretation of her slides was that BL had a different relationship of ph v salinity with increasing freshwater, such that ph stayed high with an inflow event whereas other stations showed the typical positive relationship between ph and salintiy as was observed during `normal conditions'.  I'm not seeing any of that here.
+\item \Cref{fig:phvsal2} - ph v salinity - 15 minute observations for different time slices.  This was my attempt at isolating the expected pattern that Jane saw, using different time step aggregations centered on our event categories. My hope was that BL would show the high ph/no relationship with salinity trend for the E1A/E2A plots, whereas the `standard' ph/salinity relationship would be observed in the non-impact year (the year was chosen arbitrarily).  I'm not seeing any of these things so I'm open to suggestions about how to deal with these plots.  It may be worth just showing the time slices Jane had in powerpoint - or show nothing at all.
+\item \Cref{tab:ccfwq} - cross-correlation analysis for wq variables - the key to interpreting these tables is the order of the pairwise comparisons on the left and the sign of the lag.  For example, the +40 lag for BC-PC means that the highest correlation between the salinity time series was observed when BC was 40 time steps \emph{behind} PC.  In other words, salinity was positively correlated between the sites and was higher first at PC.  This makes sense based on the locations of the sites.  I think what's interesting is the difference in maximum lags for salinity between the two events - much longer lags for the second event probably related to tidal surge from the storm.  For pH, I don't have too much faith in these differences.  A maximum lag of 1 is just 30 minutes so it could just be related to water movement from normal tidal changes.  I'm not really sure.
+\item \Cref{tab:ccfnut} - cross-correlation analysis for nuts.  We may want to reduce some of the variables in this table just for simplicity.  These are harder to interpret than the previous table because there are more variables.  Also note the difference in time scale - here one lag is one month.  I'm not entirely sure how to interpet these results as some make sense and some do not.  For example, a negative max lag for phosphate from BL to PC during the first event makes sense - phosphate was higher first at Bangs Lake.  But why a similar max lag for BC to PC?  This suggests phosphorus was higher first at BC.  It's possible that some of these are just statistical artifacts so we may want to discuss which to include/remove.  
+\item \Cref{fig:ordplo} - ordination biplots of nutrient varibles between stations/events.  I'm kind of on the fence with including these plots.  There are some interesting groupings between the sites/events but it's not very distinct.  Here's what I see - First, phosphate shows a strong relationship with BL, particularly during the first event.  Second, there is a lot of overlap between the stations during the non-impact years which is expected.  Third, BC is doing some weird stuff during the second event - it shows a strong relationship to the ammonium - chlorophyll gradient that we don't see in the other sites.  There are probably some other interesting patterns in these plots but that's all I see at first glance.  We should discuss if we want to include these or evaluate in some other way.  
+\end{itemize}
+
 \begin{landscape}
 \centering\vspace*{\fill}
-<<tsplot, fig.width = 9.5, fig.height = 5.7, echo = FALSE, fig.cap = 'Time series of total precipitation, salinity, pH, and phosphate for Bangs Lake, Grand Bay reserve.  Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.  Salinity and pH include a loess smooth to reduce variability.'>>=
+<<tsplot, fig.width = 9, fig.height = 5.25, out.height = '5in', echo = FALSE, fig.cap = 'Time series of total precipitation, salinity, pH, and phosphate for Bangs Lake, Grand Bay reserve.  Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.  Salinity and pH include a loess smooth to reduce variability. Orthophosphate is colored by event categories in relation to the vertical green bars.  E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
 # ts plots for BL
 # first get cumulative daily precipitation for met
 # then combine wq and met, take daily ave, make long form
@@ -56,13 +69,12 @@ load('nut_dat.RData')
 # met process for totprcp
 met_proc <- mutate(met_dat, datetimestamp = as.Date(datetimestamp)) %>% 
   rename(date = datetimestamp) %>% 
-  select(-TimeFrame) %>% 
-  group_by(date) %>% 
+  group_by(date, TimeFrame) %>% 
   summarise(totprcp = sum(totprcp, na.rm = TRUE))
 
 # nutrients process for BL phosphorus 
 nut_proc <- filter(nut_dat, nutrient == 'PO4F' & StationCode == 'BL') %>% 
-  select(-nutrient, -value, -TimeFrame, -stat_nut, -StationCode) %>% 
+  select(-nutrient, -value, -stat_nut, -StationCode) %>% 
   rename(logP = logvalue)
   
 # combine wq with met and nut
@@ -72,14 +84,14 @@ toplo <- filter(wq_dat, StationCode == 'BL') %>%
   rename(date = datetimestamp) %>% 
   group_by(date, TimeFrame) %>% 
   summarise_each(funs(mean(., na.rm = TRUE))) %>% 
-  full_join(met_proc, by = 'date') %>% 
-  full_join(nut_proc, by = 'date') %>% 
-  select(-TimeFrame) %>% 
+  full_join(met_proc, by = c('date', 'TimeFrame')) %>% 
+  full_join(nut_proc, by = c('date', 'TimeFrame')) %>% 
   gather('variable', 'value', sal:logP) %>% 
   mutate(variable = factor(variable, 
     levels = c('totprcp', 'sal', 'ph', 'logP'),
     labels = c('Total precipitation (mm/d)', 'Salinity (ppt)', 'pH', 'log-Orthophosphate (mg/L)')
-    ))
+    )) %>% 
+  rename(Event = TimeFrame)
 
 # event dates
 events <- c('2005-04-01', '2012-08-01')
@@ -90,7 +102,8 @@ p <- ggplot(toplo, aes(x = date, y = value)) +
   geom_line() +
   geom_vline(xintercept = as.numeric(events), colour = 'lightgreen', alpha = 0.6, size = 3) +
   geom_line() +
-  geom_point(data = filter(toplo, variable == 'log-Orthophosphate (mg/L)'), alpha = 0.8, size = 2) + 
+  geom_point(data = filter(toplo, variable == 'log-Orthophosphate (mg/L)'), alpha = 0.8, size = 3, 
+    aes(colour = Event)) + 
   facet_wrap(~variable, scales = 'free_y', ncol = 1) +
   theme_bw() +
   theme(
@@ -377,5 +390,57 @@ latex(
 
 
 @
+\clearpage
+
+<<echo = FALSE, eval = FALSE>>=
+g_legend <- function(a.gplot){
+  tmp <- ggplot_gtable(ggplot_build(a.gplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)}
+
+library(vegan)
+nut_proc <- select(nut_dat, -stat_nut, -value) %>% 
+  filter(StationCode != 'BN') %>% 
+  spread(nutrient, value) %>% 
+  na.omit(.)
+
+nuts <- c('PO4F', 'NH4F', 'NO23F', 'CHLA_N')
+
+timeframes <- unique(nut_proc$TimeFrame)
+ordres <- vector('list', length(timeframes))
+names(ordres) <- timeframes
+for(i in timeframes){
+  toeval <- nut_proc[nut_proc$TimeFrame %in% i, ]
+    
+  res <- metaMDS(toeval[, nuts], distance = 'euclidean', trymax = 100)
+  
+  res <- ggord(res, toeval$StationCode)  +
+    ggtitle(paste0(i, ' (stress ', round(res$stress, 3), ')'))
+
+  if(i == 'E2C') leg <- g_legend(res)
+  
+  res <- res + theme(legend.position = 'none')
+    
+  assign(
+    paste0('p', which(i == timeframes)), 
+    res
+    )
+  
+}
+pdf('figs/ordres.pdf', height = 7, width = 11, family = 'serif')
+grid.arrange(p1, p2, p3, p4, p5, leg, ncol = 3)
+dev.off()
+@
+
+\begin{landscape}
+\begin{figure}
+\centering\vspace*{\fill}
+\includegraphics[width = 1.3\textwidth]{figs/ordres.pdf}
+\caption{Ordination axes from non-metric multidimensional scaling of monthly nutrient observations at each station.  Plots are grouped by events as shown in \cref{fig:tsplot}.  Ellipses around each station represent 95\% confidence intervals for the bivariate distribution of scores between each axis. Stress values measure the departure from monotonicity of the reduced variables in ordination space, with smaller values indicating better fit.  E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.}
+\label{fig:ordplo}
+\end{figure}
+\end{landscape}
+\clearpage
 
 \end{document}
