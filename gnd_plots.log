@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.8.29)  15 JUN 2015 17:13
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.8.29)  27 JUN 2015 09:35
 entering extended mode
 **gnd_plots.tex
 (M:\docs\gndphosphate\gnd_plots.tex
@@ -629,90 +629,89 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: subfig package v1.3 is loaded.
 Package caption Info: End \AtBeginDocument code.
 
-[1
-
-{C:/Users/mbeck/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}] [2]
-<figs/tsplot-1.pdf, id=29, 650.43pt x 379.4175pt>
+<figs/tsplot-1.pdf, id=3, 650.43pt x 379.4175pt>
 File: figs/tsplot-1.pdf Graphic file (type pdf)
  <use figs/tsplot-1.pdf>
-Package pdftex.def Info: figs/tsplot-1.pdf used on input line 95.
+Package pdftex.def Info: figs/tsplot-1.pdf used on input line 84.
 (pdftex.def)             Requested size: 650.47803pt x 361.3593pt.
 
-[3
+[1
 
- <M:/docs/gndphosphate/figs/tsplot-1.pdf>]
-<figs/tukey-1.pdf, id=44, 433.62pt x 505.89pt>
+
+{C:/Users/mbeck/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map} <M:/docs/gnd
+phosphate/figs/tsplot-1.pdf>]
+<figs/tukey-1.pdf, id=21, 614.295pt x 216.81pt>
 File: figs/tukey-1.pdf Graphic file (type pdf)
  <use figs/tukey-1.pdf>
-Package pdftex.def Info: figs/tukey-1.pdf used on input line 108.
-(pdftex.def)             Requested size: 433.61894pt x 505.9119pt.
+Package pdftex.def Info: figs/tukey-1.pdf used on input line 97.
+(pdftex.def)             Requested size: 469.75502pt x 165.79625pt.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 112.
+(Font)              <12> on input line 101.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 112.
+(Font)              <8> on input line 101.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 112.
- [4
+(Font)              <6> on input line 101.
+ [2
 
 
  <M:/docs/gndphosphate/figs/tukey-1.pdf>]
-<figs/phvsal1-1.pdf, id=56, 650.43pt x 433.62pt>
+<figs/phvsal1-1.pdf, id=35, 650.43pt x 433.62pt>
 File: figs/phvsal1-1.pdf Graphic file (type pdf)
  <use figs/phvsal1-1.pdf>
-Package pdftex.def Info: figs/phvsal1-1.pdf used on input line 120.
+Package pdftex.def Info: figs/phvsal1-1.pdf used on input line 109.
 (pdftex.def)             Requested size: 469.75502pt x 313.17879pt.
 
-[5
+[3
 
  <M:/docs/gndphosphate/figs/phvsal1-1.pdf>]
-<figs/phvsal2-1.pdf, id=70, 650.43pt x 216.81pt>
+<figs/phvsal2-1.pdf, id=50, 650.43pt x 216.81pt>
 File: figs/phvsal2-1.pdf Graphic file (type pdf)
  <use figs/phvsal2-1.pdf>
-Package pdftex.def Info: figs/phvsal2-1.pdf used on input line 132.
+Package pdftex.def Info: figs/phvsal2-1.pdf used on input line 121.
 (pdftex.def)             Requested size: 469.75502pt x 156.58939pt.
 
-[6
+[4
 
- <M:/docs/gndphosphate/figs/phvsal2-1.pdf>] [7] [8]
-<figs/ordres.pdf, id=96, 794.97pt x 505.89pt>
-File: figs/ordres.pdf Graphic file (type pdf)
- <use figs/ordres.pdf>
-Package pdftex.def Info: figs/ordres.pdf used on input line 209.
-(pdftex.def)             Requested size: 610.68295pt x 388.62563pt.
+ <M:/docs/gndphosphate/figs/phvsal2-1.pdf>] [5] [6]
+<figs/boxplt_all-1.pdf, id=78, 578.16pt x 361.35pt>
+File: figs/boxplt_all-1.pdf Graphic file (type pdf)
+
+<use figs/boxplt_all-1.pdf>
+Package pdftex.def Info: figs/boxplt_all-1.pdf used on input line 196.
+(pdftex.def)             Requested size: 469.75502pt x 293.59616pt.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 205.
+Package atenddvi Info: Last page = 7.
+ [7
 
 
-LaTeX Warning: Float too large for page by 1.37059pt on input line 212.
 
-Package atenddvi Info: Last page = 9.
-[9 <M:/docs/gndphosphate/figs/ordres.pdf>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 216.
-Package atveryend Info: Executing hook `AfterLastShipout' on input line 216.
- (M:\docs\gndphosphate\gnd_plots.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 216.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 216.
+ <M:/docs/gndphosphate/figs/boxplt_all-1.pdf>]
+Package atveryend Info: Executing hook `AfterLastShipout' on input line 205.
+
+(M:\docs\gndphosphate\gnd_plots.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 205.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 205.
 Package rerunfilecheck Info: File `gnd_plots.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 216.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 205.
  ) 
 Here is how much of TeX's memory you used:
- 10731 strings out of 493921
- 174797 string characters out of 3147282
+ 10724 strings out of 493921
+ 174774 string characters out of 3147282
  305489 words of memory out of 3000000
- 13855 multiletter control sequences out of 15000+200000
- 7367 words of font info for 26 fonts, out of 3000000 for 9000
+ 13852 multiletter control sequences out of 15000+200000
+ 6683 words of font info for 24 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 44i,9n,42p,912b,427s stack positions out of 5000i,500n,10000p,200000b,50000s
- <C:\Users\mbeck\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\
-tcrm1200.pk><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.
-pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/
-Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program F
-iles/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKT
-eX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9/fon
-ts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1
-/public/amsfonts/cm/cmti12.pfb>
-Output written on gnd_plots.pdf (9 pages, 2112552 bytes).
+ 44i,9n,42p,858b,405s stack positions out of 5000i,500n,10000p,200000b,50000s
+<C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Pr
+ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Program Fi
+les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Files/MiKTe
+X 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTeX 2.9/fon
+ts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/p
+ublic/amsfonts/cm/cmsy10.pfb>
+Output written on gnd_plots.pdf (7 pages, 2089024 bytes).
 PDF statistics:
- 142 PDF objects out of 1000 (max. 8388607)
- 17 named destinations out of 1000 (max. 500000)
+ 115 PDF objects out of 1000 (max. 8388607)
+ 15 named destinations out of 1000 (max. 500000)
  26 words of extra memory for PDF output out of 10000 (max. 10000000)
 

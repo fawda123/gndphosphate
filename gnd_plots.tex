@@ -77,17 +77,6 @@
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 
-My comments/interpretations:
-\begin{itemize}
-\item \Cref{fig:tsplot} - time series plot of variables at Bangs Lake.  Nothing too surprising here, but there are noticeable changes in salinity/pH with each event.  Let me know if you like the format, want to add/remove any variables, etc.  
-\item \Cref{fig:tukey} - multiple comparison bar plots by event.  These are the same as before, but for Bangs Lake only.  Do we want to include all of these variables?
-\item \Cref{fig:phvsal1} - ph v salinity - daily averages of observations grouped by event/stations.  I'm not seeing anything too striking here, at least not like what Jane had in her powerpoint.  My interpretation of her slides was that BL had a different relationship of ph v salinity with increasing freshwater, such that ph stayed high with an inflow event whereas other stations showed the typical positive relationship between ph and salintiy as was observed during `normal conditions'.  I'm not seeing any of that here.
-\item \Cref{fig:phvsal2} - ph v salinity - 15 minute observations for different time slices.  This was my attempt at isolating the expected pattern that Jane saw, using different time step aggregations centered on our event categories. My hope was that BL would show the high ph/no relationship with salinity trend for the E1A/E2A plots, whereas the `standard' ph/salinity relationship would be observed in the non-impact year (the year was chosen arbitrarily).  I'm not seeing any of these things so I'm open to suggestions about how to deal with these plots.  It may be worth just showing the time slices Jane had in powerpoint - or show nothing at all.
-\item \Cref{tab:ccfwq} - cross-correlation analysis for wq variables - the key to interpreting these tables is the order of the pairwise comparisons on the left and the sign of the lag.  For example, the +40 lag for BC-PC means that the highest correlation between the salinity time series was observed when BC was 40 time steps \emph{behind} PC.  In other words, salinity was positively correlated between the sites and was higher first at PC.  This makes sense based on the locations of the sites.  I think what's interesting is the difference in maximum lags for salinity between the two events - much longer lags for the second event probably related to tidal surge from the storm.  For pH, I don't have too much faith in these differences.  A maximum lag of 1 is just 30 minutes so it could just be related to water movement from normal tidal changes.  I'm not really sure.
-\item \Cref{tab:ccfnut} - cross-correlation analysis for nuts.  We may want to reduce some of the variables in this table just for simplicity.  These are harder to interpret than the previous table because there are more variables.  Also note the difference in time scale - here one lag is one month.  I'm not entirely sure how to interpet these results as some make sense and some do not.  For example, a negative max lag for phosphate from BL to PC during the first event makes sense - phosphate was higher first at Bangs Lake.  But why a similar max lag for BC to PC?  This suggests phosphorus was higher first at BC.  It's possible that some of these are just statistical artifacts so we may want to discuss which to include/remove.  
-\item \Cref{fig:ordplo} - ordination biplots of nutrient varibles between stations/events.  I'm kind of on the fence with including these plots.  There are some interesting groupings between the sites/events but it's not very distinct.  Here's what I see - First, phosphate shows a strong relationship with BL, particularly during the first event.  Second, there is a lot of overlap between the stations during the non-impact years which is expected.  Third, BC is doing some weird stuff during the second event - it shows a strong relationship to the ammonium - chlorophyll gradient that we don't see in the other sites.  There are probably some other interesting patterns in these plots but that's all I see at first glance.  We should discuss if we want to include these or evaluate in some other way.  
-\end{itemize}
-
 \begin{landscape}
 \centering\vspace*{\fill}
 \begin{figure}[!ht]
@@ -109,7 +98,7 @@ My comments/interpretations:
 
 }
 
-\caption[Boxplot summaries of nutrient data at Bangs Lake, Grand Bay grouped by events]{Boxplot summaries of nutrient data at Bangs Lake, Grand Bay grouped by events.  Letters indicate events for each nutrient with significantly different observations based on Tukey multiple comparison analysis.  Boxes represent the interquartile range (IQR, 25\textsuperscript{th} to 75\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\cdot$IQR). E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.}\label{fig:tukey}
+\caption[Boxplot summaries by event of monthly orthophosphate data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) sites in Grand Bay]{Boxplot summaries by event of monthly orthophosphate data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) sites in Grand Bay.  Letters indicate events with significantly different events based on Tukey multiple comparison analysis within each site.  Boxes represent the interquartile range (IQR, 25\textsuperscript{th} to 75\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\cdot$IQR). Boxes are shaded by medians between sites.  E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.}\label{fig:tukey}
 \end{figure}
 
 
@@ -201,16 +190,16 @@ My comments/interpretations:
 
 \clearpage
 
+% appendix boxplots
+\begin{figure}[!ht]
 
+{\centering \includegraphics[width=\maxwidth]{figs/boxplt_all-1} 
 
-\begin{landscape}
-\begin{figure}
-\centering\vspace*{\fill}
-\includegraphics[width = 1.3\textwidth]{figs/ordres.pdf}
-\caption{Ordination axes from non-metric multidimensional scaling of monthly nutrient observations at each station.  Plots are grouped by events as shown in \cref{fig:tsplot}.  Ellipses around each station represent 95\% confidence intervals for the bivariate distribution of scores between each axis. Stress values measure the departure from monotonicity of the reduced variables in ordination space, with smaller values indicating better fit.  E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.}
-\label{fig:ordplo}
+}
+
+\caption[Boxplot summaries by event of nutrient data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) sites at Grand Bay]{Boxplot summaries by event of nutrient data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) sites at Grand Bay.  Letters indicate significantly different events based on Tukey multiple comparison analyses for each unique site and nutrient value combination.  Boxes represent the interquartile range (IQR, 25\textsuperscript{th} to 75\textsuperscript{th} percentile) with the median as the middle horizonal line.  Boxes are colored by relative median nutrients between sites.  Outliers are present beyond whiskers (1.5$\cdot$IQR). E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.}\label{fig:boxplt_all}
 \end{figure}
-\end{landscape}
-\clearpage
+
+
 
 \end{document}

@@ -48,17 +48,6 @@ load('nut_dat.RData')
 
 \begin{document}
 
-My comments/interpretations:
-\begin{itemize}
-\item \Cref{fig:tsplot} - time series plot of variables at Bangs Lake.  Nothing too surprising here, but there are noticeable changes in salinity/pH with each event.  Let me know if you like the format, want to add/remove any variables, etc.  
-\item \Cref{fig:tukey} - multiple comparison bar plots by event.  These are the same as before, but for Bangs Lake only.  Do we want to include all of these variables?
-\item \Cref{fig:phvsal1} - ph v salinity - daily averages of observations grouped by event/stations.  I'm not seeing anything too striking here, at least not like what Jane had in her powerpoint.  My interpretation of her slides was that BL had a different relationship of ph v salinity with increasing freshwater, such that ph stayed high with an inflow event whereas other stations showed the typical positive relationship between ph and salintiy as was observed during `normal conditions'.  I'm not seeing any of that here.
-\item \Cref{fig:phvsal2} - ph v salinity - 15 minute observations for different time slices.  This was my attempt at isolating the expected pattern that Jane saw, using different time step aggregations centered on our event categories. My hope was that BL would show the high ph/no relationship with salinity trend for the E1A/E2A plots, whereas the `standard' ph/salinity relationship would be observed in the non-impact year (the year was chosen arbitrarily).  I'm not seeing any of these things so I'm open to suggestions about how to deal with these plots.  It may be worth just showing the time slices Jane had in powerpoint - or show nothing at all.
-\item \Cref{tab:ccfwq} - cross-correlation analysis for wq variables - the key to interpreting these tables is the order of the pairwise comparisons on the left and the sign of the lag.  For example, the +40 lag for BC-PC means that the highest correlation between the salinity time series was observed when BC was 40 time steps \emph{behind} PC.  In other words, salinity was positively correlated between the sites and was higher first at PC.  This makes sense based on the locations of the sites.  I think what's interesting is the difference in maximum lags for salinity between the two events - much longer lags for the second event probably related to tidal surge from the storm.  For pH, I don't have too much faith in these differences.  A maximum lag of 1 is just 30 minutes so it could just be related to water movement from normal tidal changes.  I'm not really sure.
-\item \Cref{tab:ccfnut} - cross-correlation analysis for nuts.  We may want to reduce some of the variables in this table just for simplicity.  These are harder to interpret than the previous table because there are more variables.  Also note the difference in time scale - here one lag is one month.  I'm not entirely sure how to interpet these results as some make sense and some do not.  For example, a negative max lag for phosphate from BL to PC during the first event makes sense - phosphate was higher first at Bangs Lake.  But why a similar max lag for BC to PC?  This suggests phosphorus was higher first at BC.  It's possible that some of these are just statistical artifacts so we may want to discuss which to include/remove.  
-\item \Cref{fig:ordplo} - ordination biplots of nutrient varibles between stations/events.  I'm kind of on the fence with including these plots.  There are some interesting groupings between the sites/events but it's not very distinct.  Here's what I see - First, phosphate shows a strong relationship with BL, particularly during the first event.  Second, there is a lot of overlap between the stations during the non-impact years which is expected.  Third, BC is doing some weird stuff during the second event - it shows a strong relationship to the ammonium - chlorophyll gradient that we don't see in the other sites.  There are probably some other interesting patterns in these plots but that's all I see at first glance.  We should discuss if we want to include these or evaluate in some other way.  
-\end{itemize}
-
 \begin{landscape}
 \centering\vspace*{\fill}
 <<tsplot, fig.width = 9, fig.height = 5.25, out.height = '5in', echo = FALSE, fig.cap = 'Time series of total precipitation, salinity, pH, and phosphate for Bangs Lake, Grand Bay reserve.  Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.  Salinity and pH include a loess smooth to reduce variability. Orthophosphate is colored by event categories in relation to the vertical green bars.  E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
@@ -117,13 +106,16 @@ p
 \end{landscape}
 \clearpage
 
-<<tukey, fig.width = 6, fig.height = 7, echo = FALSE, fig.cap = 'Boxplot summaries of nutrient data at Bangs Lake, Grand Bay grouped by events.  Letters indicate events for each nutrient with significantly different observations based on Tukey multiple comparison analysis.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
-# BL station 
-nut_proc <- filter(nut_dat, StationCode == 'BL') %>% 
-  select(-StationCode, -stat_nut) 
+<<tukey, fig.width = 8.5, fig.height = 3, echo = FALSE, fig.cap = 'Boxplot summaries by event of monthly orthophosphate data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) sites in Grand Bay.  Letters indicate events with significantly different events based on Tukey multiple comparison analysis within each site.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). Boxes are shaded by medians between sites.  E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
+
+load(file = 'nut_dat.RData')
+
+toplo <- filter(nut_dat, StationCode != 'BN' & nutrient == 'PO4F')
+
+timeframes <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
 
 # split data by unique station/nutrient variable
-sep_data <- split(nut_proc, nut_proc$nutrient)
+sep_data <- split(toplo, toplo$stat_nut)
 
 # run a Tukey multiple comparison for each station, nutrient variable combo
 res <- lapply(sep_data, function(x){
@@ -139,34 +131,33 @@ res <- lapply(sep_data, function(x){
 # combine results for plotting
 res <- do.call('rbind', res) %>% 
   mutate(
-    nutrient = gsub('\\.[0-9]', '', row.names(.))
+    stat_nut = gsub('\\.[0-9]', '', row.names(.)),
+    TimeFrame = trt
   ) %>% 
-  rename(TimeFrame = trt)
-ylocs <- data.frame(nutrient = c('PO4F', 'NH4F', 'NO23F', 'CHLA_N'), ylims = c(10, 10, 1, 100))
+  separate(stat_nut, c('StationCode', 'nutrient'), sep = ' ')
+ylocs <- data.frame(nutrient = c('PO4F'), ylims = c(10))
 res <- left_join(res, ylocs, by = 'nutrient')
-timeframes <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
-res$TimeFrame <- factor(res$TimeFrame, levels = timeframes, labels = timeframes)
+res$TimeFrame <- factor(res$trt, levels = timeframes, labels = timeframes)
 
-nut_proc$nutrient <- factor(nut_proc$nutrient, 
-  levels = c('PO4F', 'NH4F', 'NO23F', 'CHLA_N'), 
-  labels = c('Orthophosphate (mg/L)', 'Ammonium (mg/L)', 'Nitrite + Nitrate (mg/L)', 'Chlorophyll a (ug/L)')
-)
-res$nutrient <- factor(res$nutrient, 
-  levels = c('PO4F', 'NH4F', 'NO23F', 'CHLA_N'), 
-  labels = c('Orthophosphate (mg/L)', 'Ammonium (mg/L)', 'Nitrite + Nitrate (mg/L)', 'Chlorophyll a (ug/L)')
-)
+# get nutrient/site/timeframe medians then merge with toplo for colors
+meds <- group_by(toplo, StationCode, nutrient, TimeFrame) %>% 
+  summarise(meds = median(value, na.rm = TRUE))
 
-# the boxplots but with letters above each box indicating different groups
-p <- ggplot(nut_proc, aes(x = TimeFrame, y = value)) +
-  geom_boxplot(fill = 'lightblue') + 
-  facet_wrap(~ nutrient, ncol =1, scales = 'free_y') +
-  scale_y_log10('Log-value', expand = c(0, 0.3)) +
-  theme_bw() +
+toplo <- left_join(toplo, meds, by = c('StationCode', 'nutrient', 'TimeFrame'))
+
+ylab <- expression(paste('Orthophosphate (mg ', L^-1, ')'))
+
+# boxplot
+p1 <- ggplot(toplo, aes(x = TimeFrame, y = value)) +
+  geom_boxplot(aes(fill = meds)) + 
+  facet_grid(~ StationCode, scales = 'free_y') +
+  scale_y_log10(ylab) +
+  theme_bw() + 
+  scale_fill_gradientn(colours = RColorBrewer::brewer.pal(9, 'BuGn')[3:9]) + 
+  geom_text(data = res, aes(x = TimeFrame, y = ylims, label = M)) + 
   scale_x_discrete('Event') +
-  geom_text(data = res, aes(x = TimeFrame, y = ylims, label = M))
-  
-p
-
+  theme(legend.position = 'none')
+p1
 @
 \clearpage
 
@@ -392,55 +383,67 @@ latex(
 @
 \clearpage
 
-<<echo = FALSE, eval = FALSE>>=
-g_legend <- function(a.gplot){
-  tmp <- ggplot_gtable(ggplot_build(a.gplot))
-  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
-  legend <- tmp$grobs[[leg]]
-  return(legend)}
+% appendix boxplots
+<<boxplt_all, fig.width = 8, fig.height = 5,, fig.cap = 'Boxplot summaries by event of nutrient data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) sites at Grand Bay.  Letters indicate significantly different events based on Tukey multiple comparison analyses for each unique site and nutrient value combination.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Boxes are colored by relative median nutrients between sites.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.', echo = FALSE>>=
 
-library(vegan)
-nut_proc <- select(nut_dat, -stat_nut, -value) %>% 
-  filter(StationCode != 'BN') %>% 
-  spread(nutrient, value) %>% 
-  na.omit(.)
+load(file = 'nut_dat.RData')
 
-nuts <- c('PO4F', 'NH4F', 'NO23F', 'CHLA_N')
+# remove BN, phosphorus
+toplo <- filter(nut_dat, StationCode != 'BN' & nutrient != 'PO4F')
 
-timeframes <- unique(nut_proc$TimeFrame)
-ordres <- vector('list', length(timeframes))
-names(ordres) <- timeframes
-for(i in timeframes){
-  toeval <- nut_proc[nut_proc$TimeFrame %in% i, ]
-    
-  res <- metaMDS(toeval[, nuts], distance = 'euclidean', trymax = 100)
+timeframes <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
+
+# split data by unique station/nutrient variable
+sep_data <- split(toplo, toplo$stat_nut)
+
+# run a Tukey multiple comparison for each station, nutrient variable combo
+res <- lapply(sep_data, function(x){
+
+  mod <- aov(logvalue ~ TimeFrame, data = x)
+  tuk_mod <- HSD.test(mod, 'TimeFrame', group = T)
+  grps <- tuk_mod$groups
+  grps$trt <- gsub('[[:space:]].*$', '', grps$trt)
+  grps
   
-  res <- ggord(res, toeval$StationCode)  +
-    ggtitle(paste0(i, ' (stress ', round(res$stress, 3), ')'))
+  })
 
-  if(i == 'E2C') leg <- g_legend(res)
+# combine results for plotting
+res <- do.call('rbind', res) %>% 
+  mutate(
+    stat_nut = gsub('\\.[0-9]', '', row.names(.)),
+    TimeFrame = trt
+  ) %>% 
+  separate(stat_nut, c('StationCode', 'nutrient'), sep = ' ')
+ylocs <- data.frame(nutrient = c('PO4F', 'NH4F', 'NO23F', 'CHLA_N'), ylims = c(10, 10, 1, 100))
+res <- left_join(res, ylocs, by = 'nutrient')
+res$TimeFrame <- factor(res$trt, levels = timeframes, labels = timeframes)
+
+# get nutrient/site/timeframe medians then merge with toplo for colors
+meds <- group_by(toplo, StationCode, nutrient, TimeFrame) %>% 
+  summarise(meds = median(value, na.rm = TRUE))
+meds <- split(meds, meds$nutrient)
+meds <- lapply(meds, function(x){
   
-  res <- res + theme(legend.position = 'none')
-    
-  assign(
-    paste0('p', which(i == timeframes)), 
-    res
-    )
+  x$rnks <- scales::rescale(x$meds, c(0, 1))
+  return(x)
   
-}
-pdf('figs/ordres.pdf', height = 7, width = 11, family = 'serif')
-grid.arrange(p1, p2, p3, p4, p5, leg, ncol = 3)
-dev.off()
+  })
+meds <- do.call('rbind', meds)
+
+toplo <- left_join(toplo, meds, by = c('StationCode', 'nutrient', 'TimeFrame'))
+
+# boxplot
+p1 <- ggplot(toplo, aes(x = TimeFrame, y = value)) +
+  geom_boxplot(aes(fill = rnks)) + 
+  facet_grid(nutrient ~ StationCode, scales = 'free_y') +
+  scale_y_log10() +
+  theme_bw() + 
+  theme(legend.position = 'none') + 
+  scale_x_discrete('Event') +
+  scale_fill_gradientn(colours = RColorBrewer::brewer.pal(9, 'BuGn')[3:9]) + 
+  geom_text(data = res, aes(x = TimeFrame, y = ylims, label = M))
+p1
+
 @
-
-\begin{landscape}
-\begin{figure}
-\centering\vspace*{\fill}
-\includegraphics[width = 1.3\textwidth]{figs/ordres.pdf}
-\caption{Ordination axes from non-metric multidimensional scaling of monthly nutrient observations at each station.  Plots are grouped by events as shown in \cref{fig:tsplot}.  Ellipses around each station represent 95\% confidence intervals for the bivariate distribution of scores between each axis. Stress values measure the departure from monotonicity of the reduced variables in ordination space, with smaller values indicating better fit.  E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.}
-\label{fig:ordplo}
-\end{figure}
-\end{landscape}
-\clearpage
 
 \end{document}
