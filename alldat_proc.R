@@ -117,3 +117,29 @@ met_dat$TimeFrame <- cut(as.numeric(met_dat$datetimestamp), breaks = brks, label
   right = FALSE) # open on right
 
 save(met_dat, file = 'met_dat.RData')
+
+##
+# some minor processing of supplementary precip data from KPQL
+# fill hole in 2005-2006 from Katrina
+# data from wunderground
+met_supp <- read.table('ignore/KPQL_wxsupp.txt', header = T, sep = ',')
+met_supp <- select(met_supp, CDT, PrecipitationIn) %>% 
+  mutate(
+    CDT = as.Date(CDT, format = '%Y-%m-%d'), 
+    PrecipitationIn = PrecipitationIn * 25.4
+  ) %>% 
+  rename(
+    date = CDT,
+    totprcp = PrecipitationIn
+  )
+brks <- c('07-01-2006 0:0', '03-01-2008 0:0', '09-01-2012 0:0', '02-01-2014 0:0') %>% 
+  as.POSIXct(format = '%m-%d-%Y %H:%M', tz = 'America/Regina') %>% 
+  c(-Inf, ., Inf)
+labs <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
+met_supp$TimeFrame <- cut(as.numeric(met_supp$date), breaks = brks, labels = labs, 
+  right = FALSE) # open on right
+met_supp <- met_supp[, c(1, 3, 2)]
+
+save(met_supp, file = 'met_supp.RData')
+
+

@@ -1,4 +1,13 @@
 To do:
 
-* multivariate biplots
-* more about changepoint analysis
+* b/w and color for all
+* seasonal decomp for ccf - does this improve anything?
+* depth ccf - does this explain wq ccf?
+* ph regression v salinity
+
+All data processed with alldat_proc.R, files include:
+
+* met_dat.RData
+* met_supp.RData
+* nut_dat.RData
+* wq_dat.RData
