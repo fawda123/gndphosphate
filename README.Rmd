@@ -5,9 +5,14 @@ To do:
 * depth ccf - does this explain wq ccf?
 * ph regression v salinity
 
-All data processed with alldat_proc.R, files include:
+Data processed with alldat_proc.R include:
 
 * met_dat.RData
 * met_supp.RData
 * nut_dat.RData
 * wq_dat.RData
+
+Data process elsewhere:
+
+* wq_noseas.RData - includes wq values with seasonal component removed, created in gnd_plots.Rnw
+

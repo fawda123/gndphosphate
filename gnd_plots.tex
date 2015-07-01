@@ -116,27 +116,6 @@
 
 \clearpage
 
-\begin{figure}[!ht]
-
-{\centering \includegraphics[width=\maxwidth]{figs/phvsal1-1} 
-
-}
-
-\caption[Scatterplots of pH versus salinity for each of the time frames, grouped by station]{Scatterplots of pH versus salinity for each of the time frames, grouped by station.  Observations are daily averages from the continuous time series. E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.}\label{fig:phvsal1}
-\end{figure}
-
-
-\clearpage
-
-\begin{figure}[!ht]
-
-{\centering \includegraphics[width=\maxwidth]{figs/phvsal2-1} 
-
-}
-
-\caption[Scatterplots of pH versus salinity for one month following the two acute exposure events (E1A, E2A) and 2010 during the non-impact (NI) time frame]{Scatterplots of pH versus salinity for one month following the two acute exposure events (E1A, E2A) and 2010 during the non-impact (NI) time frame.  Values are thirty-minute observations at each station. E1A: event 1 acute, NI: non-impact, E2A: event 2 acute.}\label{fig:phvsal2}
-\end{figure}
-
 
 \clearpage
 
@@ -151,14 +130,40 @@
 \multicolumn{1}{l}{}&\multicolumn{1}{c}{Lag}&\multicolumn{1}{c}{Correlation}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Lag}&\multicolumn{1}{c}{Correlation}\tabularnewline
 \hline
 {\bfseries pH}&&&&&\tabularnewline
+~~BC - BL&$ 1$&$0.58$&&$ 0$&$0.54$\tabularnewline
 ~~BC - PC&$ 1$&$0.25$&&$ 1$&$0.40$\tabularnewline
-~~BL - BC&$-1$&$0.58$&&$ 0$&$0.54$\tabularnewline
 ~~BL - PC&$ 0$&$0.57$&&$ 1$&$0.54$\tabularnewline
 \hline
 {\bfseries Salinity}&&&&&\tabularnewline
+~~BC - BL&$-1$&$0.86$&&$ 0$&$0.92$\tabularnewline
 ~~BC - PC&$ 1$&$0.47$&&$40$&$0.70$\tabularnewline
-~~BL - BC&$ 0$&$0.86$&&$ 0$&$0.92$\tabularnewline
 ~~BL - PC&$ 5$&$0.73$&&$40$&$0.87$\tabularnewline
+\hline
+\end{tabular}\end{center}
+
+\footnotesize BC: Bayou Cumbest, BL: Bangs Lake, PC: Point aux Chenes\end{table}
+
+\clearpage
+
+%latex.default(totab, file = "", rowlabel = "Site comparisons",     caption = cap.val, caption.loc = "top", rgroup = rgroups,     n.rgroup = rep(3, 2), cgroup = c("First acute event (E1A)",         "Second acute event (E2A)"), n.cgroup = c(2, 2), rowname = wqres$L1,     label = "tab:ccfwq", insert.bottom = foot.val, col.just = c("r",         "c", "r", "c"))%
+\begin{table}[!tbp]
+\caption{Results of cross-correlation analyses comparing water quality time series between sites at Grand Bay during the two acute event periods.  Seasonal components of each time series are removed.  Values for pH and salinity (ppt) are the lags in the compared time series between sites at which the maximum correlation was observed.  Negative lags indicate observations were leading at the first site relative to the second, whereas positive lags indicate observations lagged at the first site relative to the second.  One lag is thirty minutes.\label{tab:ccfwq}} 
+\begin{center}
+\begin{tabular}{lrccrc}
+\hline\hline
+\multicolumn{1}{l}{\bfseries Site comparisons}&\multicolumn{2}{c}{\bfseries First acute event (E1A)}&\multicolumn{1}{c}{\bfseries }&\multicolumn{2}{c}{\bfseries Second acute event (E2A)}\tabularnewline
+\cline{2-3} \cline{5-6}
+\multicolumn{1}{l}{}&\multicolumn{1}{c}{Lag}&\multicolumn{1}{c}{Correlation}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Lag}&\multicolumn{1}{c}{Correlation}\tabularnewline
+\hline
+{\bfseries pH}&&&&&\tabularnewline
+~~BC - BL&$ 1$&$0.52$&&$ 1$&$0.27$\tabularnewline
+~~BC - PC&$42$&$0.13$&&$ 1$&$0.12$\tabularnewline
+~~BL - PC&$-1$&$0.41$&&$-2$&$0.32$\tabularnewline
+\hline
+{\bfseries Salinity}&&&&&\tabularnewline
+~~BC - BL&$-1$&$0.87$&&$ 0$&$0.85$\tabularnewline
+~~BC - PC&$ 7$&$0.44$&&$40$&$0.48$\tabularnewline
+~~BL - PC&$ 8$&$0.55$&&$40$&$0.69$\tabularnewline
 \hline
 \end{tabular}\end{center}
 
@@ -168,7 +173,7 @@
 
 %latex.default(totab, file = "", rowlabel = "Site comparisons",     caption = cap.val, caption.loc = "top", rgroup = rgroups,     n.rgroup = rep(3, 4), cgroup = c("First acute event (E1A)",         "Second acute event (E2A)"), n.cgroup = rep(2, 2), rowname = nutres$L1,     label = "tab:ccfnut", insert.bottom = foot.val, col.just = c("r",         "c", "r", "c"))%
 \begin{table}[!tbp]
-\caption{Results of cross-correlation analyses comparing nutrient time series between sites at Grand Bay during the two acute event periods.  Values are the lags for each nutrient varialbe in the compared time series between sites at which the maximum correlation was observed.  Negative lags indicate observations were leading at the first site relative to the second, whereas positive lags indicate observations lagged at the first site relative to the second.  One lag is one month.\label{tab:ccfnut}} 
+\caption{Results of cross-correlation analyses comparing nutrient time series between sites at Grand Bay during the two acute event periods.  Values are the lags for each nutrient variable in the compared time series between sites at which the maximum correlation was observed.  Negative lags indicate observations were leading at the first site relative to the second, whereas positive lags indicate observations lagged at the first site relative to the second.  One lag is one month.\label{tab:ccfnut}} 
 \begin{center}
 \begin{tabular}{lrccrc}
 \hline\hline
@@ -177,24 +182,60 @@
 \multicolumn{1}{l}{}&\multicolumn{1}{c}{Lag}&\multicolumn{1}{c}{Correlation}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Lag}&\multicolumn{1}{c}{Correlation}\tabularnewline
 \hline
 {\bfseries Chlorophyll a}&&&&&\tabularnewline
+~~BC - BL&$ 0$&$0.49$&&$-1$&$0.49$\tabularnewline
 ~~BC - PC&$ 0$&$0.63$&&$-1$&$0.52$\tabularnewline
-~~BL - BC&$ 0$&$0.49$&&$ 1$&$0.49$\tabularnewline
 ~~BL - PC&$ 0$&$0.92$&&$ 0$&$0.87$\tabularnewline
 \hline
 {\bfseries Ammonium}&&&&&\tabularnewline
+~~BC - BL&$ 0$&$0.96$&&$-2$&$0.57$\tabularnewline
 ~~BC - PC&$ 0$&$0.99$&&$-4$&$0.38$\tabularnewline
-~~BL - BC&$ 0$&$0.96$&&$ 2$&$0.57$\tabularnewline
 ~~BL - PC&$ 0$&$0.89$&&$ 0$&$0.71$\tabularnewline
 \hline
 {\bfseries Nitrite + Nitrate}&&&&&\tabularnewline
+~~BC - BL&$ 0$&$0.81$&&$ 0$&$0.11$\tabularnewline
 ~~BC - PC&$ 0$&$0.70$&&$ 6$&$0.94$\tabularnewline
-~~BL - BC&$ 0$&$0.81$&&$ 0$&$0.11$\tabularnewline
 ~~BL - PC&$-3$&$0.55$&&$-5$&$0.98$\tabularnewline
 \hline
 {\bfseries Orthophosphate}&&&&&\tabularnewline
+~~BC - BL&$ 0$&$0.62$&&$ 1$&$0.79$\tabularnewline
 ~~BC - PC&$-6$&$0.60$&&$ 1$&$0.78$\tabularnewline
-~~BL - BC&$ 0$&$0.62$&&$-1$&$0.79$\tabularnewline
 ~~BL - PC&$-6$&$0.49$&&$ 0$&$0.82$\tabularnewline
+\hline
+\end{tabular}\end{center}
+
+\footnotesize BC: Bayou Cumbest, BL: Bangs Lake, PC: Point aux Chenes\end{table}
+
+\clearpage
+
+%latex.default(totab, file = "", rowlabel = "Site comparisons",     caption = cap.val, caption.loc = "top", rgroup = rgroups,     n.rgroup = rep(3, 4), cgroup = c("First acute event (E1A)",         "Second acute event (E2A)"), n.cgroup = rep(2, 2), rowname = nutres$L1,     label = "tab:ccfnut", insert.bottom = foot.val, col.just = c("r",         "c", "r", "c"))%
+\begin{table}[!tbp]
+\caption{Results of cross-correlation analyses comparing nutrient time series between sites at Grand Bay during the two acute event periods.  Nutrient time series were decomposed to remove the seasonal component.  Values are the lags for each nutrient variable in the compared time series between sites at which the maximum correlation was observed.  Negative lags indicate observations were leading at the first site relative to the second, whereas positive lags indicate observations lagged at the first site relative to the second.  One lag is one month.\label{tab:ccfnut}} 
+\begin{center}
+\begin{tabular}{lrccrc}
+\hline\hline
+\multicolumn{1}{l}{\bfseries Site comparisons}&\multicolumn{2}{c}{\bfseries First acute event (E1A)}&\multicolumn{1}{c}{\bfseries }&\multicolumn{2}{c}{\bfseries Second acute event (E2A)}\tabularnewline
+\cline{2-3} \cline{5-6}
+\multicolumn{1}{l}{}&\multicolumn{1}{c}{Lag}&\multicolumn{1}{c}{Correlation}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Lag}&\multicolumn{1}{c}{Correlation}\tabularnewline
+\hline
+{\bfseries Chlorophyll a}&&&&&\tabularnewline
+~~BC - BL&$ 2$&$0.34$&&$ 0$&$0.28$\tabularnewline
+~~BC - PC&$ 3$&$0.49$&&$-8$&$0.30$\tabularnewline
+~~BL - PC&$-1$&$0.19$&&$-6$&$0.96$\tabularnewline
+\hline
+{\bfseries Ammonium}&&&&&\tabularnewline
+~~BC - BL&$ 0$&$0.92$&&$ 0$&$0.58$\tabularnewline
+~~BC - PC&$ 0$&$0.82$&&$ 0$&$0.58$\tabularnewline
+~~BL - PC&$ 0$&$0.81$&&$ 0$&$0.78$\tabularnewline
+\hline
+{\bfseries Nitrite + Nitrate}&&&&&\tabularnewline
+~~BC - BL&$ 0$&$0.83$&&$ 0$&$0.85$\tabularnewline
+~~BC - PC&$-3$&$0.55$&&$ 6$&$0.41$\tabularnewline
+~~BL - PC&$-3$&$0.63$&&$-3$&$0.39$\tabularnewline
+\hline
+{\bfseries Orthophosphate}&&&&&\tabularnewline
+~~BC - BL&$ 0$&$0.67$&&$ 1$&$0.64$\tabularnewline
+~~BC - PC&$-6$&$0.48$&&$ 1$&$0.68$\tabularnewline
+~~BL - PC&$-6$&$0.43$&&$ 0$&$0.84$\tabularnewline
 \hline
 \end{tabular}\end{center}
 
