@@ -119,9 +119,9 @@
 
 \clearpage
 
-%latex.default(totab, file = "", rowlabel = "Site comparisons",     caption = cap.val, caption.loc = "top", rgroup = rgroups,     n.rgroup = rep(3, 2), cgroup = c("First acute event (E1A)",         "Second acute event (E2A)"), n.cgroup = c(2, 2), rowname = wqres$L1,     label = "tab:ccfwq", insert.bottom = foot.val, col.just = c("r",         "c", "r", "c"))%
+%latex.default(totab, file = "", rowlabel = "Site comparisons",     caption = cap.val, caption.loc = "top", rgroup = rgroups,     n.rgroup = rep(3, 3), cgroup = c("First acute event (E1A)",         "Second acute event (E2A)"), n.cgroup = c(2, 2), rowname = wqres$L1,     label = "tab:ccfwq", insert.bottom = foot.val, col.just = c("r",         "c", "r", "c"))%
 \begin{table}[!tbp]
-\caption{Results of cross-correlation analyses comparing water quality time series between sites at Grand Bay during the two acute event periods.  Values for pH and salinity (ppt) are the lags in the compared time series between sites at which the maximum correlation was observed.  Negative lags indicate observations were leading at the first site relative to the second, whereas positive lags indicate observations lagged at the first site relative to the second.  One lag is thirty minutes.\label{tab:ccfwq}} 
+\caption{Results of cross-correlation analyses comparing water quality time series between sites at Grand Bay during the two acute event periods.  Values for tidal height (m), pH, and salinity (ppt) are the lags in the compared time series between sites at which the maximum correlation was observed.  Negative lags indicate observations were leading at the first site relative to the second, whereas positive lags indicate observations lagged at the first site relative to the second.  One lag is thirty minutes.\label{tab:ccfwq}} 
 \begin{center}
 \begin{tabular}{lrccrc}
 \hline\hline
@@ -129,15 +129,20 @@
 \cline{2-3} \cline{5-6}
 \multicolumn{1}{l}{}&\multicolumn{1}{c}{Lag}&\multicolumn{1}{c}{Correlation}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Lag}&\multicolumn{1}{c}{Correlation}\tabularnewline
 \hline
+{\bfseries Tidal height}&&&&&\tabularnewline
+~~BC - BL&$0$&$0.97$&&$ 0$&$0.99$\tabularnewline
+~~BC - PC&$1$&$0.95$&&$ 1$&$0.70$\tabularnewline
+~~BL - PC&$1$&$0.94$&&$ 1$&$0.68$\tabularnewline
+\hline
 {\bfseries pH}&&&&&\tabularnewline
-~~BC - BL&$ 1$&$0.58$&&$ 0$&$0.54$\tabularnewline
-~~BC - PC&$ 1$&$0.25$&&$ 1$&$0.40$\tabularnewline
-~~BL - PC&$ 0$&$0.57$&&$ 1$&$0.54$\tabularnewline
+~~BC - BL&$1$&$0.54$&&$ 0$&$0.52$\tabularnewline
+~~BC - PC&$1$&$0.30$&&$ 0$&$0.45$\tabularnewline
+~~BL - PC&$0$&$0.60$&&$ 1$&$0.58$\tabularnewline
 \hline
 {\bfseries Salinity}&&&&&\tabularnewline
-~~BC - BL&$-1$&$0.86$&&$ 0$&$0.92$\tabularnewline
-~~BC - PC&$ 1$&$0.47$&&$40$&$0.70$\tabularnewline
-~~BL - PC&$ 5$&$0.73$&&$40$&$0.87$\tabularnewline
+~~BC - BL&$0$&$0.85$&&$ 0$&$0.91$\tabularnewline
+~~BC - PC&$3$&$0.58$&&$40$&$0.67$\tabularnewline
+~~BL - PC&$6$&$0.87$&&$40$&$0.81$\tabularnewline
 \hline
 \end{tabular}\end{center}
 
@@ -156,14 +161,14 @@
 \multicolumn{1}{l}{}&\multicolumn{1}{c}{Lag}&\multicolumn{1}{c}{Correlation}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Lag}&\multicolumn{1}{c}{Correlation}\tabularnewline
 \hline
 {\bfseries pH}&&&&&\tabularnewline
-~~BC - BL&$ 1$&$0.52$&&$ 1$&$0.27$\tabularnewline
-~~BC - PC&$42$&$0.13$&&$ 1$&$0.12$\tabularnewline
-~~BL - PC&$-1$&$0.41$&&$-2$&$0.32$\tabularnewline
+~~BC - BL&$ 1$&$0.54$&&$ 1$&$0.21$\tabularnewline
+~~BC - PC&$ 4$&$0.18$&&$-1$&$0.14$\tabularnewline
+~~BL - PC&$-1$&$0.48$&&$-2$&$0.40$\tabularnewline
 \hline
 {\bfseries Salinity}&&&&&\tabularnewline
-~~BC - BL&$-1$&$0.87$&&$ 0$&$0.85$\tabularnewline
-~~BC - PC&$ 7$&$0.44$&&$40$&$0.48$\tabularnewline
-~~BL - PC&$ 8$&$0.55$&&$40$&$0.69$\tabularnewline
+~~BC - BL&$ 0$&$0.86$&&$ 0$&$0.84$\tabularnewline
+~~BC - PC&$ 7$&$0.54$&&$40$&$0.44$\tabularnewline
+~~BL - PC&$ 1$&$0.83$&&$40$&$0.64$\tabularnewline
 \hline
 \end{tabular}\end{center}
 
@@ -182,24 +187,24 @@
 \multicolumn{1}{l}{}&\multicolumn{1}{c}{Lag}&\multicolumn{1}{c}{Correlation}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Lag}&\multicolumn{1}{c}{Correlation}\tabularnewline
 \hline
 {\bfseries Chlorophyll a}&&&&&\tabularnewline
-~~BC - BL&$ 0$&$0.49$&&$-1$&$0.49$\tabularnewline
-~~BC - PC&$ 0$&$0.63$&&$-1$&$0.52$\tabularnewline
-~~BL - PC&$ 0$&$0.92$&&$ 0$&$0.87$\tabularnewline
+~~BC - BL&$ 0$&$0.61$&&$-1$&$0.49$\tabularnewline
+~~BC - PC&$ 0$&$0.58$&&$-1$&$0.53$\tabularnewline
+~~BL - PC&$ 0$&$0.98$&&$ 0$&$0.87$\tabularnewline
 \hline
 {\bfseries Ammonium}&&&&&\tabularnewline
-~~BC - BL&$ 0$&$0.96$&&$-2$&$0.57$\tabularnewline
-~~BC - PC&$ 0$&$0.99$&&$-4$&$0.38$\tabularnewline
-~~BL - PC&$ 0$&$0.89$&&$ 0$&$0.71$\tabularnewline
+~~BC - BL&$ 0$&$0.96$&&$-2$&$0.55$\tabularnewline
+~~BC - PC&$ 0$&$0.89$&&$-4$&$0.37$\tabularnewline
+~~BL - PC&$ 0$&$0.84$&&$ 0$&$0.71$\tabularnewline
 \hline
 {\bfseries Nitrite + Nitrate}&&&&&\tabularnewline
-~~BC - BL&$ 0$&$0.81$&&$ 0$&$0.11$\tabularnewline
-~~BC - PC&$ 0$&$0.70$&&$ 6$&$0.94$\tabularnewline
-~~BL - PC&$-3$&$0.55$&&$-5$&$0.98$\tabularnewline
+~~BC - BL&$ 0$&$0.83$&&$ 0$&$0.04$\tabularnewline
+~~BC - PC&$ 0$&$0.58$&&$ 6$&$0.98$\tabularnewline
+~~BL - PC&$-3$&$0.39$&&$-5$&$0.98$\tabularnewline
 \hline
 {\bfseries Orthophosphate}&&&&&\tabularnewline
-~~BC - BL&$ 0$&$0.62$&&$ 1$&$0.79$\tabularnewline
-~~BC - PC&$-6$&$0.60$&&$ 1$&$0.78$\tabularnewline
-~~BL - PC&$-6$&$0.49$&&$ 0$&$0.82$\tabularnewline
+~~BC - BL&$ 0$&$0.62$&&$ 1$&$0.73$\tabularnewline
+~~BC - PC&$ 0$&$0.80$&&$ 1$&$0.76$\tabularnewline
+~~BL - PC&$-2$&$0.82$&&$ 0$&$0.79$\tabularnewline
 \hline
 \end{tabular}\end{center}
 
@@ -218,24 +223,24 @@
 \multicolumn{1}{l}{}&\multicolumn{1}{c}{Lag}&\multicolumn{1}{c}{Correlation}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Lag}&\multicolumn{1}{c}{Correlation}\tabularnewline
 \hline
 {\bfseries Chlorophyll a}&&&&&\tabularnewline
-~~BC - BL&$ 2$&$0.34$&&$ 0$&$0.28$\tabularnewline
-~~BC - PC&$ 3$&$0.49$&&$-8$&$0.30$\tabularnewline
-~~BL - PC&$-1$&$0.19$&&$-6$&$0.96$\tabularnewline
+~~BC - BL&$-7$&$0.44$&&$ 0$&$0.29$\tabularnewline
+~~BC - PC&$ 3$&$0.59$&&$-8$&$0.31$\tabularnewline
+~~BL - PC&$ 0$&$0.15$&&$-6$&$0.96$\tabularnewline
 \hline
 {\bfseries Ammonium}&&&&&\tabularnewline
-~~BC - BL&$ 0$&$0.92$&&$ 0$&$0.58$\tabularnewline
-~~BC - PC&$ 0$&$0.82$&&$ 0$&$0.58$\tabularnewline
-~~BL - PC&$ 0$&$0.81$&&$ 0$&$0.78$\tabularnewline
+~~BC - BL&$ 0$&$0.91$&&$ 0$&$0.58$\tabularnewline
+~~BC - PC&$ 0$&$0.81$&&$ 0$&$0.58$\tabularnewline
+~~BL - PC&$ 0$&$0.74$&&$ 0$&$0.78$\tabularnewline
 \hline
 {\bfseries Nitrite + Nitrate}&&&&&\tabularnewline
-~~BC - BL&$ 0$&$0.83$&&$ 0$&$0.85$\tabularnewline
-~~BC - PC&$-3$&$0.55$&&$ 6$&$0.41$\tabularnewline
-~~BL - PC&$-3$&$0.63$&&$-3$&$0.39$\tabularnewline
+~~BC - BL&$ 0$&$0.84$&&$ 0$&$0.83$\tabularnewline
+~~BC - PC&$-3$&$0.48$&&$ 6$&$0.43$\tabularnewline
+~~BL - PC&$-3$&$0.53$&&$ 9$&$0.31$\tabularnewline
 \hline
 {\bfseries Orthophosphate}&&&&&\tabularnewline
-~~BC - BL&$ 0$&$0.67$&&$ 1$&$0.64$\tabularnewline
-~~BC - PC&$-6$&$0.48$&&$ 1$&$0.68$\tabularnewline
-~~BL - PC&$-6$&$0.43$&&$ 0$&$0.84$\tabularnewline
+~~BC - BL&$ 0$&$0.67$&&$ 1$&$0.59$\tabularnewline
+~~BC - PC&$-1$&$0.40$&&$ 1$&$0.66$\tabularnewline
+~~BL - PC&$-2$&$0.64$&&$ 0$&$0.77$\tabularnewline
 \hline
 \end{tabular}\end{center}
 

@@ -257,11 +257,11 @@ p1
 \clearpage
 
 <<ccfwq, echo = FALSE, eval = T>>=
-# pre-process wq for stations, timeframe and equal lags
+# # pre-process wq for stations, timeframe and equal lags
 # wq_proc <- filter(wq_dat, StationCode %in% c('BL', 'PC', 'BC')) %>% 
 #   rename(Station = StationCode) %>% 
 #   filter(strftime(datetimestamp, '%M') %in% c('00', '30')) %>% # this has to be done to make lags valid
-#   gather(wq, value, sal:ph)
+#   gather(wq, value, sal:depth)
 # 
 # # seasonal decomp all
 # wq_proc <- split(wq_proc, f = wq_proc[, c('Station', 'wq')])
@@ -273,18 +273,27 @@ p1
 #   
 #   # fill missing values
 #   x$value_fl <- zoo::na.approx(x$value, maxgap = 1e6)
-#   
+# 
 #   # decomp
-#   dc <- decomp(x, param = 'value_fl', 'datetimestamp', type = 'multiplicative', 
-#     frequency = 'annual')
-#   x$value_dc <- x$value/dc$seasonal
+#   if(unique(x$wq) == 'depth'){
+#     
+#     x$value_dc <- x$value # the decomped value for depth is just the actual value
+#     
+#   } else { 
+#     
+#     dc <- decomp(x, param = 'value_fl', 'datetimestamp', type = 'multiplicative', 
+#       frequency = 'annual')
+#     x$value_dc <- x$value_fl/dc$seasonal
+#     
+#   }
+# 
 #   x <- x[order(x$date), ]
 #   
 #   return(x)
 #   
 # })
 # 
-# wq_proc <- na.omit(do.call('rbind', wq_proc))
+# wq_proc <- do.call('rbind', wq_proc)
 # row.names(wq_proc) <- 1:nrow(wq_proc)
 # 
 # # filter time frames
@@ -317,11 +326,14 @@ wq_ccf <- function(dat_in, stats, val_nm){
   toproc <- filter(dat_in, Station %in% stats) %>% 
     spread(Station, tospread) %>% 
     mutate(TimeFrame = factor(TimeFrame, levels = c('E1A', 'E2A')))
+  toproc <- na.omit(toproc)
+  
   toproc <- split(toproc, f = list(toproc$TimeFrame, toproc$wq))
   
   # ccf for timeframe, wq var combos
   toproc <- lapply(toproc, function(x){
-    cors <- ccf(x[, stats[1]], x[, stats[2]], plot = FALSE, na.action = na.pass)
+    if(length(unique(diff(x$datetime))) > 1) browser()
+    cors <- ccf(x[, stats[1]], x[, stats[2]], plot = FALSE) # no napass, correlation only
     ind <- which.max(cors$acf)
     out <- with(cors, c(lag[ind], acf[ind]))
     names(out) <- c('lag', 'cor')
@@ -336,7 +348,7 @@ wq_ccf <- function(dat_in, stats, val_nm){
 combs <- combn(unique(wq_proc$Station), 2, simplify = F)
 
 # get ccf results
-wqres <- lapply(combs, function(x) wq_ccf(wq_proc, x, 'value'))
+wqres <- lapply(combs, function(x) wq_ccf(wq_proc, x, 'value_fl'))
 combs <- unlist(lapply(combs, paste, collapse = ' - '))
 names(wqres) <- combs
 
@@ -355,9 +367,9 @@ totab <- wqres[, -c(1:2)]
 totab <- round(totab, 2)
 names(totab) <- c('Lag', 'Correlation', 'Lag', 'Correlation')
 
-cap.val <- 'Results of cross-correlation analyses comparing water quality time series between sites at Grand Bay during the two acute event periods.  Values for pH and salinity (ppt) are the lags in the compared time series between sites at which the maximum correlation was observed.  Negative lags indicate observations were leading at the first site relative to the second, whereas positive lags indicate observations lagged at the first site relative to the second.  One lag is thirty minutes.'
+cap.val <- 'Results of cross-correlation analyses comparing water quality time series between sites at Grand Bay during the two acute event periods.  Values for tidal height (m), pH, and salinity (ppt) are the lags in the compared time series between sites at which the maximum correlation was observed.  Negative lags indicate observations were leading at the first site relative to the second, whereas positive lags indicate observations lagged at the first site relative to the second.  One lag is thirty minutes.'
 rgroups <- unique(wqres$wqvar) %>% 
-  factor(., levels = c('ph', 'sal'), labels = c('pH', 'Salinity'))
+  factor(., levels = c('ph', 'sal', 'depth'), labels = c('pH', 'Salinity', 'Tidal height'))
 
 foot.val <- '\\footnotesize BC: Bayou Cumbest, BL: Bangs Lake, PC: Point aux Chenes' 
 
@@ -368,7 +380,7 @@ latex(
   caption = cap.val,
   caption.loc = 'top',
   rgroup = rgroups,
-  n.rgroup = rep(3, 2),
+  n.rgroup = rep(3, 3),
   cgroup = c('First acute event (E1A)', 'Second acute event (E2A)'),
   n.cgroup = c(2, 2),
   rowname = wqres$L1,
@@ -381,55 +393,13 @@ latex(
 \clearpage
 
 <<ccfwqdc, echo = FALSE, eval = T>>=
-# pre-process wq for stations, timeframe and equal lags
-# wq_proc <- filter(wq_dat, StationCode %in% c('BL', 'PC', 'BC')) %>% 
-#   rename(Station = StationCode) %>% 
-#   filter(strftime(datetimestamp, '%M') %in% c('00', '30')) %>% # this has to be done to make lags valid
-#   gather(wq, value, sal:ph)
-# 
-# # seasonal decomp all
-# wq_proc <- split(wq_proc, f = wq_proc[, c('Station', 'wq')])
-# wq_proc <- lapply(wq_proc, function(x){
-# 
-#   # create continuous timestep
-#   x <- x[order(x$date), ]
-#   x <- setstep(x, date_col = 'datetimestamp', timestep = 30)
-#   
-#   # fill missing values
-#   x$value_fl <- zoo::na.approx(x$value, maxgap = 1e6)
-#   
-#   # decomp
-#   dc <- decomp(x, param = 'value_fl', 'datetimestamp', type = 'multiplicative', 
-#     frequency = 'annual')
-#   x$value_dc <- x$value/dc$seasonal
-#   x <- x[order(x$date), ]
-#   
-#   return(x)
-#   
-# })
-# 
-# wq_proc <- na.omit(do.call('rbind', wq_proc))
-# row.names(wq_proc) <- 1:nrow(wq_proc)
-# 
-# # filter time frames
-# wq_proc <- filter(wq_proc, TimeFrame %in% c('E1A', 'E2A'))
-# 
-# wq_noseas <- wq_proc
-# save(wq_noseas, file = 'wq_noseas.RData')
-
 load(file = 'wq_noseas.RData')
 wq_proc <- wq_noseas
 
-# ggplot(wq_proc, aes(x = datetimestamp, y = value)) +
-#   geom_line() +
-#   facet_wrap(Station ~ wq, scales = 'free_y', ncol = 2) + 
-#   theme_bw()
-# 
-# ggplot(wq_proc, aes(x = datetimestamp, y = value_dc)) +
-#   geom_line() +
-#   facet_wrap(Station ~ wq, scales = 'free_y', ncol = 2) + 
-#   theme_bw()
-
+# remove depth
+wq_proc <- filter(wq_proc, wq != 'depth') %>% 
+  droplevels(.)
+  
 #ccf functions
 wq_ccf <- function(dat_in, stats, val_nm){
   
@@ -441,11 +411,14 @@ wq_ccf <- function(dat_in, stats, val_nm){
   toproc <- filter(dat_in, Station %in% stats) %>% 
     spread(Station, tospread) %>% 
     mutate(TimeFrame = factor(TimeFrame, levels = c('E1A', 'E2A')))
+  toproc <- na.omit(toproc)
+    
   toproc <- split(toproc, f = list(toproc$TimeFrame, toproc$wq))
   
   # ccf for timeframe, wq var combos
   toproc <- lapply(toproc, function(x){
-    cors <- ccf(x[, stats[1]], x[, stats[2]], plot = FALSE, na.action = na.pass)
+    if(length(unique(diff(x$datetime))) > 1) browser()
+    cors <- ccf(x[, stats[1]], x[, stats[2]], plot = FALSE) # no napass, correlation only
     ind <- which.max(cors$acf)
     out <- with(cors, c(lag[ind], acf[ind]))
     names(out) <- c('lag', 'cor')
@@ -510,24 +483,42 @@ nut_proc <- filter(nut_dat, StationCode %in% c('BL', 'PC', 'BC')) %>%
   rename(Station = StationCode) %>% 
   select(-stat_nut, -value)
 
-# seasonal decomp all
+# seasonal decomp all, must be continuous by month
 nut_proc <- split(nut_proc, f = nut_proc[, c('Station', 'nutrient')])
 nut_proc <- lapply(nut_proc, function(x){
+
+  # decompose
   dc <- decomp_cj(x, param = 'logvalue', 'date', type = 'mult', vals_out = T)
-  dc$mo <- strftime(dc$Time, '%m')
-  dc <- unique(dc[, c('mo', 'seasonal')])
-  x$mo <- strftime(x$date, '%m')
-  x <- merge(x, dc, by = 'mo', all.x = TRUE)
-  x$logvalue_dc <- with(x, logvalue/seasonal)
-  x <- x[order(x$date), ]
-  x$mo <- NULL
-  return(x)
+  
+  # find leading/trailing NA, remove, then fill
+  notna <- which(!is.na(dc$original))
+  notna <- c(notna[1], notna[length(notna)])
+  dc <- dc[notna[1]:notna[2], ]
+  dc$original <- zoo::na.approx(dc$original, maxgap = 1e6)
+
+  dc$dc <- dc$original/dc$seasonal
+
+  # subset by timeframes
+  brks <- c('07-01-2006', '03-01-2008', '09-01-2012', '02-01-2014') %>% 
+  as.Date(format = '%m-%d-%Y') %>% 
+    c(-Inf, ., Inf)
+  labs <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
+  dc$TimeFrame <- cut(as.numeric(dc$Time), breaks = brks, labels = labs, 
+    right = FALSE) # open on right
+  
+  return(dc[, c('Time', 'TimeFrame', 'original', 'dc')])
+  
 })
 
 nut_proc <- do.call('rbind', nut_proc)
+nut_proc$ind <- row.names(nut_proc)
+nut_proc$Station <- gsub('\\..*$', '', nut_proc$ind)
+nut_proc$nutrient <- gsub('^[A-Z][A-Z]\\.|\\.[0-9]*$', '', nut_proc$ind)
 row.names(nut_proc) <- 1:nrow(nut_proc)
+nut_proc$ind <- NULL
+nut_proc <- rename(nut_proc, date = Time)
 
-# filter time frames
+# filter time frames 1234qwasdfjasdfja;sk
 nut_proc <- filter(nut_proc, TimeFrame %in% c('E1A', 'E2A'))
 
 # ggplot(nut_proc, aes(x = date, y = logvalue)) +
@@ -551,15 +542,20 @@ nut_ccf <- function(dat_in, stats, val_nm){
   toproc <- filter(dat_in, Station %in% stats) %>% 
     spread(Station, tospread) %>% 
     mutate(TimeFrame = factor(TimeFrame, levels = c('E1A', 'E2A')))
+  
   toproc <- split(toproc, f = list(toproc$TimeFrame, toproc$nutrient))
   
   # ccf for timeframe, wq var combos
   toproc <- lapply(toproc, function(x){
-    cors <- ccf(x[, stats[1]], x[, stats[2]], plot = FALSE, na.action = na.pass)
+    
+    x <- na.omit(x)
+    if(any(!unique(diff(x$date) %in% c('30', '31', '28')))) browser()
+    cors <- ccf(x[, stats[1]], x[, stats[2]], plot = FALSE)
     ind <- which.max(cors$acf)
     out <- with(cors, c(lag[ind], acf[ind]))
     names(out) <- c('lag', 'cor')
     return(out)
+    
   })
 
   return(toproc)
@@ -570,7 +566,7 @@ nut_ccf <- function(dat_in, stats, val_nm){
 combs <- combn(unique(nut_proc$Station), 2, simplify = F)
 
 # get ccf results
-nutres <- lapply(combs, function(x) nut_ccf(nut_proc, x, 'logvalue'))
+nutres <- lapply(combs, function(x) nut_ccf(nut_proc, x, 'original'))
 combs <- unlist(lapply(combs, paste, collapse = ' - '))
 names(nutres) <- combs
 
@@ -622,24 +618,42 @@ nut_proc <- filter(nut_dat, StationCode %in% c('BL', 'PC', 'BC')) %>%
   rename(Station = StationCode) %>% 
   select(-stat_nut, -value)
 
-# seasonal decomp all
+# seasonal decomp all, must be continuous by month
 nut_proc <- split(nut_proc, f = nut_proc[, c('Station', 'nutrient')])
 nut_proc <- lapply(nut_proc, function(x){
+
+  # decompose
   dc <- decomp_cj(x, param = 'logvalue', 'date', type = 'mult', vals_out = T)
-  dc$mo <- strftime(dc$Time, '%m')
-  dc <- unique(dc[, c('mo', 'seasonal')])
-  x$mo <- strftime(x$date, '%m')
-  x <- merge(x, dc, by = 'mo', all.x = TRUE)
-  x$logvalue_dc <- with(x, logvalue/seasonal)
-  x <- x[order(x$date), ]
-  x$mo <- NULL
-  return(x)
+  
+  # find leading/trailing NA, remove, then fill
+  notna <- which(!is.na(dc$original))
+  notna <- c(notna[1], notna[length(notna)])
+  dc <- dc[notna[1]:notna[2], ]
+  dc$original <- zoo::na.approx(dc$original, maxgap = 1e6)
+
+  dc$dc <- dc$original/dc$seasonal
+
+  # subset by timeframes
+  brks <- c('07-01-2006', '03-01-2008', '09-01-2012', '02-01-2014') %>% 
+  as.Date(format = '%m-%d-%Y') %>% 
+    c(-Inf, ., Inf)
+  labs <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
+  dc$TimeFrame <- cut(as.numeric(dc$Time), breaks = brks, labels = labs, 
+    right = FALSE) # open on right
+  
+  return(dc[, c('Time', 'TimeFrame', 'original', 'dc')])
+  
 })
 
 nut_proc <- do.call('rbind', nut_proc)
+nut_proc$ind <- row.names(nut_proc)
+nut_proc$Station <- gsub('\\..*$', '', nut_proc$ind)
+nut_proc$nutrient <- gsub('^[A-Z][A-Z]\\.|\\.[0-9]*$', '', nut_proc$ind)
 row.names(nut_proc) <- 1:nrow(nut_proc)
+nut_proc$ind <- NULL
+nut_proc <- rename(nut_proc, date = Time)
 
-# filter time frames
+# filter time frames 1234qwasdfjasdfja;sk
 nut_proc <- filter(nut_proc, TimeFrame %in% c('E1A', 'E2A'))
 
 # ggplot(nut_proc, aes(x = date, y = logvalue)) +
@@ -663,26 +677,32 @@ nut_ccf <- function(dat_in, stats, val_nm){
   toproc <- filter(dat_in, Station %in% stats) %>% 
     spread(Station, tospread) %>% 
     mutate(TimeFrame = factor(TimeFrame, levels = c('E1A', 'E2A')))
+  
   toproc <- split(toproc, f = list(toproc$TimeFrame, toproc$nutrient))
   
   # ccf for timeframe, wq var combos
   toproc <- lapply(toproc, function(x){
-    cors <- ccf(x[, stats[1]], x[, stats[2]], plot = FALSE, na.action = na.pass)
+    
+    x <- na.omit(x)
+    if(any(!unique(diff(x$date) %in% c('30', '31', '28')))) browser()
+    cors <- ccf(x[, stats[1]], x[, stats[2]], plot = FALSE)
     ind <- which.max(cors$acf)
     out <- with(cors, c(lag[ind], acf[ind]))
     names(out) <- c('lag', 'cor')
     return(out)
+    
   })
 
   return(toproc)
   
 }
 
+
 # get station combos
 combs <- combn(unique(nut_proc$Station), 2, simplify = F)
 
 # get ccf results
-nutres <- lapply(combs, function(x) nut_ccf(nut_proc, x, 'logvalue_dc'))
+nutres <- lapply(combs, function(x) nut_ccf(nut_proc, x, 'dc'))
 combs <- unlist(lapply(combs, paste, collapse = ' - '))
 names(nutres) <- combs
 
