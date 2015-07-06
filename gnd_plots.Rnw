@@ -74,7 +74,7 @@ nut_proc <- filter(nut_dat, nutrient == 'PO4F' & StationCode == 'BL') %>%
   
 # combine wq with met and nut
 toplo <- filter(wq_dat, StationCode == 'BL') %>% 
-  select(-StationCode) %>% 
+  select(-StationCode, -depth) %>% 
   mutate(datetimestamp = as.Date(datetimestamp)) %>% 
   rename(date = datetimestamp) %>% 
   group_by(date, TimeFrame) %>% 
@@ -129,7 +129,7 @@ met_proc <- rbind(met_proc, met_supp) %>%
   
 # combine wq with met and nut
 toplo <- filter(wq_dat, StationCode == 'BL') %>% 
-  select(-StationCode) %>% 
+  select(-StationCode, -depth) %>% 
   mutate(datetimestamp = as.Date(datetimestamp)) %>% 
   rename(date = datetimestamp) %>% 
   group_by(date, TimeFrame) %>% 
