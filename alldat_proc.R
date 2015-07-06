@@ -73,7 +73,7 @@ wq_dat <- lapply(dat_in,
     
     x <- qaqc(x, qaqc_keep = c(0, 4, 5)) %>% 
       subset(subset = '2015-01-01 00:00', operator = '<') %>% 
-      select(datetimestamp, sal, ph) 
+      select(datetimestamp, sal, ph, depth) 
     
     return(x)
     

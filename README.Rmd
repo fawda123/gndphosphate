@@ -1,7 +1,6 @@
 To do:
 
 * b/w and color for all
-* seasonal decomp for ccf - does this improve anything?
 * depth ccf - does this explain wq ccf?
 * ph regression v salinity
 
@@ -12,7 +11,7 @@ Data processed with alldat_proc.R include:
 * nut_dat.RData
 * wq_dat.RData
 
-Data process elsewhere:
+Data processed elsewhere:
 
 * wq_noseas.RData - includes wq values with seasonal component removed, created in gnd_plots.Rnw
 
