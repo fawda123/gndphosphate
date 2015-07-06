@@ -117,6 +117,49 @@
 \clearpage
 
 
+% Table created by stargazer v.5.1 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Mon, Jul 06, 2015 - 2:23:40 PM
+\begin{table}[!htbp] \centering 
+  \caption{Results for generalized least squares models of pH as a function of salinity and station, including interactions.  The constant value is the intercept term defined as mean salinity at Bayou Cumbust (BC) with all other coefficients describing the change in ph from the intercept in relation to each fixed parameter.  One model was created for each time frame.  A first-order autoregressive structure conditional on station was used to account for time-dependent correlation among model residuals.} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{3}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-4} 
+\\[-1.8ex] & \multicolumn{3}{c}{ph} \\ 
+ & E1A & NI & E2A \\ 
+\\[-1.8ex] & (1) & (2) & (3)\\ 
+\hline \\[-1.8ex] 
+ sal & 0.057$^{***}$ & 0.047$^{***}$ & 0.053$^{***}$ \\ 
+  & (0.002) & (0.001) & (0.003) \\ 
+  & & & \\ 
+ StationBL & 0.629$^{***}$ & 0.578$^{***}$ & 0.290 \\ 
+  & (0.130) & (0.096) & (0.187) \\ 
+  & & & \\ 
+ StationPC & 1.931$^{***}$ & 0.607$^{***}$ & 0.917$^{***}$ \\ 
+  & (0.172) & (0.091) & (0.164) \\ 
+  & & & \\ 
+ sal:StationBL & $-$0.017$^{***}$ & $-$0.016$^{***}$ & $-$0.007 \\ 
+  & (0.005) & (0.003) & (0.007) \\ 
+  & & & \\ 
+ sal:StationPC & $-$0.059$^{***}$ & $-$0.011$^{***}$ & $-$0.028$^{***}$ \\ 
+  & (0.006) & (0.002) & (0.005) \\ 
+  & & & \\ 
+ Constant & 6.199$^{***}$ & 6.522$^{***}$ & 6.479$^{***}$ \\ 
+  & (0.070) & (0.060) & (0.110) \\ 
+  & & & \\ 
+\hline \\[-1.8ex] 
+Observations & 1,983 & 4,937 & 1,556 \\ 
+Log Likelihood & 1,471.083 & 2,944.468 & 705.973 \\ 
+Akaike Inf. Crit. & $-$2,926.167 & $-$5,872.935 & $-$1,395.947 \\ 
+Bayesian Inf. Crit. & $-$2,881.452 & $-$5,820.909 & $-$1,353.179 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{3}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
+
 \clearpage
 
 %latex.default(totab, file = "", rowlabel = "Site comparisons",     caption = cap.val, caption.loc = "top", rgroup = rgroups,     n.rgroup = rep(3, 3), cgroup = c("First acute event (E1A)",         "Second acute event (E2A)"), n.cgroup = c(2, 2), rowname = wqres$L1,     label = "tab:ccfwq", insert.bottom = foot.val, col.just = c("r",         "c", "r", "c"))%

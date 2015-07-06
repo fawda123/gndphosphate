@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.8.29)  6 JUL 2015 13:14
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.8.29)  6 JUL 2015 14:23
 entering extended mode
 **gnd_plots.tex
 (M:\docs\gndphosphate\gnd_plots.tex
@@ -675,53 +675,56 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 113.
  [3
 
- <M:/docs/gndphosphate/figs/tukey-1.pdf>] [4] [5] [6] [7]
-<figs/boxplt_all-1.pdf, id=73, 578.16pt x 433.62pt>
+ <M:/docs/gndphosphate/figs/tukey-1.pdf>] [4
+
+] [5] [6] [7] [8]
+<figs/boxplt_all-1.pdf, id=80, 578.16pt x 433.62pt>
 File: figs/boxplt_all-1.pdf Graphic file (type pdf)
 
 <use figs/boxplt_all-1.pdf>
-Package pdftex.def Info: figs/boxplt_all-1.pdf used on input line 254.
+Package pdftex.def Info: figs/boxplt_all-1.pdf used on input line 297.
 (pdftex.def)             Requested size: 469.75502pt x 352.31538pt.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 263.
-Package atenddvi Info: Last page = 8.
- [8
-
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 306.
+Package atenddvi Info: Last page = 9.
+ [9
 
 
 
 
 
  <M:/docs/gndphosphate/figs/boxplt_all-1.pdf>]
-Package atveryend Info: Executing hook `AfterLastShipout' on input line 263.
+Package atveryend Info: Executing hook `AfterLastShipout' on input line 306.
 
 (M:\docs\gndphosphate\gnd_plots.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 263.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 263.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 306.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 306.
 Package rerunfilecheck Info: File `gnd_plots.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 263.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 306.
  ) 
 Here is how much of TeX's memory you used:
- 10717 strings out of 493921
- 174646 string characters out of 3147282
+ 10725 strings out of 493921
+ 174706 string characters out of 3147282
  305489 words of memory out of 3000000
- 13844 multiletter control sequences out of 15000+200000
- 6683 words of font info for 24 fonts, out of 3000000 for 9000
+ 13849 multiletter control sequences out of 15000+200000
+ 7030 words of font info for 25 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 44i,9n,42p,858b,405s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 44i,10n,42p,858b,405s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Pr
 ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Program Fi
 les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Files/MiKTe
 X 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTeX 2.9/fon
 ts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/p
-ublic/amsfonts/cm/cmsy10.pfb>
-Output written on gnd_plots.pdf (8 pages, 285365 bytes).
+ublic/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/am
+sfonts/cm/cmsy8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm
+/cmti12.pfb>
+Output written on gnd_plots.pdf (9 pages, 306355 bytes).
 PDF statistics:
- 110 PDF objects out of 1000 (max. 8388607)
- 17 named destinations out of 1000 (max. 500000)
+ 124 PDF objects out of 1000 (max. 8388607)
+ 19 named destinations out of 1000 (max. 500000)
  21 words of extra memory for PDF output out of 10000 (max. 10000000)
 

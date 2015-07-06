@@ -1,7 +1,6 @@
 To do:
 
 * b/w and color for all
-* depth ccf - does this explain wq ccf?
 * ph regression v salinity
 
 Data processed with alldat_proc.R include:
