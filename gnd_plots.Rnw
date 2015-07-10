@@ -181,7 +181,7 @@ grid.arrange(p1, p2, ncol = 2)
 @
 \clearpage
 
-<<tukey, fig.width = 8.5, fig.height = 3, echo = FALSE, fig.cap = 'Boxplot summaries by event of monthly orthophosphate data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) sites in Grand Bay.  Letters indicate events with significantly different events based on Tukey multiple comparison analysis within each site.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). Boxes are shaded by medians between sites.  E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
+<<orthfig, fig.width = 8.5, fig.height = 3, echo = FALSE, fig.cap = 'Boxplot summaries by event of monthly orthophosphate data at Bangs Lake (BL), and Point aux Chenes (PC), and Bayou Cumbest (BC) sites in Grand Bay.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). Boxes are shaded by medians between sites.  E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
 
 load(file = 'nut_dat.RData')
 
@@ -222,17 +222,77 @@ toplo <- left_join(toplo, meds, by = c('StationCode', 'nutrient', 'TimeFrame'))
 
 ylab <- expression(paste('Orthophosphate (mg ', L^-1, ')'))
 
+toplo$StationCode <- factor(toplo$StationCode, levels = c('BL', 'PC', 'BC'))
+
 # boxplot
 p1 <- ggplot(toplo, aes(x = TimeFrame, y = value)) +
   geom_boxplot(aes(fill = meds)) + 
-  facet_grid(~ StationCode, scales = 'free_y') +
+  facet_wrap(~ StationCode, scales = 'free_y') +
   scale_y_log10(ylab) +
   theme_bw() + 
   scale_fill_gradientn(colours = RColorBrewer::brewer.pal(9, 'BuGn')[3:9]) + 
-  geom_text(data = res, aes(x = TimeFrame, y = ylims, label = M)) + 
   scale_x_discrete('Event') +
   theme(legend.position = 'none')
 p1
+@
+\clearpage
+
+<<orthtab, echo = FALSE>>=
+load(file = 'nut_dat.RData')
+
+toplo <- filter(nut_dat, StationCode != 'BN' & nutrient == 'PO4F')
+
+timeframes <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
+
+# split data by unique station/nutrient variable
+sep_data <- split(toplo, toplo$stat_nut)
+
+# run a Tukey multiple comparison for each station, nutrient variable combo
+res <- lapply(sep_data, function(x){
+
+  mod <- aov(logvalue ~ TimeFrame, data = x)
+  tuk_mod <- HSD.test(mod, 'TimeFrame', group = T)
+  grps <- tuk_mod$groups
+  grps$trt <- gsub('[[:space:]].*$', '', grps$trt)
+  aves <- tuk_mod$means
+  aves$trt <- row.names(aves)
+  aves <- merge(aves, grps, by = 'trt')
+  aves
+  
+  })
+
+# combine results for plotting
+res <- do.call('rbind', res) %>% 
+  mutate(
+    stat_nut = gsub('\\.[0-9]', '', row.names(.)),
+    TimeFrame = trt
+  ) %>% 
+  separate(stat_nut, c('StationCode', 'nutrient'), sep = ' ') %>% 
+  select(StationCode, TimeFrame, M, means, std, r, Min, Max) %>% 
+  mutate(
+    TimeFrame = factor(TimeFrame, levels = c('E1A', 'E1C', 'NI', 'E2A', 'E2C')),
+    StationCode = factor(StationCode, levels = c('BL', 'PC', 'BC'))
+    ) %>% 
+  arrange(StationCode, TimeFrame)
+
+tab <- res[, -c(1, 2)]
+tab[, -1] <- round(tab[, -1], 2)
+rows <- res[, 2]
+cap <- 'Summaries by site and event of monthly orthophosphate data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for orthophosphate by station and time frame.  Result letters indicate time frames within each station that were were not significantly different based on Tukey multiple comparison analyses ($\\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
+
+latex(
+  tab,
+  file = '',
+  rowlabel = 'Site',
+  caption = cap,
+  caption.loc = 'top',
+  rgroup = unique(res$StationCode),
+  n.rgroup = rep(5, 3),
+  rowname = rows,
+  colheads=c('Result', 'Mean', 'St. Dev.', 'n', 'Min', 'Max'),
+  label = 'tab:orthtab'
+  )
+
 @
 \clearpage
 
@@ -268,142 +328,6 @@ tomod <- lapply(wq_proc, function(x) {
 
 stargazer(tomod, column.labels = c('E1A', 'NI', 'E2A'), 
   title = 'Results for generalized least squares models of pH as a function of salinity and station, including interactions.  The constant value is the intercept term defined as mean salinity at Bayou Cumbust (BC) with all other coefficients describing the change in ph from the intercept in relation to each fixed parameter.  One model was created for each time frame.  A first-order autoregressive structure conditional on station was used to account for time-dependent correlation among model residuals.')
-@
-\clearpage
-
-<<ccfwq, echo = FALSE, eval = T>>=
-# # pre-process wq for stations, timeframe and equal lags
-# wq_proc <- filter(wq_dat, StationCode %in% c('BL', 'PC', 'BC')) %>% 
-#   rename(Station = StationCode) %>% 
-#   filter(strftime(datetimestamp, '%M') %in% c('00', '30')) %>% # this has to be done to make lags valid
-#   gather(wq, value, sal:depth)
-# 
-# # seasonal decomp all
-# wq_proc <- split(wq_proc, f = wq_proc[, c('Station', 'wq')])
-# wq_proc <- lapply(wq_proc, function(x){
-# 
-#   # create continuous timestep
-#   x <- x[order(x$date), ]
-#   x <- setstep(x, date_col = 'datetimestamp', timestep = 30)
-#   
-#   # fill missing values
-#   x$value_fl <- zoo::na.approx(x$value, maxgap = 1e6)
-# 
-#   # decomp
-#   if(unique(x$wq) == 'depth'){
-#     
-#     x$value_dc <- x$value # the decomped value for depth is just the actual value
-#     
-#   } else { 
-#     
-#     dc <- decomp(x, param = 'value_fl', 'datetimestamp', type = 'multiplicative', 
-#       frequency = 'annual')
-#     x$value_dc <- x$value_fl/dc$seasonal
-#     
-#   }
-# 
-#   x <- x[order(x$date), ]
-#   
-#   return(x)
-#   
-# })
-# 
-# wq_proc <- do.call('rbind', wq_proc)
-# row.names(wq_proc) <- 1:nrow(wq_proc)
-# 
-# # filter time frames
-# wq_proc <- filter(wq_proc, TimeFrame %in% c('E1A', 'E2A'))
-# 
-# wq_noseas <- wq_proc
-# save(wq_noseas, file = 'wq_noseas.RData')
-
-load(file = 'wq_noseas.RData')
-wq_proc <- wq_noseas
-
-# ggplot(wq_proc, aes(x = datetimestamp, y = value)) +
-#   geom_line() +
-#   facet_wrap(Station ~ wq, scales = 'free_y', ncol = 2) + 
-#   theme_bw()
-# 
-# ggplot(wq_proc, aes(x = datetimestamp, y = value_dc)) +
-#   geom_line() +
-#   facet_wrap(Station ~ wq, scales = 'free_y', ncol = 2) + 
-#   theme_bw()
-
-#ccf functions
-wq_ccf <- function(dat_in, stats, val_nm){
-  
-  # retain relevant columns, rename spread column
-  dat_in <- dat_in[, c('TimeFrame', 'Station', 'datetimestamp', 'wq', val_nm)]
-  names(dat_in)[names(dat_in) %in% val_nm] <- 'tospread'
-  
-  # filter dat_in for station data, reformat for analysis
-  toproc <- filter(dat_in, Station %in% stats) %>% 
-    spread(Station, tospread) %>% 
-    mutate(TimeFrame = factor(TimeFrame, levels = c('E1A', 'E2A')))
-  toproc <- na.omit(toproc)
-  
-  toproc <- split(toproc, f = list(toproc$TimeFrame, toproc$wq))
-  
-  # ccf for timeframe, wq var combos
-  toproc <- lapply(toproc, function(x){
-    if(length(unique(diff(x$datetime))) > 1) browser()
-    cors <- ccf(x[, stats[1]], x[, stats[2]], plot = FALSE) # no napass, correlation only
-    ind <- which.max(cors$acf)
-    out <- with(cors, c(lag[ind], acf[ind]))
-    names(out) <- c('lag', 'cor')
-    return(out)
-  })
-  
-  return(toproc)
-  
-}
-
-# get station combos
-combs <- combn(unique(wq_proc$Station), 2, simplify = F)
-
-# get ccf results
-wqres <- lapply(combs, function(x) wq_ccf(wq_proc, x, 'value_fl'))
-combs <- unlist(lapply(combs, paste, collapse = ' - '))
-names(wqres) <- combs
-
-# format for table
-wqres <- lapply(wqres, function(x) do.call('rbind', x)) %>% 
-  melt(.) %>% 
-  separate(Var1, c('Event', 'wqvar')) %>% 
-  unite('comb', Event, Var2) %>% 
-  spread(comb, value)
-  
-nms <- c('wqvar', 'L1', 'E1A_lag', 'E1A_cor', 'E2A_lag', 'E2A_cor')
-wqres <- wqres[, nms]
-  
-# table output
-totab <- wqres[, -c(1:2)]
-totab <- round(totab, 2)
-names(totab) <- c('Lag', 'Correlation', 'Lag', 'Correlation')
-
-cap.val <- 'Results of cross-correlation analyses comparing water quality time series between sites at Grand Bay during the two acute event periods.  Values for tidal height (m), pH, and salinity (ppt) are the lags in the compared time series between sites at which the maximum correlation was observed.  Negative lags indicate observations were leading at the first site relative to the second, whereas positive lags indicate observations lagged at the first site relative to the second.  One lag is thirty minutes.'
-rgroups <- unique(wqres$wqvar) %>% 
-  factor(., levels = c('ph', 'sal', 'depth'), labels = c('pH', 'Salinity', 'Tidal height'))
-
-foot.val <- '\\footnotesize BC: Bayou Cumbest, BL: Bangs Lake, PC: Point aux Chenes' 
-
-latex( 
-  totab,
-  file = '',
-  rowlabel = 'Site comparisons',
-  caption = cap.val,
-  caption.loc = 'top',
-  rgroup = rgroups,
-  n.rgroup = rep(3, 3),
-  cgroup = c('First acute event (E1A)', 'Second acute event (E2A)'),
-  n.cgroup = c(2, 2),
-  rowname = wqres$L1,
-  label = 'tab:ccfwq',
-  insert.bottom = foot.val,
-  col.just = c('r', 'c', 'r', 'c')
-  )
-
 @
 \clearpage
 
@@ -486,277 +410,6 @@ latex(
   rowname = wqres$L1,
   label = 'tab:ccfwq',
   insert.bottom = foot.val,
-  col.just = c('r', 'c', 'r', 'c')
-  )
-
-@
-\clearpage
-
-<<ccfnut, echo = FALSE, eval = T>>=
-# pre-process nut for stations, timeframe
-nut_proc <- filter(nut_dat, StationCode %in% c('BL', 'PC', 'BC')) %>% 
-  rename(Station = StationCode) %>% 
-  select(-stat_nut, -value)
-
-# seasonal decomp all, must be continuous by month
-nut_proc <- split(nut_proc, f = nut_proc[, c('Station', 'nutrient')])
-nut_proc <- lapply(nut_proc, function(x){
-
-  # decompose
-  dc <- decomp_cj(x, param = 'logvalue', 'date', type = 'mult', vals_out = T)
-  
-  # find leading/trailing NA, remove, then fill
-  notna <- which(!is.na(dc$original))
-  notna <- c(notna[1], notna[length(notna)])
-  dc <- dc[notna[1]:notna[2], ]
-  dc$original <- zoo::na.approx(dc$original, maxgap = 1e6)
-
-  dc$dc <- dc$original/dc$seasonal
-
-  # subset by timeframes
-  brks <- c('07-01-2006', '03-01-2008', '09-01-2012', '02-01-2014') %>% 
-  as.Date(format = '%m-%d-%Y') %>% 
-    c(-Inf, ., Inf)
-  labs <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
-  dc$TimeFrame <- cut(as.numeric(dc$Time), breaks = brks, labels = labs, 
-    right = FALSE) # open on right
-  
-  return(dc[, c('Time', 'TimeFrame', 'original', 'dc')])
-  
-})
-
-nut_proc <- do.call('rbind', nut_proc)
-nut_proc$ind <- row.names(nut_proc)
-nut_proc$Station <- gsub('\\..*$', '', nut_proc$ind)
-nut_proc$nutrient <- gsub('^[A-Z][A-Z]\\.|\\.[0-9]*$', '', nut_proc$ind)
-row.names(nut_proc) <- 1:nrow(nut_proc)
-nut_proc$ind <- NULL
-nut_proc <- rename(nut_proc, date = Time)
-
-# filter time frames 1234qwasdfjasdfja;sk
-nut_proc <- filter(nut_proc, TimeFrame %in% c('E1A', 'E2A'))
-
-# ggplot(nut_proc, aes(x = date, y = logvalue)) +
-#   geom_line() +
-#   facet_wrap(Station ~ nutrient, scales = 'free_y') + 
-#   theme_bw()
-# 
-# ggplot(nut_proc, aes(x = date, y = logvalue_dc)) +
-#   geom_line() +
-#   facet_wrap(Station ~ nutrient, scales = 'free_y') + 
-#   theme_bw()
-
-#ccf functions
-nut_ccf <- function(dat_in, stats, val_nm){
-  
-  # retain relevant columns, rename spread column
-  dat_in <- dat_in[, c('TimeFrame', 'Station', 'date', 'nutrient', val_nm)]
-  names(dat_in)[names(dat_in) %in% val_nm] <- 'tospread'
-  
-  # filter dat_in for station data, reformat for analysis
-  toproc <- filter(dat_in, Station %in% stats) %>% 
-    spread(Station, tospread) %>% 
-    mutate(TimeFrame = factor(TimeFrame, levels = c('E1A', 'E2A')))
-  
-  toproc <- split(toproc, f = list(toproc$TimeFrame, toproc$nutrient))
-  
-  # ccf for timeframe, wq var combos
-  toproc <- lapply(toproc, function(x){
-    
-    x <- na.omit(x)
-    if(any(!unique(diff(x$date) %in% c('30', '31', '28')))) browser()
-    cors <- ccf(x[, stats[1]], x[, stats[2]], plot = FALSE)
-    ind <- which.max(cors$acf)
-    out <- with(cors, c(lag[ind], acf[ind]))
-    names(out) <- c('lag', 'cor')
-    return(out)
-    
-  })
-
-  return(toproc)
-  
-}
-
-# get station combos
-combs <- combn(unique(nut_proc$Station), 2, simplify = F)
-
-# get ccf results
-nutres <- lapply(combs, function(x) nut_ccf(nut_proc, x, 'original'))
-combs <- unlist(lapply(combs, paste, collapse = ' - '))
-names(nutres) <- combs
-
-# format for table
-nutres <- lapply(nutres, function(x) do.call('rbind', x)) %>% 
-  melt(.) %>% 
-  separate(Var1, c('Event', 'nutvar'), sep = '\\.') %>% 
-  unite('comb', Event, Var2) %>% 
-  spread(comb, value)
-  
-nms <- c('nutvar', 'L1', 'E1A_lag', 'E1A_cor', 'E2A_lag', 'E2A_cor')
-nutres <- nutres[, nms]
-  
-# table output
-totab <- nutres[, -c(1:2)]
-totab <- round(totab, 2)
-names(totab) <- c('Lag', 'Correlation', 'Lag', 'Correlation')
-
-cap.val <- 'Results of cross-correlation analyses comparing nutrient time series between sites at Grand Bay during the two acute event periods.  Values are the lags for each nutrient variable in the compared time series between sites at which the maximum correlation was observed.  Negative lags indicate observations were leading at the first site relative to the second, whereas positive lags indicate observations lagged at the first site relative to the second.  One lag is one month.'
-rgroups <- unique(nutres$nutvar) %>% 
-  factor(., levels = c('CHLA_N', 'NH4F', 'NO23F', 'PO4F'), 
-    labels = c('Chlorophyll a', 'Ammonium', 'Nitrite + Nitrate', 'Orthophosphate')
-  )
-
-foot.val <- '\\footnotesize BC: Bayou Cumbest, BL: Bangs Lake, PC: Point aux Chenes' 
-
-latex( 
-  totab,
-  file = '',
-  rowlabel = 'Site comparisons',
-  caption = cap.val,
-  caption.loc = 'top',
-  rgroup = rgroups,
-  n.rgroup = rep(3, 4),
-  cgroup = c('First acute event (E1A)', 'Second acute event (E2A)'),
-  n.cgroup = rep(2, 2),
-  rowname = nutres$L1,
-  label = 'tab:ccfnut',
-  insert.bottom = foot.val, 
-  col.just = c('r', 'c', 'r', 'c')
-  )
-
-@
-\clearpage
-
-<<ccfnutdc, echo = FALSE, eval = T>>=
-# pre-process nut for stations, timeframe
-nut_proc <- filter(nut_dat, StationCode %in% c('BL', 'PC', 'BC')) %>% 
-  rename(Station = StationCode) %>% 
-  select(-stat_nut, -value)
-
-# seasonal decomp all, must be continuous by month
-nut_proc <- split(nut_proc, f = nut_proc[, c('Station', 'nutrient')])
-nut_proc <- lapply(nut_proc, function(x){
-
-  # decompose
-  dc <- decomp_cj(x, param = 'logvalue', 'date', type = 'mult', vals_out = T)
-  
-  # find leading/trailing NA, remove, then fill
-  notna <- which(!is.na(dc$original))
-  notna <- c(notna[1], notna[length(notna)])
-  dc <- dc[notna[1]:notna[2], ]
-  dc$original <- zoo::na.approx(dc$original, maxgap = 1e6)
-
-  dc$dc <- dc$original/dc$seasonal
-
-  # subset by timeframes
-  brks <- c('07-01-2006', '03-01-2008', '09-01-2012', '02-01-2014') %>% 
-  as.Date(format = '%m-%d-%Y') %>% 
-    c(-Inf, ., Inf)
-  labs <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
-  dc$TimeFrame <- cut(as.numeric(dc$Time), breaks = brks, labels = labs, 
-    right = FALSE) # open on right
-  
-  return(dc[, c('Time', 'TimeFrame', 'original', 'dc')])
-  
-})
-
-nut_proc <- do.call('rbind', nut_proc)
-nut_proc$ind <- row.names(nut_proc)
-nut_proc$Station <- gsub('\\..*$', '', nut_proc$ind)
-nut_proc$nutrient <- gsub('^[A-Z][A-Z]\\.|\\.[0-9]*$', '', nut_proc$ind)
-row.names(nut_proc) <- 1:nrow(nut_proc)
-nut_proc$ind <- NULL
-nut_proc <- rename(nut_proc, date = Time)
-
-# filter time frames 1234qwasdfjasdfja;sk
-nut_proc <- filter(nut_proc, TimeFrame %in% c('E1A', 'E2A'))
-
-# ggplot(nut_proc, aes(x = date, y = logvalue)) +
-#   geom_line() +
-#   facet_wrap(Station ~ nutrient, scales = 'free_y') + 
-#   theme_bw()
-# 
-# ggplot(nut_proc, aes(x = date, y = logvalue_dc)) +
-#   geom_line() +
-#   facet_wrap(Station ~ nutrient, scales = 'free_y') + 
-#   theme_bw()
-
-#ccf functions
-nut_ccf <- function(dat_in, stats, val_nm){
-  
-  # retain relevant columns, rename spread column
-  dat_in <- dat_in[, c('TimeFrame', 'Station', 'date', 'nutrient', val_nm)]
-  names(dat_in)[names(dat_in) %in% val_nm] <- 'tospread'
-  
-  # filter dat_in for station data, reformat for analysis
-  toproc <- filter(dat_in, Station %in% stats) %>% 
-    spread(Station, tospread) %>% 
-    mutate(TimeFrame = factor(TimeFrame, levels = c('E1A', 'E2A')))
-  
-  toproc <- split(toproc, f = list(toproc$TimeFrame, toproc$nutrient))
-  
-  # ccf for timeframe, wq var combos
-  toproc <- lapply(toproc, function(x){
-    
-    x <- na.omit(x)
-    if(any(!unique(diff(x$date) %in% c('30', '31', '28')))) browser()
-    cors <- ccf(x[, stats[1]], x[, stats[2]], plot = FALSE)
-    ind <- which.max(cors$acf)
-    out <- with(cors, c(lag[ind], acf[ind]))
-    names(out) <- c('lag', 'cor')
-    return(out)
-    
-  })
-
-  return(toproc)
-  
-}
-
-
-# get station combos
-combs <- combn(unique(nut_proc$Station), 2, simplify = F)
-
-# get ccf results
-nutres <- lapply(combs, function(x) nut_ccf(nut_proc, x, 'dc'))
-combs <- unlist(lapply(combs, paste, collapse = ' - '))
-names(nutres) <- combs
-
-# format for table
-nutres <- lapply(nutres, function(x) do.call('rbind', x)) %>% 
-  melt(.) %>% 
-  separate(Var1, c('Event', 'nutvar'), sep = '\\.') %>% 
-  unite('comb', Event, Var2) %>% 
-  spread(comb, value)
-  
-nms <- c('nutvar', 'L1', 'E1A_lag', 'E1A_cor', 'E2A_lag', 'E2A_cor')
-nutres <- nutres[, nms]
-  
-# table output
-totab <- nutres[, -c(1:2)]
-totab <- round(totab, 2)
-names(totab) <- c('Lag', 'Correlation', 'Lag', 'Correlation')
-
-cap.val <- 'Results of cross-correlation analyses comparing nutrient time series between sites at Grand Bay during the two acute event periods.  Nutrient time series were decomposed to remove the seasonal component.  Values are the lags for each nutrient variable in the compared time series between sites at which the maximum correlation was observed.  Negative lags indicate observations were leading at the first site relative to the second, whereas positive lags indicate observations lagged at the first site relative to the second.  One lag is one month.'
-rgroups <- unique(nutres$nutvar) %>% 
-  factor(., levels = c('CHLA_N', 'NH4F', 'NO23F', 'PO4F'), 
-    labels = c('Chlorophyll a', 'Ammonium', 'Nitrite + Nitrate', 'Orthophosphate')
-  )
-
-foot.val <- '\\footnotesize BC: Bayou Cumbest, BL: Bangs Lake, PC: Point aux Chenes' 
-
-latex( 
-  totab,
-  file = '',
-  rowlabel = 'Site comparisons',
-  caption = cap.val,
-  caption.loc = 'top',
-  rgroup = rgroups,
-  n.rgroup = rep(3, 4),
-  cgroup = c('First acute event (E1A)', 'Second acute event (E2A)'),
-  n.cgroup = rep(2, 2),
-  rowname = nutres$L1,
-  label = 'tab:ccfnut',
-  insert.bottom = foot.val, 
   col.just = c('r', 'c', 'r', 'c')
   )
 
