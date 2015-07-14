@@ -41,6 +41,7 @@ library(agricolae)
 library(reshape2)
 library(Hmisc)
 library(gridExtra)
+library(nlme)
 
 # load data
 load('wq_dat.RData')
@@ -309,7 +310,6 @@ wq_proc <- filter(wq_dat, StationCode %in% c('BL', 'PC', 'BC') & TimeFrame %in% 
 # split by station for regs
 wq_proc <- split(wq_proc, f = wq_proc$TimeFrame)
 
-library(nlme)
 tomod <- lapply(wq_proc, function(x) {
   
   # find leading/trailing NA, remove, then fill
@@ -322,7 +322,7 @@ tomod <- lapply(wq_proc, function(x) {
   
   x$ph <-zoo::na.approx(x$ph, maxgap = 1e6)
   x$sal <- zoo::na.approx(x$sal, maxgap = 1e6)
-  gls(ph ~ sal * Station, data = x, correlation = corAR1(form = ~ 1 | Station))
+  gls(ph ~ sal * Station + date, data = x, correlation = corAR1(form = ~ date | Station))
   
 })
 

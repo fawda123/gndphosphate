@@ -153,7 +153,7 @@
 
 
 % Table created by stargazer v.5.1 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
-% Date and time: Fri, Jul 10, 2015 - 1:35:28 PM
+% Date and time: Tue, Jul 14, 2015 - 12:57:59 PM
 \begin{table}[!htbp] \centering 
   \caption{Results for generalized least squares models of pH as a function of salinity and station, including interactions.  The constant value is the intercept term defined as mean salinity at Bayou Cumbust (BC) with all other coefficients describing the change in ph from the intercept in relation to each fixed parameter.  One model was created for each time frame.  A first-order autoregressive structure conditional on station was used to account for time-dependent correlation among model residuals.} 
   \label{} 
@@ -169,11 +169,14 @@
  sal & 0.057$^{***}$ & 0.047$^{***}$ & 0.053$^{***}$ \\ 
   & (0.002) & (0.001) & (0.003) \\ 
   & & & \\ 
- StationBL & 0.629$^{***}$ & 0.578$^{***}$ & 0.290 \\ 
-  & (0.130) & (0.096) & (0.187) \\ 
+ StationBL & 0.623$^{***}$ & 0.578$^{***}$ & 0.290 \\ 
+  & (0.129) & (0.094) & (0.188) \\ 
   & & & \\ 
- StationPC & 1.931$^{***}$ & 0.607$^{***}$ & 0.917$^{***}$ \\ 
-  & (0.172) & (0.091) & (0.164) \\ 
+ StationPC & 2.006$^{***}$ & 0.606$^{***}$ & 0.919$^{***}$ \\ 
+  & (0.176) & (0.089) & (0.165) \\ 
+  & & & \\ 
+ date & $-$0.0003$^{*}$ & $-$0.0002$^{***}$ & 0.0005 \\ 
+  & (0.0002) & (0.0001) & (0.0004) \\ 
   & & & \\ 
  sal:StationBL & $-$0.017$^{***}$ & $-$0.016$^{***}$ & $-$0.007 \\ 
   & (0.005) & (0.003) & (0.007) \\ 
@@ -181,14 +184,14 @@
  sal:StationPC & $-$0.059$^{***}$ & $-$0.011$^{***}$ & $-$0.028$^{***}$ \\ 
   & (0.006) & (0.002) & (0.005) \\ 
   & & & \\ 
- Constant & 6.199$^{***}$ & 6.522$^{***}$ & 6.479$^{***}$ \\ 
-  & (0.070) & (0.060) & (0.110) \\ 
+ Constant & 10.043$^{***}$ & 9.124$^{***}$ & $-$1.368 \\ 
+  & (2.172) & (0.926) & (5.780) \\ 
   & & & \\ 
 \hline \\[-1.8ex] 
 Observations & 1,983 & 4,937 & 1,556 \\ 
-Log Likelihood & 1,471.083 & 2,944.468 & 705.973 \\ 
-Akaike Inf. Crit. & $-$2,926.167 & $-$5,872.935 & $-$1,395.947 \\ 
-Bayesian Inf. Crit. & $-$2,881.452 & $-$5,820.909 & $-$1,353.179 \\ 
+Log Likelihood & 1,464.874 & 2,939.564 & 699.896 \\ 
+Akaike Inf. Crit. & $-$2,911.749 & $-$5,861.127 & $-$1,381.792 \\ 
+Bayesian Inf. Crit. & $-$2,861.449 & $-$5,802.599 & $-$1,333.684 \\ 
 \hline 
 \hline \\[-1.8ex] 
 \textit{Note:}  & \multicolumn{3}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
