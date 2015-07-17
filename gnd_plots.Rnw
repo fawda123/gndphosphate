@@ -51,9 +51,11 @@ load('nut_dat.RData')
 
 \begin{document}
 
+% figures
+
 \begin{landscape}
 \centering\vspace*{\fill}
-<<tsplot, fig.width = 9, fig.height = 5.25, out.height = '5in', echo = FALSE, fig.cap = 'Time series of total precipitation, salinity, pH, and phosphate for Bangs Lake, Grand Bay reserve.  Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.  Salinity and pH include a loess smooth to reduce variability. Orthophosphate is colored by event categories in relation to the vertical green bars.  E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
+<<tsplot, fig.width = 9, fig.height = 5.25, out.height = '5in', echo = FALSE, fig.cap = 'Time series of total precipitation, salinity, pH, and phosphate for Bangs Lake, Grand Bay reserve.  All observations are daily averages, excluding phosphate which was sampled monthly.  Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.  Salinity and pH include a loess smooth to reduce variability. Orthophosphate is colored by event categories in relation to the vertical green bars.  E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
 # ts plots for BL
 # first get cumulative daily precipitation for met
 # then combine wq and met, take daily ave, make long form
@@ -113,7 +115,7 @@ p
 \end{landscape}
 \clearpage
 
-<<tsplotexp, fig.width = 9, fig.height = 6, echo = FALSE, fig.cap = 'Time series of total precipitation, salinity, and pH for Bangs Lake, Grand Bay reserve.  Plots show six month windows centered (green line) around a heavy rain event in April 2005 and hurricane Isaac in August 2012.  E1A: event 1 acute, E2A: event 2 acute.'>>=
+<<tsplotexp, fig.width = 9, fig.height = 6, echo = FALSE, fig.cap = 'Time series of total precipitation, salinity, and pH for Bangs Lake, Grand Bay reserve.  Data were collected at 15 minute time steps.  Plots show approximate one month windows centered (green line) around a heavy rain event in April 2005 and hurricane Isaac in August 2012.  E1A: event 1 acute, E2A: event 2 acute.'>>=
 # ts plots for BL, wq only expanded about the events
 # first get cumulative daily precipitation for met
 # then combine wq and met, take daily ave, make long form
@@ -121,21 +123,13 @@ p
 load(file = 'met_supp.RData')
 
 # met process for totprcp
-met_proc <- mutate(met_dat, datetimestamp = as.Date(datetimestamp)) %>% 
-  rename(date = datetimestamp) %>% 
-  group_by(date, TimeFrame) %>% 
-  summarise(totprcp = sum(totprcp, na.rm = TRUE))
-met_proc <- rbind(met_proc, met_supp) %>% 
-  arrange(date)
+met_proc <- select(met_dat, datetimestamp, totprcp)
   
 # combine wq with met and nut
 toplo <- filter(wq_dat, StationCode == 'BL') %>% 
   select(-StationCode, -depth) %>% 
-  mutate(datetimestamp = as.Date(datetimestamp)) %>% 
-  rename(date = datetimestamp) %>% 
-  group_by(date, TimeFrame) %>% 
-  summarise_each(funs(mean(., na.rm = TRUE))) %>% 
-  full_join(met_proc, by = c('date', 'TimeFrame')) %>% 
+  left_join(., met_proc, by = c('datetimestamp')) %>% 
+  select(datetimestamp, TimeFrame, sal, ph, totprcp) %>% 
   gather('variable', 'value', sal:totprcp) %>% 
   mutate(variable = factor(variable, 
     levels = c('totprcp', 'sal', 'ph'),
@@ -144,19 +138,19 @@ toplo <- filter(wq_dat, StationCode == 'BL') %>%
   rename(Event = TimeFrame)
 
 # event dates
-events <- c('2005-04-01', '2012-09-01')
-events <- rep(as.Date(events), 3)
+events <- c('2005-04-01 0:0', '2012-09-01 0:0')
+events <- rep(as.POSIXct(events, format = '%Y-%m-%d %H:%M', tz = 'America/Regina'), 3)
 
 # subset +- one month from each event
-subdts <- c('2005-01-01', '2005-07-01', '2012-06-01', '2012-12-01')
-subdts <- as.Date(subdts, format = '%Y-%m-%d')
-toplo1 <- filter(toplo, date >= subdts[1] & date <= subdts[2]) %>% 
+subdts <- c('2005-03-20 0:0', '2005-05-01 0:0', '2012-08-20 0:0', '2012-10-01 0:0')
+subdts <- as.POSIXct(subdts, format = '%Y-%m-%d %H:%M', tz = 'America/Regina')
+toplo1 <- filter(toplo, datetimestamp >= subdts[1] & datetimestamp <= subdts[2]) %>% 
   mutate(Event = 'E1A')
-toplo2 <- filter(toplo, date >= subdts[3] & date <= subdts[4]) %>% 
+toplo2 <- filter(toplo, datetimestamp >= subdts[3] & datetimestamp <= subdts[4]) %>% 
   mutate(Event = 'E2A')
 
 # plots
-p1 <- ggplot(toplo1, aes(x = date, y = value)) + 
+p1 <- ggplot(toplo1, aes(x = datetimestamp, y = value)) + 
   geom_line() +
   geom_vline(xintercept = as.numeric(events[1]), colour = 'lightgreen', alpha = 0.6, size = 2) +
   geom_line() +
@@ -166,7 +160,7 @@ p1 <- ggplot(toplo1, aes(x = date, y = value)) +
     axis.title.x = element_blank(), 
     axis.title.y = element_blank()
   )
-p2 <- ggplot(toplo2, aes(x = date, y = value)) + 
+p2 <- ggplot(toplo2, aes(x = datetimestamp, y = value)) + 
   geom_line() +
   geom_vline(xintercept = as.numeric(events[2]), colour = 'lightgreen', alpha = 0.6, size = 2) +
   geom_line() +
@@ -182,38 +176,13 @@ grid.arrange(p1, p2, ncol = 2)
 @
 \clearpage
 
-<<orthfig, fig.width = 8.5, fig.height = 3, echo = FALSE, fig.cap = 'Boxplot summaries by event of monthly orthophosphate data at Bangs Lake (BL), and Point aux Chenes (PC), and Bayou Cumbest (BC) sites in Grand Bay.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). Boxes are shaded by medians between sites.  E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
+<<orthfig, fig.width = 8.5, fig.height = 3, echo = FALSE, fig.cap = 'Boxplot summaries by event of monthly orthophosphate data at Bangs Lake (BL), and Point aux Chenes (PC), and Bayou Cumbest (BC) sites in Grand Bay.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). Boxes are shaded by medians between sites.  See \\cref{tab:orthtab} for a numerical summary. E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
 
 load(file = 'nut_dat.RData')
 
 toplo <- filter(nut_dat, StationCode != 'BN' & nutrient == 'PO4F')
 
 timeframes <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
-
-# split data by unique station/nutrient variable
-sep_data <- split(toplo, toplo$stat_nut)
-
-# run a Tukey multiple comparison for each station, nutrient variable combo
-res <- lapply(sep_data, function(x){
-
-  mod <- aov(logvalue ~ TimeFrame, data = x)
-  tuk_mod <- HSD.test(mod, 'TimeFrame', group = T)
-  grps <- tuk_mod$groups
-  grps$trt <- gsub('[[:space:]].*$', '', grps$trt)
-  grps
-  
-  })
-
-# combine results for plotting
-res <- do.call('rbind', res) %>% 
-  mutate(
-    stat_nut = gsub('\\.[0-9]', '', row.names(.)),
-    TimeFrame = trt
-  ) %>% 
-  separate(stat_nut, c('StationCode', 'nutrient'), sep = ' ')
-ylocs <- data.frame(nutrient = c('PO4F'), ylims = c(10))
-res <- left_join(res, ylocs, by = 'nutrient')
-res$TimeFrame <- factor(res$trt, levels = timeframes, labels = timeframes)
 
 # get nutrient/site/timeframe medians then merge with toplo for colors
 meds <- group_by(toplo, StationCode, nutrient, TimeFrame) %>% 
@@ -238,219 +207,34 @@ p1
 @
 \clearpage
 
-<<orthtab, echo = FALSE>>=
+<<pcafig, fig.width = 8, fig.height = 7, echo = FALSE, fig.cap = 'Ordination biplot of nutrient values by site and time frames. Monthly data were averaged by site and time frame prior to ordination.  Site are Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC). E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
+
 load(file = 'nut_dat.RData')
 
-toplo <- filter(nut_dat, StationCode != 'BN' & nutrient == 'PO4F')
+toplo <- filter(nut_dat, StationCode != 'BN') %>% 
+  group_by(StationCode, TimeFrame, nutrient) %>% 
+  summarise(logvalue = mean(logvalue, na.rm = TRUE)) %>% 
+  spread(nutrient, logvalue)
+pcres <- prcomp(toplo[, 3:6])
+toplo <- data.frame(toplo, pcres$x)
 
-timeframes <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
-
-# split data by unique station/nutrient variable
-sep_data <- split(toplo, toplo$stat_nut)
-
-# run a Tukey multiple comparison for each station, nutrient variable combo
-res <- lapply(sep_data, function(x){
-
-  mod <- aov(logvalue ~ TimeFrame, data = x)
-  tuk_mod <- HSD.test(mod, 'TimeFrame', group = T)
-  grps <- tuk_mod$groups
-  grps$trt <- gsub('[[:space:]].*$', '', grps$trt)
-  aves <- tuk_mod$means
-  aves$trt <- row.names(aves)
-  aves <- merge(aves, grps, by = 'trt')
-  aves
-  
-  })
-
-# combine results for plotting
-res <- do.call('rbind', res) %>% 
-  mutate(
-    stat_nut = gsub('\\.[0-9]', '', row.names(.)),
-    TimeFrame = trt
-  ) %>% 
-  separate(stat_nut, c('StationCode', 'nutrient'), sep = ' ') %>% 
-  select(StationCode, TimeFrame, M, means, std, r, Min, Max) %>% 
-  mutate(
-    TimeFrame = factor(TimeFrame, levels = c('E1A', 'E1C', 'NI', 'E2A', 'E2C')),
-    StationCode = factor(StationCode, levels = c('BL', 'PC', 'BC'))
-    ) %>% 
-  arrange(StationCode, TimeFrame)
-
-tab <- res[, -c(1, 2)]
-tab[, -1] <- round(tab[, -1], 2)
-rows <- res[, 2]
-cap <- 'Summaries by site and event of monthly orthophosphate data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for orthophosphate by station and time frame.  Result letters indicate time frames within each station that were were not significantly different based on Tukey multiple comparison analyses ($\\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
-
-latex(
-  tab,
-  file = '',
-  rowlabel = 'Site',
-  caption = cap,
-  caption.loc = 'top',
-  rgroup = unique(res$StationCode),
-  n.rgroup = rep(5, 3),
-  rowname = rows,
-  colheads=c('Result', 'Mean', 'St. Dev.', 'n', 'Min', 'Max'),
-  label = 'tab:orthtab'
-  )
-
-@
-\clearpage
-
-<<phreg, eval = TRUE, echo = FALSE>>=
-# select BL, BC, PC, timeframes, summarize by day to reduce
-wq_proc <- filter(wq_dat, StationCode %in% c('BL', 'PC', 'BC') & TimeFrame %in% c('E1A', 'NI', 'E2A')) %>% 
-  mutate(datetimestamp = as.Date(datetimestamp)) %>% 
-  rename(date = datetimestamp) %>% 
-  group_by(date, StationCode, TimeFrame) %>% 
-  summarise_each(funs(mean(., na.rm = TRUE))) %>% 
-  rename(Station = StationCode) %>% 
-  droplevels(.)
-
-# split by station for regs
-wq_proc <- split(wq_proc, f = wq_proc$TimeFrame)
-
-tomod <- lapply(wq_proc, function(x) {
-  
-  # find leading/trailing NA, remove, then fill
-  notna <- which(!is.na(x$ph))
-  notna <- c(notna[1], notna[length(notna)])
-  x <- x[notna[1]:notna[2], ]
-  notna <- which(!is.na(x$sal))
-  notna <- c(notna[1], notna[length(notna)])
-  x <- x[notna[1]:notna[2], ]
-  
-  x$ph <-zoo::na.approx(x$ph, maxgap = 1e6)
-  x$sal <- zoo::na.approx(x$sal, maxgap = 1e6)
-  gls(ph ~ sal * Station + date, data = x, correlation = corAR1(form = ~ date | Station))
-  
-})
-
-stargazer(tomod, column.labels = c('E1A', 'NI', 'E2A'), 
-  title = 'Results for generalized least squares models of pH as a function of salinity and station, including interactions.  The constant value is the intercept term defined as mean salinity at Bayou Cumbust (BC) with all other coefficients describing the change in ph from the intercept in relation to each fixed parameter.  One model was created for each time frame.  A first-order autoregressive structure conditional on station was used to account for time-dependent correlation among model residuals.')
-@
-\clearpage
-
-<<ccfwqdc, echo = FALSE, eval = T>>=
-load(file = 'wq_noseas.RData')
-wq_proc <- wq_noseas
-
-# remove depth
-wq_proc <- filter(wq_proc, wq != 'depth') %>% 
-  droplevels(.)
-  
-#ccf functions
-wq_ccf <- function(dat_in, stats, val_nm){
-  
-  # retain relevant columns, rename spread column
-  dat_in <- dat_in[, c('TimeFrame', 'Station', 'datetimestamp', 'wq', val_nm)]
-  names(dat_in)[names(dat_in) %in% val_nm] <- 'tospread'
-  
-  # filter dat_in for station data, reformat for analysis
-  toproc <- filter(dat_in, Station %in% stats) %>% 
-    spread(Station, tospread) %>% 
-    mutate(TimeFrame = factor(TimeFrame, levels = c('E1A', 'E2A')))
-  toproc <- na.omit(toproc)
-    
-  toproc <- split(toproc, f = list(toproc$TimeFrame, toproc$wq))
-  
-  # ccf for timeframe, wq var combos
-  toproc <- lapply(toproc, function(x){
-    if(length(unique(diff(x$datetime))) > 1) browser()
-    cors <- ccf(x[, stats[1]], x[, stats[2]], plot = FALSE) # no napass, correlation only
-    ind <- which.max(cors$acf)
-    out <- with(cors, c(lag[ind], acf[ind]))
-    names(out) <- c('lag', 'cor')
-    return(out)
-  })
-  
-  return(toproc)
-  
-}
-
-# get station combos
-combs <- combn(unique(wq_proc$Station), 2, simplify = F)
-
-# get ccf results
-wqres <- lapply(combs, function(x) wq_ccf(wq_proc, x, 'value_dc'))
-combs <- unlist(lapply(combs, paste, collapse = ' - '))
-names(wqres) <- combs
-
-# format for table
-wqres <- lapply(wqres, function(x) do.call('rbind', x)) %>% 
-  melt(.) %>% 
-  separate(Var1, c('Event', 'wqvar')) %>% 
-  unite('comb', Event, Var2) %>% 
-  spread(comb, value)
-  
-nms <- c('wqvar', 'L1', 'E1A_lag', 'E1A_cor', 'E2A_lag', 'E2A_cor')
-wqres <- wqres[, nms]
-  
-# table output
-totab <- wqres[, -c(1:2)]
-totab <- round(totab, 2)
-names(totab) <- c('Lag', 'Correlation', 'Lag', 'Correlation')
-
-cap.val <- 'Results of cross-correlation analyses comparing water quality time series between sites at Grand Bay during the two acute event periods.  Seasonal components of each time series are removed.  Values for pH and salinity (ppt) are the lags in the compared time series between sites at which the maximum correlation was observed.  Negative lags indicate observations were leading at the first site relative to the second, whereas positive lags indicate observations lagged at the first site relative to the second.  One lag is thirty minutes.'
-rgroups <- unique(wqres$wqvar) %>% 
-  factor(., levels = c('ph', 'sal'), labels = c('pH', 'Salinity'))
-
-foot.val <- '\\footnotesize BC: Bayou Cumbest, BL: Bangs Lake, PC: Point aux Chenes' 
-
-latex( 
-  totab,
-  file = '',
-  rowlabel = 'Site comparisons',
-  caption = cap.val,
-  caption.loc = 'top',
-  rgroup = rgroups,
-  n.rgroup = rep(3, 2),
-  cgroup = c('First acute event (E1A)', 'Second acute event (E2A)'),
-  n.cgroup = c(2, 2),
-  rowname = wqres$L1,
-  label = 'tab:ccfwq',
-  insert.bottom = foot.val,
-  col.just = c('r', 'c', 'r', 'c')
-  )
+p1 <- ggord(pcres, toplo$TimeFrame) +
+  geom_text(data = toplo, aes(x = PC1, y = 0.07 + PC2, label = StationCode), colour = 'grey40', 
+    size = 4)
+p1
 
 @
 \clearpage
 
 % appendix boxplots
-<<boxplt_all, fig.width = 8, fig.height = 6,, fig.cap = 'Boxplot summaries by event of nutrient data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) sites at Grand Bay.  Letters indicate significantly different events based on Tukey multiple comparison analyses for each unique site and nutrient value combination.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Boxes are colored by relative median nutrients between sites.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.', echo = FALSE>>=
+
+<<boxplt_all, fig.width = 8, fig.height = 6,, fig.cap = 'Boxplot summaries by event of nutrient data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) sites at Grand Bay.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Boxes are colored by relative median nutrients between sites.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). See \\cref{tab:ammontab,tab:tntab,tab:chltab} for numerical summaries.  E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.', echo = FALSE>>=
 
 load(file = 'nut_dat.RData')
 
 # remove BN, phosphorus
 toplo <- filter(nut_dat, StationCode != 'BN' & nutrient != 'PO4F') 
 toplo$nutrient <- droplevels(toplo$nutrient)
-
-timeframes <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
-
-# split data by unique station/nutrient variable
-sep_data <- split(toplo, toplo$stat_nut)
-
-# run a Tukey multiple comparison for each station, nutrient variable combo
-res <- lapply(sep_data, function(x){
-
-  mod <- aov(logvalue ~ TimeFrame, data = x)
-  tuk_mod <- HSD.test(mod, 'TimeFrame', group = T)
-  grps <- tuk_mod$groups
-  grps$trt <- gsub('[[:space:]].*$', '', grps$trt)
-  grps
-  
-  })
-
-# combine results for plotting
-res <- do.call('rbind', res) %>% 
-  mutate(
-    stat_nut = gsub('\\.[0-9]', '', row.names(.)),
-    TimeFrame = trt
-  ) %>% 
-  separate(stat_nut, c('StationCode', 'nutrient'), sep = ' ')
-ylocs <- data.frame(nutrient = c('PO4F', 'NH4F', 'NO23F', 'CHLA_N'), ylims = c(10, 10, 1, 100))
-res <- left_join(res, ylocs, by = 'nutrient')
-res$TimeFrame <- factor(res$trt, levels = timeframes, labels = timeframes)
 
 # get nutrient/site/timeframe medians then merge with toplo for colors
 meds <- group_by(toplo, StationCode, nutrient, TimeFrame) %>% 
@@ -493,10 +277,257 @@ p1 <- ggplot(toplo, aes(x = TimeFrame, y = value)) +
   theme_bw() + 
   theme(legend.position = 'none') + 
   scale_x_discrete('Event') +
-  scale_fill_gradientn(colours = RColorBrewer::brewer.pal(9, 'BuGn')[3:9]) + 
-  geom_text(data = res, aes(x = TimeFrame, y = ylims, label = M))
+  scale_fill_gradientn(colours = RColorBrewer::brewer.pal(9, 'BuGn')[3:9]) 
 p1
 
 @
+\clearpage
+
+% tables
+
+<<orthtab, echo = FALSE>>=
+load(file = 'nut_dat.RData')
+
+toplo <- filter(nut_dat, StationCode != 'BN' & nutrient == 'PO4F')
+
+timeframes <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
+
+# split data by unique station/nutrient variable
+sep_data <- split(toplo, toplo$stat_nut)
+
+# run a Tukey multiple comparison for each station, nutrient variable combo
+res <- lapply(sep_data, function(x){
+
+  mod <- aov(logvalue ~ TimeFrame, data = x)
+  tuk_mod <- HSD.test(mod, 'TimeFrame', group = T)
+  grps <- tuk_mod$groups
+  grps$means <- 10^grps$means
+  grps$trt <- gsub('[[:space:]].*$', '', grps$trt)
+  aves <- tuk_mod$means
+  aves[, !names(aves) %in% 'r'] <- 10^aves[, !names(aves) %in% 'r']
+  aves$trt <- row.names(aves)
+  aves <- merge(aves, grps, by = 'trt')
+  aves
+  
+  })
+
+# combine results for plotting
+res <- do.call('rbind', res) %>% 
+  mutate(
+    stat_nut = gsub('\\.[0-9]', '', row.names(.)),
+    TimeFrame = trt
+  ) %>% 
+  separate(stat_nut, c('StationCode', 'nutrient'), sep = ' ') %>% 
+  select(StationCode, TimeFrame, M, means, std, r, Min, Max) %>% 
+  mutate(
+    TimeFrame = factor(TimeFrame, levels = c('E1A', 'E1C', 'NI', 'E2A', 'E2C')),
+    StationCode = factor(StationCode, levels = c('BL', 'PC', 'BC'))
+    ) %>% 
+  arrange(StationCode, TimeFrame)
+
+tab <- res[, -c(1, 2)]
+tab[, -1] <- round(tab[, -1], 2)
+rows <- res[, 2]
+cap <- 'Summaries by site and event of monthly orthophosphate data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for orthophosphate by station and time frame.  Result letters indicate time frames within each station that were were not significantly different based on Tukey multiple comparison analyses ($\\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
+
+latex(
+  tab,
+  file = '',
+  rowlabel = 'Site',
+  caption = cap,
+  caption.loc = 'top',
+  rgroup = unique(res$StationCode),
+  n.rgroup = rep(5, 3),
+  rowname = rows,
+  colheads=c('Result', 'Mean', 'St. Dev.', 'n', 'Min', 'Max'),
+  label = 'tab:orthtab'
+  )
+
+@
+\clearpage
+
+% appendix tables
+<<ammontab, echo = FALSE>>=
+load(file = 'nut_dat.RData')
+
+toplo <- filter(nut_dat, StationCode != 'BN' & nutrient == 'NH4F')
+
+timeframes <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
+
+# split data by unique station/nutrient variable
+sep_data <- split(toplo, toplo$stat_nut)
+
+# run a Tukey multiple comparison for each station, nutrient variable combo
+res <- lapply(sep_data, function(x){
+
+  mod <- aov(logvalue ~ TimeFrame, data = x)
+  tuk_mod <- HSD.test(mod, 'TimeFrame', group = T)
+  grps <- tuk_mod$groups
+  grps$means <- 10^grps$means
+  grps$trt <- gsub('[[:space:]].*$', '', grps$trt)
+  aves <- tuk_mod$means
+  aves[, !names(aves) %in% 'r'] <- 10^aves[, !names(aves) %in% 'r']
+  aves$trt <- row.names(aves)
+  aves <- merge(aves, grps, by = 'trt')
+  aves
+  
+  })
+
+# combine results for plotting
+res <- do.call('rbind', res) %>% 
+  mutate(
+    stat_nut = gsub('\\.[0-9]', '', row.names(.)),
+    TimeFrame = trt
+  ) %>% 
+  separate(stat_nut, c('StationCode', 'nutrient'), sep = ' ') %>% 
+  select(StationCode, TimeFrame, M, means, std, r, Min, Max) %>% 
+  mutate(
+    TimeFrame = factor(TimeFrame, levels = c('E1A', 'E1C', 'NI', 'E2A', 'E2C')),
+    StationCode = factor(StationCode, levels = c('BL', 'PC', 'BC'))
+    ) %>% 
+  arrange(StationCode, TimeFrame)
+
+tab <- res[, -c(1, 2)]
+tab[, -1] <- round(tab[, -1], 2)
+rows <- res[, 2]
+cap <- 'Summaries by site and event of monthly ammonium data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for ammonium by station and time frame.  Result letters indicate time frames within each station that were were not significantly different based on Tukey multiple comparison analyses ($\\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
+
+latex(
+  tab,
+  file = '',
+  rowlabel = 'Site',
+  caption = cap,
+  caption.loc = 'top',
+  rgroup = unique(res$StationCode),
+  n.rgroup = rep(5, 3),
+  rowname = rows,
+  colheads=c('Result', 'Mean', 'St. Dev.', 'n', 'Min', 'Max'),
+  label = 'tab:ammontab'
+  )
+  
+@
+\clearpage
+
+<<tntab, echo = FALSE>>=
+load(file = 'nut_dat.RData')
+
+toplo <- filter(nut_dat, StationCode != 'BN' & nutrient == 'NO23F')
+
+timeframes <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
+
+# split data by unique station/nutrient variable
+sep_data <- split(toplo, toplo$stat_nut)
+
+# run a Tukey multiple comparison for each station, nutrient variable combo
+res <- lapply(sep_data, function(x){
+
+  mod <- aov(logvalue ~ TimeFrame, data = x)
+  tuk_mod <- HSD.test(mod, 'TimeFrame', group = T)
+  grps <- tuk_mod$groups
+  grps$means <- 10^grps$means
+  grps$trt <- gsub('[[:space:]].*$', '', grps$trt)
+  aves <- tuk_mod$means
+  aves[, !names(aves) %in% 'r'] <- 10^aves[, !names(aves) %in% 'r']
+  aves$trt <- row.names(aves)
+  aves <- merge(aves, grps, by = 'trt')
+  aves
+  
+  })
+
+# combine results for plotting
+res <- do.call('rbind', res) %>% 
+  mutate(
+    stat_nut = gsub('\\.[0-9]', '', row.names(.)),
+    TimeFrame = trt
+  ) %>% 
+  separate(stat_nut, c('StationCode', 'nutrient'), sep = ' ') %>% 
+  select(StationCode, TimeFrame, M, means, std, r, Min, Max) %>% 
+  mutate(
+    TimeFrame = factor(TimeFrame, levels = c('E1A', 'E1C', 'NI', 'E2A', 'E2C')),
+    StationCode = factor(StationCode, levels = c('BL', 'PC', 'BC'))
+    ) %>% 
+  arrange(StationCode, TimeFrame)
+
+tab <- res[, -c(1, 2)]
+tab[, -1] <- round(tab[, -1], 2)
+rows <- res[, 2]
+cap <- 'Summaries by site and event of monthly total nitrogen (nitrate, nitrite) data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for total nitrogen by station and time frame.  Result letters indicate time frames within each station that were were not significantly different based on Tukey multiple comparison analyses ($\\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
+
+latex(
+  tab,
+  file = '',
+  rowlabel = 'Site',
+  caption = cap,
+  caption.loc = 'top',
+  rgroup = unique(res$StationCode),
+  n.rgroup = rep(5, 3),
+  rowname = rows,
+  colheads=c('Result', 'Mean', 'St. Dev.', 'n', 'Min', 'Max'),
+  label = 'tab:tntab'
+  )
+  
+@
+\clearpage
+
+<<chltab, echo = FALSE>>=
+load(file = 'nut_dat.RData')
+
+toplo <- filter(nut_dat, StationCode != 'BN' & nutrient == 'CHLA_N')
+
+timeframes <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
+
+# split data by unique station/nutrient variable
+sep_data <- split(toplo, toplo$stat_nut)
+
+# run a Tukey multiple comparison for each station, nutrient variable combo
+res <- lapply(sep_data, function(x){
+
+  mod <- aov(logvalue ~ TimeFrame, data = x)
+  tuk_mod <- HSD.test(mod, 'TimeFrame', group = T)
+  grps <- tuk_mod$groups
+  grps$means <- 10^grps$means
+  grps$trt <- gsub('[[:space:]].*$', '', grps$trt)
+  aves <- tuk_mod$means
+  aves[, !names(aves) %in% 'r'] <- 10^aves[, !names(aves) %in% 'r']
+  aves$trt <- row.names(aves)
+  aves <- merge(aves, grps, by = 'trt')
+  aves
+  
+  })
+
+# combine results for plotting
+res <- do.call('rbind', res) %>% 
+  mutate(
+    stat_nut = gsub('\\.[0-9]', '', row.names(.)),
+    TimeFrame = trt
+  ) %>% 
+  separate(stat_nut, c('StationCode', 'nutrient'), sep = ' ') %>% 
+  select(StationCode, TimeFrame, M, means, std, r, Min, Max) %>% 
+  mutate(
+    TimeFrame = factor(TimeFrame, levels = c('E1A', 'E1C', 'NI', 'E2A', 'E2C')),
+    StationCode = factor(StationCode, levels = c('BL', 'PC', 'BC'))
+    ) %>% 
+  arrange(StationCode, TimeFrame)
+
+tab <- res[, -c(1, 2)]
+tab[, -1] <- round(tab[, -1], 2)
+rows <- res[, 2]
+cap <- 'Summaries by site and event of monthly chlorophyll data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for chlorophyll by station and time frame.  Result letters indicate time frames within each station that were were not significantly different based on Tukey multiple comparison analyses ($\\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
+
+latex(
+  tab,
+  file = '',
+  rowlabel = 'Site',
+  caption = cap,
+  caption.loc = 'top',
+  rgroup = unique(res$StationCode),
+  n.rgroup = rep(5, 3),
+  rowname = rows,
+  colheads=c('Result', 'Mean', 'St. Dev.', 'n', 'Min', 'Max'),
+  label = 'tab:chltab'
+  )
+  
+@
+\clearpage
 
 \end{document}
