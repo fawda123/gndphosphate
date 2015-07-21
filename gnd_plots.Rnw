@@ -59,11 +59,12 @@ load('nut_dat.RData')
 
 \begin{document}
 
-% figures
+\setcounter{figure}{1}
+\setcounter{table}{1}
 
 \begin{landscape}
 \centering\vspace*{\fill}
-<<tsplot, fig.width = 9, fig.height = 5.25, out.height = '5in', echo = FALSE, fig.cap = 'Time series of total precipitation, salinity, pH, and phosphate for Bangs Lake, Grand Bay reserve.  All observations are daily averages, excluding phosphate which was sampled monthly.  Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.  Salinity and pH include a loess smooth to reduce variability. Orthophosphate is colored by event categories in relation to the vertical green bars.  E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
+<<tsplot, fig.width = 9, fig.height = 5.25, out.height = '4.8in', echo = FALSE, fig.cap = 'Time series of total precipitation, salinity, pH, and phosphate for Bangs Lake, Grand Bay reserve.  All observations are daily averages, excluding phosphate which was sampled monthly.  Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.  Salinity and pH include a loess smooth to reduce variability. Orthophosphate is colored by event categories in relation to the vertical green bars.  E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
 # ts plots for BL
 # first get cumulative daily precipitation for met
 # then combine wq and met, take daily ave, make long form
@@ -184,37 +185,6 @@ grid.arrange(p1, p2, ncol = 2)
 @
 \clearpage
 
-<<orthfig, fig.width = 8.5, fig.height = 3, echo = FALSE, fig.cap = 'Boxplot summaries by event of monthly orthophosphate data at Bangs Lake (BL), and Point aux Chenes (PC), and Bayou Cumbest (BC) sites in Grand Bay.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). Boxes are shaded by medians between sites.  See \\cref{tab:orthtab} for a numerical summary. E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
-
-load(file = 'nut_dat.RData')
-
-toplo <- filter(nut_dat, StationCode != 'BN' & nutrient == 'PO4F')
-
-timeframes <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
-
-# get nutrient/site/timeframe medians then merge with toplo for colors
-meds <- group_by(toplo, StationCode, nutrient, TimeFrame) %>% 
-  summarise(meds = median(value, na.rm = TRUE))
-
-toplo <- left_join(toplo, meds, by = c('StationCode', 'nutrient', 'TimeFrame'))
-
-ylab <- expression(paste('Orthophosphate (mg ', L^-1, ')'))
-
-toplo$StationCode <- factor(toplo$StationCode, levels = c('BL', 'PC', 'BC'))
-
-# boxplot
-p1 <- ggplot(toplo, aes(x = TimeFrame, y = value)) +
-  geom_boxplot(aes(fill = meds)) + 
-  facet_wrap(~ StationCode, scales = 'free_y') +
-  scale_y_log10(ylab) +
-  theme_bw() + 
-  scale_fill_gradientn(colours = RColorBrewer::brewer.pal(9, 'BuGn')[3:9]) + 
-  scale_x_discrete('Event') +
-  theme(legend.position = 'none')
-p1
-@
-\clearpage
-
 <<orthtsfig, fig.width = 7.5, fig.height = 5, echo = FALSE, fig.cap = 'Monthly phosphate time series at Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC) sites at Grand Bay. Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.'>>=
 
 load(file = 'nut_dat.RData')
@@ -247,19 +217,52 @@ p1
 @
 \clearpage
 
+<<orthfig, fig.width = 8.5, fig.height = 3, echo = FALSE, fig.cap = 'Boxplot summaries by event of monthly orthophosphate data at Bangs Lake (BL), and Point aux Chenes (PC), and Bayou Cumbest (BC) sites in Grand Bay.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). Boxes are shaded by medians between sites.  See \\cref{tab:orthtab} for a numerical summary. E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
+
+load(file = 'nut_dat.RData')
+
+toplo <- filter(nut_dat, StationCode != 'BN' & nutrient == 'PO4F')
+
+timeframes <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
+
+# get nutrient/site/timeframe medians then merge with toplo for colors
+meds <- group_by(toplo, StationCode, nutrient, TimeFrame) %>% 
+  summarise(meds = median(value, na.rm = TRUE))
+
+toplo <- left_join(toplo, meds, by = c('StationCode', 'nutrient', 'TimeFrame'))
+
+ylab <- expression(paste('Orthophosphate (mg ', L^-1, ')'))
+
+toplo$StationCode <- factor(toplo$StationCode, levels = c('BL', 'PC', 'BC'))
+
+# boxplot
+p1 <- ggplot(toplo, aes(x = TimeFrame, y = value)) +
+  geom_boxplot(aes(fill = meds)) + 
+  facet_wrap(~ StationCode, scales = 'free_y') +
+  scale_y_log10(ylab) +
+  theme_bw() + 
+  scale_fill_gradientn(colours = RColorBrewer::brewer.pal(9, 'BuGn')[3:9]) + 
+  scale_x_discrete('Event') +
+  theme(legend.position = 'none')
+p1
+@
+\clearpage
+
 <<pcafig, fig.width = 8, fig.height = 7, echo = FALSE, fig.cap = 'Ordination biplot of nutrient values by site and time frames. Monthly data were averaged by site and time frame prior to ordination.  Site are Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC). E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
 
 load(file = 'nut_dat.RData')
 
 toplo <- filter(nut_dat, StationCode != 'BN') %>% 
   group_by(StationCode, TimeFrame, nutrient) %>% 
-  summarise(logvalue = mean(logvalue, na.rm = TRUE)) %>% 
-  spread(nutrient, logvalue)
-pcres <- prcomp(toplo[, 3:6])
+  summarise(value = mean(value, na.rm = TRUE)) %>% 
+  spread(nutrient, value) %>% 
+  rename(PO4 = PO4F, NH4 = NH4F, NO23 = NO23F, Chl = CHLA_N)
+
+pcres <- prcomp(toplo[, 3:6], scale = TRUE)
 toplo <- data.frame(toplo, pcres$x)
 
-p1 <- ggord(pcres, toplo$TimeFrame) +
-  geom_text(data = toplo, aes(x = PC1, y = 0.07 + PC2, label = StationCode), colour = 'grey40', 
+p1 <- ggord(pcres, toplo$TimeFrame, vec_ext = 3, ellipse_pro = 0.66) +
+  geom_text(data = toplo, aes(x = PC1, y = 0.13 + PC2, label = StationCode), colour = 'grey40', 
     size = 4)
 p1
 
@@ -309,7 +312,7 @@ res <- do.call('rbind', res) %>%
 tab <- res[, -c(1, 2)]
 tab[, -1] <- round(tab[, -1], 2)
 rows <- res[, 2]
-cap <- 'Summaries by site and event of monthly orthophosphate data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for orthophosphate by station and time frame.  Result letters indicate time frames within each station that were were not significantly different based on Tukey multiple comparison analyses ($\\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
+cap <- 'Summaries by site and event of monthly orthophosphate data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for orthophosphate by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on Tukey multiple comparison analyses ($\\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
 
 latex(
   tab,
@@ -428,7 +431,7 @@ res <- do.call('rbind', res) %>%
 tab <- res[, -c(1, 2)]
 tab[, -1] <- round(tab[, -1], 2)
 rows <- res[, 2]
-cap <- 'Summaries by site and event of monthly ammonium data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for ammonium by station and time frame.  Result letters indicate time frames within each station that were were not significantly different based on Tukey multiple comparison analyses ($\\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
+cap <- 'Summaries by site and event of monthly ammonium data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for ammonium by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on Tukey multiple comparison analyses ($\\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
 
 latex(
   tab,
@@ -489,7 +492,7 @@ res <- do.call('rbind', res) %>%
 tab <- res[, -c(1, 2)]
 tab[, -1] <- round(tab[, -1], 2)
 rows <- res[, 2]
-cap <- 'Summaries by site and event of monthly total nitrogen (nitrate, nitrite) data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for total nitrogen by station and time frame.  Result letters indicate time frames within each station that were were not significantly different based on Tukey multiple comparison analyses ($\\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
+cap <- 'Summaries by site and event of monthly total nitrogen (nitrate, nitrite) data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for total nitrogen by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on Tukey multiple comparison analyses ($\\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
 
 latex(
   tab,
@@ -550,7 +553,7 @@ res <- do.call('rbind', res) %>%
 tab <- res[, -c(1, 2)]
 tab[, -1] <- round(tab[, -1], 2)
 rows <- res[, 2]
-cap <- 'Summaries by site and event of monthly chlorophyll data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for chlorophyll by station and time frame.  Result letters indicate time frames within each station that were were not significantly different based on Tukey multiple comparison analyses ($\\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
+cap <- 'Summaries by site and event of monthly chlorophyll data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for chlorophyll by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on Tukey multiple comparison analyses ($\\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
 
 latex(
   tab,

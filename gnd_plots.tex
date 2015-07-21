@@ -85,13 +85,14 @@
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 
-% figures
+\setcounter{figure}{1}
+\setcounter{table}{1}
 
 \begin{landscape}
 \centering\vspace*{\fill}
 \begin{figure}[!ht]
 
-{\centering \includegraphics[width=\maxwidth,height=5in]{figs/tsplot-1} 
+{\centering \includegraphics[width=\maxwidth,height=4.8in]{figs/tsplot-1} 
 
 }
 
@@ -116,11 +117,11 @@
 
 \begin{figure}[!ht]
 
-{\centering \includegraphics[width=\maxwidth]{figs/orthfig-1} 
+{\centering \includegraphics[width=\maxwidth]{figs/orthtsfig-1} 
 
 }
 
-\caption{Boxplot summaries by event of monthly orthophosphate data at Bangs Lake (BL), and Point aux Chenes (PC), and Bayou Cumbest (BC) sites in Grand Bay.  Boxes represent the interquartile range (IQR, 25\textsuperscript{th} to 75\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\cdot$IQR). Boxes are shaded by medians between sites.  See \cref{tab:orthtab} for a numerical summary. E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.}\label{fig:orthfig}
+\caption[Monthly phosphate time series at Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC) sites at Grand Bay]{Monthly phosphate time series at Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC) sites at Grand Bay. Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.}\label{fig:orthtsfig}
 \end{figure}
 
 
@@ -128,11 +129,11 @@
 
 \begin{figure}[!ht]
 
-{\centering \includegraphics[width=\maxwidth]{figs/orthtsfig-1} 
+{\centering \includegraphics[width=\maxwidth]{figs/orthfig-1} 
 
 }
 
-\caption[Monthly phosphate time series at Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC) sites at Grand Bay]{Monthly phosphate time series at Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC) sites at Grand Bay. Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.}\label{fig:orthtsfig}
+\caption{Boxplot summaries by event of monthly orthophosphate data at Bangs Lake (BL), and Point aux Chenes (PC), and Bayou Cumbest (BC) sites in Grand Bay.  Boxes represent the interquartile range (IQR, 25\textsuperscript{th} to 75\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\cdot$IQR). Boxes are shaded by medians between sites.  See \cref{tab:orthtab} for a numerical summary. E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.}\label{fig:orthfig}
 \end{figure}
 
 
@@ -152,7 +153,7 @@
 
 %latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$StationCode), n.rgroup = rep(5,         3), rowname = rows, colheads = c("Result", "Mean", "St. Dev.",         "n", "Min", "Max"), label = "tab:orthtab")%
 \begin{table}[!tbp]
-\caption{Summaries by site and event of monthly orthophosphate data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for orthophosphate by station and time frame.  Result letters indicate time frames within each station that were were not significantly different based on Tukey multiple comparison analyses ($\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.\label{tab:orthtab}} 
+\caption{Summaries by site and event of monthly orthophosphate data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for orthophosphate by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on Tukey multiple comparison analyses ($\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.\label{tab:orthtab}} 
 \begin{center}
 \begin{tabular}{llrrrrr}
 \hline\hline
@@ -202,7 +203,7 @@
 
 %latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$StationCode), n.rgroup = rep(5,         3), rowname = rows, colheads = c("Result", "Mean", "St. Dev.",         "n", "Min", "Max"), label = "tab:ammontab")%
 \begin{table}[!tbp]
-\caption{Summaries by site and event of monthly ammonium data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for ammonium by station and time frame.  Result letters indicate time frames within each station that were were not significantly different based on Tukey multiple comparison analyses ($\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.\label{tab:ammontab}} 
+\caption{Summaries by site and event of monthly ammonium data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for ammonium by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on Tukey multiple comparison analyses ($\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.\label{tab:ammontab}} 
 \begin{center}
 \begin{tabular}{llrrrrr}
 \hline\hline
@@ -237,7 +238,7 @@
 
 %latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$StationCode), n.rgroup = rep(5,         3), rowname = rows, colheads = c("Result", "Mean", "St. Dev.",         "n", "Min", "Max"), label = "tab:tntab")%
 \begin{table}[!tbp]
-\caption{Summaries by site and event of monthly total nitrogen (nitrate, nitrite) data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for total nitrogen by station and time frame.  Result letters indicate time frames within each station that were were not significantly different based on Tukey multiple comparison analyses ($\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.\label{tab:tntab}} 
+\caption{Summaries by site and event of monthly total nitrogen (nitrate, nitrite) data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for total nitrogen by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on Tukey multiple comparison analyses ($\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.\label{tab:tntab}} 
 \begin{center}
 \begin{tabular}{llrrrrr}
 \hline\hline
@@ -272,7 +273,7 @@
 
 %latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$StationCode), n.rgroup = rep(5,         3), rowname = rows, colheads = c("Result", "Mean", "St. Dev.",         "n", "Min", "Max"), label = "tab:chltab")%
 \begin{table}[!tbp]
-\caption{Summaries by site and event of monthly chlorophyll data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for chlorophyll by station and time frame.  Result letters indicate time frames within each station that were were not significantly different based on Tukey multiple comparison analyses ($\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.\label{tab:chltab}} 
+\caption{Summaries by site and event of monthly chlorophyll data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for chlorophyll by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on Tukey multiple comparison analyses ($\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.\label{tab:chltab}} 
 \begin{center}
 \begin{tabular}{llrrrrr}
 \hline\hline
