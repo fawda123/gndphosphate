@@ -69,6 +69,14 @@
 \usepackage{outlines}
 \usepackage{pdflscape}
 
+%for supplemental figures/tables
+\newcommand{\beginsupplement}{%
+        \setcounter{table}{0}
+        \renewcommand{\thetable}{S\arabic{table}}%
+        \setcounter{figure}{0}
+        \renewcommand{\thefigure}{S\arabic{figure}}%
+     }
+
 % knitr options
 
 
@@ -120,6 +128,18 @@
 
 \begin{figure}[!ht]
 
+{\centering \includegraphics[width=\maxwidth]{figs/orthtsfig-1} 
+
+}
+
+\caption[Monthly phosphate time series at Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC) sites at Grand Bay]{Monthly phosphate time series at Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC) sites at Grand Bay. Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.}\label{fig:orthtsfig}
+\end{figure}
+
+
+\clearpage
+
+\begin{figure}[!ht]
+
 {\centering \includegraphics[width=\maxwidth]{figs/pcafig-1} 
 
 }
@@ -129,22 +149,6 @@
 
 
 \clearpage
-
-% appendix boxplots
-
-\begin{figure}[!ht]
-
-{\centering \includegraphics[width=\maxwidth]{figs/boxplt_all-1} 
-
-}
-
-\caption{Boxplot summaries by event of nutrient data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) sites at Grand Bay.  Boxes represent the interquartile range (IQR, 25\textsuperscript{th} to 75\textsuperscript{th} percentile) with the median as the middle horizonal line.  Boxes are colored by relative median nutrients between sites.  Outliers are present beyond whiskers (1.5$\cdot$IQR). See \cref{tab:ammontab,tab:tntab,tab:chltab} for numerical summaries.  E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.}\label{fig:boxplt_all}
-\end{figure}
-
-
-\clearpage
-
-% tables
 
 %latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$StationCode), n.rgroup = rep(5,         3), rowname = rows, colheads = c("Result", "Mean", "St. Dev.",         "n", "Min", "Max"), label = "tab:orthtab")%
 \begin{table}[!tbp]
@@ -181,7 +185,21 @@
 
 \clearpage
 
-% appendix tables
+% supplements
+\beginsupplement
+
+\begin{figure}[!ht]
+
+{\centering \includegraphics[width=\maxwidth]{figs/boxplt_all-1} 
+
+}
+
+\caption{Boxplot summaries by event of nutrient data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) sites at Grand Bay.  Boxes represent the interquartile range (IQR, 25\textsuperscript{th} to 75\textsuperscript{th} percentile) with the median as the middle horizonal line.  Boxes are colored by relative median nutrients between sites.  Outliers are present beyond whiskers (1.5$\cdot$IQR). See \cref{tab:ammontab,tab:tntab,tab:chltab} for numerical summaries.  E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.}\label{fig:boxplt_all}
+\end{figure}
+
+
+\clearpage
+
 %latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$StationCode), n.rgroup = rep(5,         3), rowname = rows, colheads = c("Result", "Mean", "St. Dev.",         "n", "Min", "Max"), label = "tab:ammontab")%
 \begin{table}[!tbp]
 \caption{Summaries by site and event of monthly ammonium data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for ammonium by station and time frame.  Result letters indicate time frames within each station that were were not significantly different based on Tukey multiple comparison analyses ($\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.\label{tab:ammontab}} 

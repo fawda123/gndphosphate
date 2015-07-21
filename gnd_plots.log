@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.8.29)  17 JUL 2015 10:33
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.8.29)  21 JUL 2015 09:54
 entering extended mode
 **gnd_plots.tex
 (M:\docs\gndphosphate\gnd_plots.tex
@@ -553,27 +553,27 @@ Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
 tim
 )
 (M:\docs\gndphosphate\gnd_plots.aux)
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 78.
-LaTeX Font Info:    ... okay on input line 78.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 78.
-LaTeX Font Info:    ... okay on input line 78.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 78.
-LaTeX Font Info:    ... okay on input line 78.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 78.
-LaTeX Font Info:    ... okay on input line 78.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 78.
-LaTeX Font Info:    ... okay on input line 78.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 78.
-LaTeX Font Info:    ... okay on input line 78.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 78.
-LaTeX Font Info:    ... okay on input line 78.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 78.
-LaTeX Font Info:    Try loading font information for TS1+cmr on input line 78.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 86.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 86.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\base\ts1cmr.fd"
 File: ts1cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 78.
+LaTeX Font Info:    ... okay on input line 86.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -610,7 +610,7 @@ LaTeX Font Info:    ... okay on input line 78.
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 \AtBeginShipoutBox=\box31
-Package hyperref Info: Link coloring ON on input line 78.
+Package hyperref Info: Link coloring ON on input line 86.
 ("C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\nameref.sty"
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
 
@@ -619,9 +619,9 @@ Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
 \c@section@level=\count151
 )
-LaTeX Info: Redefining \ref on input line 78.
-LaTeX Info: Redefining \pageref on input line 78.
-LaTeX Info: Redefining \nameref on input line 78.
+LaTeX Info: Redefining \ref on input line 86.
+LaTeX Info: Redefining \pageref on input line 86.
+LaTeX Info: Redefining \nameref on input line 86.
 
 (M:\docs\gndphosphate\gnd_plots.out) (M:\docs\gndphosphate\gnd_plots.out)
 \@outlinefile=\write5
@@ -632,7 +632,7 @@ Package caption Info: End \AtBeginDocument code.
 <figs/tsplot-1.pdf, id=3, 650.43pt x 379.4175pt>
 File: figs/tsplot-1.pdf Graphic file (type pdf)
  <use figs/tsplot-1.pdf>
-Package pdftex.def Info: figs/tsplot-1.pdf used on input line 86.
+Package pdftex.def Info: figs/tsplot-1.pdf used on input line 94.
 (pdftex.def)             Requested size: 650.47803pt x 361.3593pt.
 
 [1
@@ -650,7 +650,7 @@ Overfull \vbox (2.10426pt too high) has occurred while \output is active []
 <figs/tsplotexp-1.pdf, id=25, 650.43pt x 433.62pt>
 File: figs/tsplotexp-1.pdf Graphic file (type pdf)
  <use figs/tsplotexp-1.pdf>
-Package pdftex.def Info: figs/tsplotexp-1.pdf used on input line 99.
+Package pdftex.def Info: figs/tsplotexp-1.pdf used on input line 107.
 (pdftex.def)             Requested size: 469.75502pt x 313.17879pt.
 
 [3
@@ -660,64 +660,74 @@ Package pdftex.def Info: figs/tsplotexp-1.pdf used on input line 99.
 <figs/orthfig-1.pdf, id=39, 614.295pt x 216.81pt>
 File: figs/orthfig-1.pdf Graphic file (type pdf)
  <use figs/orthfig-1.pdf>
-Package pdftex.def Info: figs/orthfig-1.pdf used on input line 111.
+Package pdftex.def Info: figs/orthfig-1.pdf used on input line 119.
 (pdftex.def)             Requested size: 469.75502pt x 165.79625pt.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 115.
+(Font)              <12> on input line 123.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 115.
+(Font)              <8> on input line 123.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 115.
+(Font)              <6> on input line 123.
 
 [4
 
  <M:/docs/gndphosphate/figs/orthfig-1.pdf>]
-<figs/pcafig-1.pdf, id=56, 578.16pt x 505.89pt>
-File: figs/pcafig-1.pdf Graphic file (type pdf)
- <use figs/pcafig-1.pdf>
-Package pdftex.def Info: figs/pcafig-1.pdf used on input line 123.
-(pdftex.def)             Requested size: 469.75502pt x 411.0346pt.
+<figs/orthtsfig-1.pdf, id=56, 542.025pt x 361.35pt>
+File: figs/orthtsfig-1.pdf Graphic file (type pdf)
+ <use figs/orthtsfig-1.pdf>
+Package pdftex.def Info: figs/orthtsfig-1.pdf used on input line 131.
+(pdftex.def)             Requested size: 469.75502pt x 313.181pt.
 
 [5
 
- <M:/docs/gndphosphate/figs/pcafig-1.pdf>]
-<figs/boxplt_all-1.pdf, id=68, 578.16pt x 433.62pt>
+ <M:/docs/gndphosphate/figs/orthtsfig-1.pdf>]
+<figs/pcafig-1.pdf, id=71, 578.16pt x 505.89pt>
+File: figs/pcafig-1.pdf Graphic file (type pdf)
+ <use figs/pcafig-1.pdf>
+Package pdftex.def Info: figs/pcafig-1.pdf used on input line 143.
+(pdftex.def)             Requested size: 469.75502pt x 411.0346pt.
+
+[6
+
+ <M:/docs/gndphosphate/figs/pcafig-1.pdf>] [7]
+<figs/boxplt_all-1.pdf, id=90, 578.16pt x 433.62pt>
 File: figs/boxplt_all-1.pdf Graphic file (type pdf)
 
 <use figs/boxplt_all-1.pdf>
-Package pdftex.def Info: figs/boxplt_all-1.pdf used on input line 137.
+Package pdftex.def Info: figs/boxplt_all-1.pdf used on input line 193.
 (pdftex.def)             Requested size: 469.75502pt x 352.31538pt.
- [6
+ [8
+
 
  <M:/docs/gndphosphate/figs/boxplt_all-1.pdf>]
-[7] [8] [9]
-Package atenddvi Info: Last page = 10.
- [10]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 290.
-Package atveryend Info: Executing hook `AfterLastShipout' on input line 290.
+[9] [10]
+Package atenddvi Info: Last page = 11.
+ [11]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 308.
+Package atveryend Info: Executing hook `AfterLastShipout' on input line 308.
  (M:\docs\gndphosphate\gnd_plots.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 290.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 290.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 308.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 308.
 Package rerunfilecheck Info: File `gnd_plots.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 290.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 308.
  ) 
 Here is how much of TeX's memory you used:
- 10737 strings out of 493921
- 174978 string characters out of 3147282
- 306489 words of memory out of 3000000
- 13860 multiletter control sequences out of 15000+200000
+ 10749 strings out of 493921
+ 175201 string characters out of 3147282
+ 306547 words of memory out of 3000000
+ 13869 multiletter control sequences out of 15000+200000
  6683 words of font info for 24 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 44i,9n,47p,743b,409s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 44i,9n,47p,745b,409s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Pr
 ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Program Fi
 les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTe
 X 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9/font
 s/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on gnd_plots.pdf (10 pages, 311784 bytes).
+Output written on gnd_plots.pdf (11 pages, 334959 bytes).
 PDF statistics:
- 129 PDF objects out of 1000 (max. 8388607)
- 20 named destinations out of 1000 (max. 500000)
- 26 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 144 PDF objects out of 1000 (max. 8388607)
+ 22 named destinations out of 1000 (max. 500000)
+ 31 words of extra memory for PDF output out of 10000 (max. 10000000)
 
