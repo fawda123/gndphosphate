@@ -71,11 +71,23 @@ dat_in <- gndwq
 wq_dat <- lapply(dat_in, 
   function(x) {
     
-    x <- qaqc(x, qaqc_keep = c(0, 4, 5)) %>% 
-      subset(subset = '2015-01-01 00:00', operator = '<') %>% 
+    out <- qaqc(x, qaqc_keep = c(0, 4, 5))  
+    
+    # add in all ph for period in second ts plot if station is bl
+    if(attr(x, 'station') == 'gndblwq'){
+      
+      keepph <- subset(x, select = 'ph') 
+      subs <- c('2012-08-20 0:0', '2012-10-01 0:0')
+      subs <- as.POSIXct(subs, format = '%Y-%m-%d', tz = 'America/Regina')
+      subs <- out$datetimestamp >= subs[1] & out$datetimestamp <= subs[2]
+      out[subs, 'ph'] <- keepph[subs, 'ph']
+      
+    }
+      
+    out <- subset(out, subset = '2015-01-01 00:00', operator = '<') %>% 
       select(datetimestamp, sal, ph, depth) 
     
-    return(x)
+    return(out)
     
   })
 
@@ -92,7 +104,6 @@ wq_dat$TimeFrame <- cut(as.numeric(wq_dat$datetimestamp), breaks = brks, labels 
 
 save(wq_dat, file = 'wq_dat.RData')
 
-# setup timeframes
 ######
 # met proc
 
@@ -120,7 +131,7 @@ save(met_dat, file = 'met_dat.RData')
 
 ##
 # some minor processing of supplementary precip data from KPQL
-# fill hole in 2005-2006 from Katrina
+# fill hole in 2005-2006 from Katrina for first time series plot
 # data from wunderground
 met_supp <- read.table('ignore/KPQL_wxsupp.txt', header = T, sep = ',')
 met_supp <- select(met_supp, CDT, PrecipitationIn) %>% 
@@ -142,4 +153,51 @@ met_supp <- met_supp[, c(1, 3, 2)]
 
 save(met_supp, file = 'met_supp.RData')
 
+##
+# some minor processing of supplementary precip data from KPQL
+# fill hole in precip for first event for second time series plot
+# data from wunderground
+met_supp_e1 <- read.table('ignore/KPQL_event1.txt', header = T, sep = ',')
+met_supp_e1 <- select(met_supp_e1, CDT, PrecipitationIn) %>% 
+  mutate(
+    CDT = as.POSIXct(CDT, format = '%Y-%m-%d', tz = 'America/Regina'), 
+    PrecipitationIn = PrecipitationIn * 2.54 # in to cm
+  ) %>% 
+  rename(
+    datetimestamp = CDT,
+    totprcp = PrecipitationIn
+  )
+brks <- c('07-01-2006 0:0', '03-01-2008 0:0', '09-01-2012 0:0', '02-01-2014 0:0') %>% 
+  as.POSIXct(format = '%m-%d-%Y %H:%M', tz = 'America/Regina') %>% 
+  c(-Inf, ., Inf)
+labs <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
+met_supp_e1$TimeFrame <- cut(as.numeric(met_supp_e1$datetimestamp), breaks = brks, labels = labs, 
+  right = FALSE) # open on right
+met_supp_e1 <- met_supp_e1[, c(1, 3, 2)]
+
+save(met_supp_e1, file = 'met_supp_e1.RData')
+
+##
+# some minor processing of supplementary precip data from KPQL
+# fill hole in precip for second event for second time series plot
+# data from wunderground
+met_supp_e2 <- read.table('ignore/KPQL_event2.txt', header = T, sep = ',')
+met_supp_e2 <- select(met_supp_e2, CDT, PrecipitationIn) %>% 
+  mutate(
+    CDT = as.POSIXct(CDT, format = '%Y-%m-%d', tz = 'America/Regina'), 
+    PrecipitationIn = PrecipitationIn * 2.54 # in to cm
+  ) %>% 
+  rename(
+    datetimestamp = CDT,
+    totprcp = PrecipitationIn
+  )
+brks <- c('07-01-2006 0:0', '03-01-2008 0:0', '09-01-2012 0:0', '02-01-2014 0:0') %>% 
+  as.POSIXct(format = '%m-%d-%Y %H:%M', tz = 'America/Regina') %>% 
+  c(-Inf, ., Inf)
+labs <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
+met_supp_e2$TimeFrame <- cut(as.numeric(met_supp_e2$datetimestamp), breaks = brks, labels = labs, 
+  right = FALSE) # open on right
+met_supp_e2 <- met_supp_e2[, c(1, 3, 2)]
+
+save(met_supp_e2, file = 'met_supp_e2.RData')
 
