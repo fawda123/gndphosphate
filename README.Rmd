@@ -1,7 +1,6 @@
 To do:
 
-* b/w and color for all
-* ph regression v salinity
+* detection limits
 
 Data processed with alldat_proc.R include:
 

@@ -50,6 +50,7 @@ library(reshape2)
 library(Hmisc)
 library(gridExtra)
 library(nlme)
+library(vegan)
 
 # load data
 load('wq_dat.RData')
@@ -272,12 +273,18 @@ toplo <- filter(nut_dat, StationCode != 'BN') %>%
   spread(nutrient, value) %>% 
   rename(PO4 = PO4F, NH4 = NH4F, NO23 = NO23F, Chl = CHLA_N)
 
-pcres <- prcomp(toplo[, 3:6], scale = TRUE)
-toplo <- data.frame(toplo, pcres$x)
+nmsres <- metaMDS(toplo[, 3:6], distance = 'euclidean', trymax = 100)
+toplo <- data.frame(toplo, nmsres$points)
+  
+# pcres <- prcomp(toplo[, 3:6], scale = TRUE)
+# toplo <- data.frame(toplo, pcres$x)
 
-p1 <- ggord(pcres, toplo$TimeFrame, vec_ext = 3, ellipse_pro = 0.66) +
-  geom_text(data = toplo, aes(x = PC1, y = 0.13 + PC2, label = StationCode), colour = 'grey40', 
+p1 <- ggord(nmsres, toplo$TimeFrame, ellipse_pro = 0.66) +
+  geom_text(data = toplo, aes(x = MDS1, y = 0.02 + MDS2, label = StationCode), colour = 'grey40', 
     size = 4)
+# p1 <- ggord(pcres, toplo$TimeFrame, vec_ext = 3, ellipse_pro = 0.66) +
+#   geom_text(data = toplo, aes(x = PC1, y = 0.13 + PC2, label = StationCode), colour = 'grey40', 
+#     size = 4)
 p1
 
 @
