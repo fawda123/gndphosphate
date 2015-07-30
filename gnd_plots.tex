@@ -141,56 +141,53 @@
 
 Wisconsin double standardization
 Run 0 stress 0.1036975 
-Run 1 stress 0.1138584 
-Run 2 stress 0.1138585 
-Run 3 stress 0.1192835 
-Run 4 stress 0.1192825 
-Run 5 stress 0.1397869 
-Run 6 stress 0.1138584 
-Run 7 stress 0.1216212 
-Run 8 stress 0.1036976 
-... procrustes: rmse 6.92744e-05  max resid 0.0001629315 
+Run 1 stress 0.1216213 
+Run 2 stress 0.1216212 
+Run 3 stress 0.1138584 
+Run 4 stress 0.1036975 
+... New best solution
+... procrustes: rmse 1.19793e-05  max resid 2.55159e-05 
 *** Solution reached
 \begin{figure}[!ht]
 
-{\centering \includegraphics[width=\maxwidth]{figs/pcafig-1} 
+{\centering \includegraphics[width=\maxwidth]{figs/ordfig-1} 
 
 }
 
-\caption[Ordination biplot of nutrient values by site and time frames]{Ordination biplot of nutrient values by site and time frames. Monthly data were averaged by site and time frame prior to ordination.  Site are Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC). E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.}\label{fig:pcafig}
+\caption[Ordination biplot of nutrient values by site and time frames]{Ordination biplot of nutrient values by site and time frames. Monthly data were averaged by site and time frame prior to ordination.  Site are Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC). E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.}\label{fig:ordfig}
 \end{figure}
 
 
 \clearpage
 
-%latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$StationCode), n.rgroup = rep(5,         3), rowname = rows, colheads = c("Result", "Mean", "St. Dev.",         "n", "Min", "Max"), label = "tab:orthtab")%
+%latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$StationCode), n.rgroup = rep(5,         3), rowname = rows, colheads = c("Result", "n", "Median",         "Min", "Max"), label = "tab:orthtab")%
 \begin{table}[!tbp]
-\caption{Summaries by site and event of monthly orthophosphate data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for orthophosphate by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on Tukey multiple comparison analyses ($\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.\label{tab:orthtab}} 
+\caption{Summaries by site and event of monthly orthophosphate data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of sample size, median, and ranges for orthophosphate by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests, with the alpha-level of each test corrected for the total number of comparisons at each site. Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.\label{tab:orthtab}} 
 \begin{center}
-\begin{tabular}{llrrrrr}
+\begin{tabular}{llrrrr}
 \hline\hline
-\multicolumn{1}{l}{Site}&\multicolumn{1}{c}{Result}&\multicolumn{1}{c}{Mean}&\multicolumn{1}{c}{St. Dev.}&\multicolumn{1}{c}{n}&\multicolumn{1}{c}{Min}&\multicolumn{1}{c}{Max}\tabularnewline
+\multicolumn{1}{l}{Site}&\multicolumn{1}{c}{Result}&\multicolumn{1}{c}{n}&\multicolumn{1}{c}{Median}&\multicolumn{1}{c}{Min}&\multicolumn{1}{c}{Max}\tabularnewline
 \hline
-{\bfseries BL}&&&&&&\tabularnewline
-~~E1A&a&$0.07$&$7.80$&$13$&$0.01$&$4.29$\tabularnewline
-~~E1C&bc&$0.01$&$1.89$&$19$&$0.01$&$0.09$\tabularnewline
-~~NI&c&$0.01$&$1.15$&$52$&$0.01$&$0.03$\tabularnewline
-~~E2A&a&$0.07$&$2.64$&$16$&$0.03$&$0.97$\tabularnewline
-~~E2C&b&$0.02$&$1.87$&$11$&$0.01$&$0.04$\tabularnewline
+{\bfseries BL}&&&&&\tabularnewline
+~~E1A&a&$13$&$0.02$&$0.01$&$4.29$\tabularnewline
+~~E1C&bc&$19$&$0.01$&$0.01$&$0.09$\tabularnewline
+~~NI&b&$52$&$0.01$&$0.01$&$0.03$\tabularnewline
+~~E2A&a&$16$&$0.06$&$0.03$&$0.97$\tabularnewline
+~~E2C&ac&$11$&$0.03$&$0.01$&$0.04$\tabularnewline
 \hline
-{\bfseries PC}&&&&&&\tabularnewline
-~~E1A&bc&$0.01$&$1.31$&$ 9$&$0.01$&$0.02$\tabularnewline
-~~E1C&c&$0.01$&$1.00$&$18$&$0.01$&$0.01$\tabularnewline
-~~NI&c&$0.01$&$1.10$&$52$&$0.01$&$0.02$\tabularnewline
-~~E2A&ab&$0.02$&$2.24$&$15$&$0.01$&$0.16$\tabularnewline
-~~E2C&a&$0.02$&$1.91$&$11$&$0.01$&$0.06$\tabularnewline
+{\bfseries PC}&&&&&\tabularnewline
+~~E1A&a&$ 9$&$0.01$&$0.01$&$0.02$\tabularnewline
+~~E1C&b&$18$&$0.01$&$0.01$&$0.01$\tabularnewline
+~~NI&b&$52$&$0.01$&$0.01$&$0.02$\tabularnewline
+~~E2A&a&$15$&$0.01$&$0.01$&$0.16$\tabularnewline
+~~E2C&a&$11$&$0.02$&$0.01$&$0.06$\tabularnewline
 \hline
-{\bfseries BC}&&&&&&\tabularnewline
-~~E1A&a&$0.01$&$2.82$&$13$&$0.01$&$0.43$\tabularnewline
-~~E1C&b&$0.01$&$1.00$&$19$&$0.01$&$0.01$\tabularnewline
-~~NI&b&$0.01$&$1.04$&$52$&$0.01$&$0.01$\tabularnewline
-~~E2A&ab&$0.01$&$1.17$&$16$&$0.01$&$0.02$\tabularnewline
-~~E2C&ab&$0.01$&$1.06$&$11$&$0.01$&$0.01$\tabularnewline
+{\bfseries BC}&&&&&\tabularnewline
+~~E1A&a&$13$&$0.01$&$0.01$&$0.43$\tabularnewline
+~~E1C&ab&$19$&$0.01$&$0.01$&$0.01$\tabularnewline
+~~NI&b&$52$&$0.01$&$0.01$&$0.01$\tabularnewline
+~~E2A&ab&$16$&$0.01$&$0.01$&$0.02$\tabularnewline
+~~E2C&ab&$11$&$0.01$&$0.01$&$0.01$\tabularnewline
 \hline
 \end{tabular}\end{center}
 
