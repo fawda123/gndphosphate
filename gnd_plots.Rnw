@@ -39,6 +39,7 @@ options(replace.assign=TRUE,width=90)
 <<echo = FALSE, message = FALSE>>=
 # libraries to use
 library(ggord)
+# devtools::load_all('M:/docs/ggord')
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -264,28 +265,24 @@ p1
 @
 \clearpage
 
-<<ordfig, fig.width = 8, fig.height = 7, echo = FALSE, fig.cap = 'Ordination biplot of nutrient values by site and time frames. Monthly data were averaged by site and time frame prior to ordination.  Site are Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC). E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
+<<ordfig, fig.width = 8, fig.height = 7, echo = FALSE, fig.cap = 'Ordination biplot of nutrient values (phosphorus, nitrogen, ammonium, and chlorophyll) by site and time frames. Monthly data were averaged by site and time frame prior to ordination.  Site are Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC). E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'>>=
 
 load(file = 'nut_dat.RData')
 
 toplo <- filter(nut_dat, StationCode != 'BN') %>% 
   group_by(StationCode, TimeFrame, nutrient) %>% 
   summarise(value = mean(value, na.rm = TRUE)) %>% 
-  spread(nutrient, value) %>% 
-  rename(PO4 = PO4F, NH4 = NH4F, NO23 = NO23F, Chl = CHLA_N)
+  spread(nutrient, value)
 
-nmsres <- metaMDS(toplo[, 3:6], distance = 'euclidean', trymax = 100)
+nmsres <- metaMDS(toplo[, 3:6], distance = 'euclidean', trymax = 100, trace = 0)
 toplo <- data.frame(toplo, nmsres$points)
-  
-# pcres <- prcomp(toplo[, 3:6], scale = TRUE)
-# toplo <- data.frame(toplo, pcres$x)
 
-p1 <- ggord(nmsres, toplo$TimeFrame, ellipse_pro = 0.66) +
+# make sure order is correct for optional vector label
+labs <- list(PO4F = 'P', NO23F = 'N', CHLA_N = 'Chl', NH4F = 'Amm')
+
+p1 <- ggord(nmsres, toplo$TimeFrame, ellipse_pro = 0.66, vec_lab = labs, ext = 1.1, txt = 6) +
   geom_text(data = toplo, aes(x = MDS1, y = 0.02 + MDS2, label = StationCode), colour = 'grey40', 
     size = 4)
-# p1 <- ggord(pcres, toplo$TimeFrame, vec_ext = 3, ellipse_pro = 0.66) +
-#   geom_text(data = toplo, aes(x = PC1, y = 0.13 + PC2, label = StationCode), colour = 'grey40', 
-#     size = 4)
 p1
 
 @
@@ -314,9 +311,12 @@ res <- lapply(sep_data, function(x){
     pval[col] <- res$p.value
   }
   
+  # adjust p-values using holm sequential bonferroni 
+  pval <- p.adjust(pval, method = 'holm')
+  
   # pval as t/f using bonferroni correction
   vecs <- rep(FALSE, ncol(grps))
-  vecs[pval < (0.05/ncol(grps))] <- TRUE
+  vecs[pval < 0.05] <- TRUE
   names(vecs) <- paste(grps[1, ], grps[2, ], sep = '-')
   
   # group membership based on multiple comparisons
@@ -351,7 +351,7 @@ res <- do.call('rbind', res) %>%
 tab <- res[, -c(1, 2)]
 tab[, -1] <- round(tab[, -1], 2)
 rows <- res[, 2]
-cap <- 'Summaries by site and event of monthly orthophosphate data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of sample size, median, and ranges for orthophosphate by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests, with the alpha-level of each test corrected for the total number of comparisons at each site. Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
+cap <- 'Summaries by site and event of monthly orthophosphate data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of sample size, median, and ranges for orthophosphate by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
 
 latex(
   tab,
@@ -362,7 +362,7 @@ latex(
   rgroup = unique(res$StationCode),
   n.rgroup = rep(5, 3),
   rowname = rows,
-  colheads=c('Result', 'n', 'Median', 'Min', 'Max'),
+  colheads = c('Result', 'n', 'Median', 'Min', 'Max'),
   label = 'tab:orthtab'
   )
 
@@ -437,30 +437,50 @@ timeframes <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
 # split data by unique station/nutrient variable
 sep_data <- split(toplo, toplo$stat_nut)
 
-# run a Tukey multiple comparison for each station, nutrient variable combo
 res <- lapply(sep_data, function(x){
 
-  mod <- aov(logvalue ~ TimeFrame, data = x)
-  tuk_mod <- HSD.test(mod, 'TimeFrame', group = T)
-  grps <- tuk_mod$groups
-  grps$means <- 10^grps$means
-  grps$trt <- gsub('[[:space:]].*$', '', grps$trt)
-  aves <- tuk_mod$means
-  aves[, !names(aves) %in% 'r'] <- 10^aves[, !names(aves) %in% 'r']
-  aves$trt <- row.names(aves)
-  aves <- merge(aves, grps, by = 'trt')
-  aves
+  # pairwise comparisons with mann-whitney (wilcox)
+  grps <- unique(x$TimeFrame)
+  grps <- combn(grps, 2)
+  pval <- rep(NA, ncol(grps))
+  for(col in 1:ncol(grps)){
+    grp <- x$TimeFrame %in% grps[, col, drop = TRUE]
+    res <- wilcox.test(logvalue ~ TimeFrame, data = x[grp, ], exact = FALSE, 
+      alternative = 'two.sided')
+    pval[col] <- res$p.value
+  }
+  
+  # adjust p-values using holm sequential bonferroni 
+  pval <- p.adjust(pval, method = 'holm')
+  
+  # pval as t/f using bonferroni correction
+  vecs <- rep(FALSE, ncol(grps))
+  vecs[pval < 0.05] <- TRUE
+  names(vecs) <- paste(grps[1, ], grps[2, ], sep = '-')
+  
+  # group membership based on multiple comparisons
+  lets <- multcompLetters(vecs)$Letters
+  
+  # standard summary stats
+  sums <- group_by(x, TimeFrame) %>% 
+    summarise(
+      length = length(na.omit(value)),
+      medval = median(value, na.rm = TRUE),
+      minval = min(value, na.rm = TRUE),
+      maxval = max(value, na.rm = TRUE)
+      )
+  
+  data.frame(lets, sums[, -1])
   
   })
 
 # combine results for plotting
 res <- do.call('rbind', res) %>% 
   mutate(
-    stat_nut = gsub('\\.[0-9]', '', row.names(.)),
-    TimeFrame = trt
+    stat_nut = gsub('NH4F\\.', '', row.names(.))
   ) %>% 
-  separate(stat_nut, c('StationCode', 'nutrient'), sep = ' ') %>% 
-  select(StationCode, TimeFrame, M, means, std, r, Min, Max) %>% 
+  separate(stat_nut, c('StationCode', 'TimeFrame'), sep = ' ') %>% 
+  select(StationCode, TimeFrame, lets, length, medval, minval, maxval) %>% 
   mutate(
     TimeFrame = factor(TimeFrame, levels = c('E1A', 'E1C', 'NI', 'E2A', 'E2C')),
     StationCode = factor(StationCode, levels = c('BL', 'PC', 'BC'))
@@ -470,7 +490,7 @@ res <- do.call('rbind', res) %>%
 tab <- res[, -c(1, 2)]
 tab[, -1] <- round(tab[, -1], 2)
 rows <- res[, 2]
-cap <- 'Summaries by site and event of monthly ammonium data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for ammonium by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on Tukey multiple comparison analyses ($\\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
+cap <- 'Summaries by site and event of monthly ammonium data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of sample size, median, and ranges for ammonium by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
 
 latex(
   tab,
@@ -481,7 +501,7 @@ latex(
   rgroup = unique(res$StationCode),
   n.rgroup = rep(5, 3),
   rowname = rows,
-  colheads=c('Result', 'Mean', 'St. Dev.', 'n', 'Min', 'Max'),
+  colheads = c('Result', 'n', 'Median', 'Min', 'Max'),
   label = 'tab:ammontab'
   )
   
@@ -498,30 +518,50 @@ timeframes <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
 # split data by unique station/nutrient variable
 sep_data <- split(toplo, toplo$stat_nut)
 
-# run a Tukey multiple comparison for each station, nutrient variable combo
 res <- lapply(sep_data, function(x){
 
-  mod <- aov(logvalue ~ TimeFrame, data = x)
-  tuk_mod <- HSD.test(mod, 'TimeFrame', group = T)
-  grps <- tuk_mod$groups
-  grps$means <- 10^grps$means
-  grps$trt <- gsub('[[:space:]].*$', '', grps$trt)
-  aves <- tuk_mod$means
-  aves[, !names(aves) %in% 'r'] <- 10^aves[, !names(aves) %in% 'r']
-  aves$trt <- row.names(aves)
-  aves <- merge(aves, grps, by = 'trt')
-  aves
+  # pairwise comparisons with mann-whitney (wilcox)
+  grps <- unique(x$TimeFrame)
+  grps <- combn(grps, 2)
+  pval <- rep(NA, ncol(grps))
+  for(col in 1:ncol(grps)){
+    grp <- x$TimeFrame %in% grps[, col, drop = TRUE]
+    res <- wilcox.test(logvalue ~ TimeFrame, data = x[grp, ], exact = FALSE, 
+      alternative = 'two.sided')
+    pval[col] <- res$p.value
+  }
+  
+  # adjust p-values using holm sequential bonferroni 
+  pval <- p.adjust(pval, method = 'holm')
+  
+  # pval as t/f using bonferroni correction
+  vecs <- rep(FALSE, ncol(grps))
+  vecs[pval < 0.05] <- TRUE
+  names(vecs) <- paste(grps[1, ], grps[2, ], sep = '-')
+  
+  # group membership based on multiple comparisons
+  lets <- multcompLetters(vecs)$Letters
+  
+  # standard summary stats
+  sums <- group_by(x, TimeFrame) %>% 
+    summarise(
+      length = length(na.omit(value)),
+      medval = median(value, na.rm = TRUE),
+      minval = min(value, na.rm = TRUE),
+      maxval = max(value, na.rm = TRUE)
+      )
+  
+  data.frame(lets, sums[, -1])
   
   })
 
 # combine results for plotting
 res <- do.call('rbind', res) %>% 
   mutate(
-    stat_nut = gsub('\\.[0-9]', '', row.names(.)),
-    TimeFrame = trt
+    stat_nut = gsub('NO23F\\.', '', row.names(.))
   ) %>% 
-  separate(stat_nut, c('StationCode', 'nutrient'), sep = ' ') %>% 
-  select(StationCode, TimeFrame, M, means, std, r, Min, Max) %>% 
+  separate(stat_nut, c('StationCode', 'TimeFrame'), sep = ' ') %>% 
+  select(StationCode, TimeFrame, lets, length, medval, minval, maxval) %>% 
   mutate(
     TimeFrame = factor(TimeFrame, levels = c('E1A', 'E1C', 'NI', 'E2A', 'E2C')),
     StationCode = factor(StationCode, levels = c('BL', 'PC', 'BC'))
@@ -531,7 +571,7 @@ res <- do.call('rbind', res) %>%
 tab <- res[, -c(1, 2)]
 tab[, -1] <- round(tab[, -1], 2)
 rows <- res[, 2]
-cap <- 'Summaries by site and event of monthly total nitrogen (nitrate, nitrite) data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for total nitrogen by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on Tukey multiple comparison analyses ($\\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
+cap <- 'Summaries by site and event of monthly nitrogen (nitrate, nitrite) data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of sample size, median, and ranges for nitrogen by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors.  Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
 
 latex(
   tab,
@@ -542,7 +582,7 @@ latex(
   rgroup = unique(res$StationCode),
   n.rgroup = rep(5, 3),
   rowname = rows,
-  colheads=c('Result', 'Mean', 'St. Dev.', 'n', 'Min', 'Max'),
+  colheads = c('Result', 'n', 'Median', 'Min', 'Max'),
   label = 'tab:tntab'
   )
   
@@ -559,30 +599,50 @@ timeframes <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
 # split data by unique station/nutrient variable
 sep_data <- split(toplo, toplo$stat_nut)
 
-# run a Tukey multiple comparison for each station, nutrient variable combo
 res <- lapply(sep_data, function(x){
 
-  mod <- aov(logvalue ~ TimeFrame, data = x)
-  tuk_mod <- HSD.test(mod, 'TimeFrame', group = T)
-  grps <- tuk_mod$groups
-  grps$means <- 10^grps$means
-  grps$trt <- gsub('[[:space:]].*$', '', grps$trt)
-  aves <- tuk_mod$means
-  aves[, !names(aves) %in% 'r'] <- 10^aves[, !names(aves) %in% 'r']
-  aves$trt <- row.names(aves)
-  aves <- merge(aves, grps, by = 'trt')
-  aves
+  # pairwise comparisons with mann-whitney (wilcox)
+  grps <- unique(x$TimeFrame)
+  grps <- combn(grps, 2)
+  pval <- rep(NA, ncol(grps))
+  for(col in 1:ncol(grps)){
+    grp <- x$TimeFrame %in% grps[, col, drop = TRUE]
+    res <- wilcox.test(logvalue ~ TimeFrame, data = x[grp, ], exact = FALSE, 
+      alternative = 'two.sided')
+    pval[col] <- res$p.value
+  }
+  
+  # adjust p-values using holm sequential bonferroni 
+  pval <- p.adjust(pval, method = 'holm')
+  
+  # pval as t/f using bonferroni correction
+  vecs <- rep(FALSE, ncol(grps))
+  vecs[pval < 0.05] <- TRUE
+  names(vecs) <- paste(grps[1, ], grps[2, ], sep = '-')
+  
+  # group membership based on multiple comparisons
+  lets <- multcompLetters(vecs)$Letters
+  
+  # standard summary stats
+  sums <- group_by(x, TimeFrame) %>% 
+    summarise(
+      length = length(na.omit(value)),
+      medval = median(value, na.rm = TRUE),
+      minval = min(value, na.rm = TRUE),
+      maxval = max(value, na.rm = TRUE)
+      )
+  
+  data.frame(lets, sums[, -1])
   
   })
 
 # combine results for plotting
 res <- do.call('rbind', res) %>% 
   mutate(
-    stat_nut = gsub('\\.[0-9]', '', row.names(.)),
-    TimeFrame = trt
+    stat_nut = gsub('CHLA_N\\.', '', row.names(.))
   ) %>% 
-  separate(stat_nut, c('StationCode', 'nutrient'), sep = ' ') %>% 
-  select(StationCode, TimeFrame, M, means, std, r, Min, Max) %>% 
+  separate(stat_nut, c('StationCode', 'TimeFrame'), sep = ' ') %>% 
+  select(StationCode, TimeFrame, lets, length, medval, minval, maxval) %>% 
   mutate(
     TimeFrame = factor(TimeFrame, levels = c('E1A', 'E1C', 'NI', 'E2A', 'E2C')),
     StationCode = factor(StationCode, levels = c('BL', 'PC', 'BC'))
@@ -592,7 +652,7 @@ res <- do.call('rbind', res) %>%
 tab <- res[, -c(1, 2)]
 tab[, -1] <- round(tab[, -1], 2)
 rows <- res[, 2]
-cap <- 'Summaries by site and event of monthly chlorophyll data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of mean, standard deviation, sample size, and range for chlorophyll by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on Tukey multiple comparison analyses ($\\alpha = 0.05$, corrected to reduce Type I error rates). Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
+cap <- 'Summaries by site and event of monthly chlorophyll data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of sample size, median, and ranges for chlorophyll by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors.  Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
 
 latex(
   tab,
@@ -603,7 +663,7 @@ latex(
   rgroup = unique(res$StationCode),
   n.rgroup = rep(5, 3),
   rowname = rows,
-  colheads=c('Result', 'Mean', 'St. Dev.', 'n', 'Min', 'Max'),
+  colheads = c('Result', 'n', 'Median', 'Min', 'Max'),
   label = 'tab:chltab'
   )
   
