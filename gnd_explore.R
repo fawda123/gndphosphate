@@ -152,3 +152,30 @@ ggplot(to_eval, aes(x = Date, y = logvalue, group = TimeFrame, colour = TimeFram
   geom_vline(xintercept = as.numeric(chngs)) + 
   theme_bw()
 dev.off()
+
+######
+# changepoint analysis for ph, first event
+library(changepoint)
+load(file = 'wq_dat.RData')
+
+# subset +- one month
+subdts <- c('2005-04-01 0:0', '2005-05-01 0:0')
+subdts <- as.POSIXct(subdts, format = '%Y-%m-%d %H:%M', tz = 'America/Regina')
+
+to_eval <- filter(wq_dat, StationCode == 'BL') %>% 
+  select(datetimestamp, ph) %>% 
+  filter(datetimestamp >= subdts[1] & datetimestamp <= subdts[2])
+
+# fill missing values
+interped <- approx(y = to_eval$ph, x = to_eval$datetimestamp, xout = to_eval$datetimestamp)
+to_eval$interp <- interped$y 
+res <- cpt.mean(to_eval$interp, Q = 200, method = 'BinSeg')
+plot(res)
+chngs <- to_eval$datetimestamp[cpts(res)]
+
+# pdf('gnd_chngpt.pdf', width = 8, height = 3, family = 'serif')
+ggplot(to_eval, aes(x = datetimestamp, y = ph)) + 
+  geom_line() +
+  geom_vline(xintercept = as.numeric(chngs), colour = 'darkgreen') + 
+  theme_bw()
+# dev.off()

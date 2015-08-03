@@ -202,17 +202,17 @@ grid.arrange(p1, p2, ncol = 2)
 @
 \clearpage
 
-<<orthtsfig, fig.width = 7.5, fig.height = 5, echo = FALSE, fig.cap = 'Monthly phosphate time series at Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC) sites at Grand Bay. Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.'>>=
+<<orthtsfig, fig.width = 7.5, fig.height = 6, echo = FALSE, fig.cap = 'Monthly phosphate time series at Bangs North (BN), Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC) sites at Grand Bay. Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.'>>=
 
 load(file = 'nut_dat.RData')
 
-toplo <- filter(nut_dat, StationCode != 'BN' & nutrient == 'PO4F')
+toplo <- filter(nut_dat, nutrient == 'PO4F')
 
 timeframes <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
 
 ylab <- expression(paste('Orthophosphate (mg ', L^-1, ')'))
 
-toplo$StationCode <- factor(toplo$StationCode, levels = c('BL', 'PC', 'BC'))
+toplo$StationCode <- factor(toplo$StationCode, levels = c('BN', 'BL', 'PC', 'BC'))
 
 # event dates
 events <- c('2005-04-01', '2012-08-01')
@@ -269,9 +269,9 @@ p1
 
 load(file = 'nut_dat.RData')
 
-toplo <- filter(nut_dat, StationCode != 'BN') %>% 
-  group_by(StationCode, TimeFrame, nutrient) %>% 
-  summarise(value = mean(value, na.rm = TRUE)) %>% 
+# toplo <- filter(nut_dat, StationCode != 'BN') %>% 
+toplo <-group_by(nut_dat, StationCode, TimeFrame, nutrient) %>% 
+  summarise(value = median(value, na.rm = TRUE)) %>% 
   spread(nutrient, value)
 
 nmsres <- metaMDS(toplo[, 3:6], distance = 'euclidean', trymax = 100, trace = 0)
@@ -280,7 +280,7 @@ toplo <- data.frame(toplo, nmsres$points)
 # make sure order is correct for optional vector label
 labs <- list(PO4F = 'P', NO23F = 'N', CHLA_N = 'Chl', NH4F = 'Amm')
 
-p1 <- ggord(nmsres, toplo$TimeFrame, ellipse_pro = 0.66, vec_lab = labs, ext = 1.1, txt = 6) +
+p1 <- ggord(nmsres, toplo$TimeFrame, ellipse_pro = 0.66, vec_lab = labs, ext = 1.2, txt = 6) +
   geom_text(data = toplo, aes(x = MDS1, y = 0.02 + MDS2, label = StationCode), colour = 'grey40', 
     size = 4)
 p1
@@ -288,7 +288,8 @@ p1
 @
 \clearpage
 
-<<orthtab, echo = FALSE>>=
+% within site eval
+<<orthtab1, echo = FALSE>>=
 load(file = 'nut_dat.RData')
 
 toplo <- filter(nut_dat, StationCode != 'BN' & nutrient == 'PO4F')
@@ -351,7 +352,7 @@ res <- do.call('rbind', res) %>%
 tab <- res[, -c(1, 2)]
 tab[, -1] <- round(tab[, -1], 2)
 rows <- res[, 2]
-cap <- 'Summaries by site and event of monthly orthophosphate data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of sample size, median, and ranges for orthophosphate by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
+cap <- 'Within site comparisons  of monthly orthophosphate data for each time frame at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for orthophosphate by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, and PC: Point aux Chenes.  Time frames are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, and E2C: event 2 chronic.'
 
 latex(
   tab,
@@ -363,7 +364,88 @@ latex(
   n.rgroup = rep(5, 3),
   rowname = rows,
   colheads = c('Result', 'n', 'Median', 'Min', 'Max'),
-  label = 'tab:orthtab'
+  label = 'tab:orthtab1'
+  )
+
+@
+\clearpage
+
+% between site eval
+<<orthtab2, echo = FALSE>>=
+load(file = 'nut_dat.RData')
+
+toplo <- filter(nut_dat, StationCode != 'BN' & nutrient == 'PO4F') %>% 
+  select(-stat_nut)
+
+# split data by unique station/nutrient variable
+sep_data <- split(toplo, toplo$TimeFrame)
+
+res <- lapply(sep_data, function(x){
+
+  # pairwise comparisons with mann-whitney (wilcox)
+  grps <- unique(x$StationCode)
+  grps <- combn(grps, 2)
+  pval <- rep(NA, ncol(grps))
+  for(col in 1:ncol(grps)){
+    grp <- x$StationCode %in% grps[, col, drop = TRUE]
+    res <- wilcox.test(logvalue ~ StationCode, data = x[grp, ], exact = FALSE, 
+      alternative = 'two.sided')
+    pval[col] <- res$p.value
+  }
+  
+  # adjust p-values using holm sequential bonferroni 
+  pval <- p.adjust(pval, method = 'holm')
+  
+  # pval as t/f using bonferroni correction
+  vecs <- rep(FALSE, ncol(grps))
+  vecs[pval < 0.05] <- TRUE
+  names(vecs) <- paste(grps[1, ], grps[2, ], sep = '-')
+  
+  # group membership based on multiple comparisons
+  lets <- multcompLetters(vecs)$Letters
+  
+  # standard summary stats
+  sums <- group_by(x, StationCode) %>% 
+    summarise(
+      length = length(na.omit(value)),
+      medval = median(value, na.rm = TRUE),
+      minval = min(value, na.rm = TRUE),
+      maxval = max(value, na.rm = TRUE)
+      )
+  
+  data.frame(lets, sums[, -1])
+  
+  })
+
+# combine results for plotting
+res <- do.call('rbind', res) %>% 
+  mutate(
+    time_stat = row.names(.)
+  ) %>% 
+  separate(time_stat, c('TimeFrame', 'StationCode'), sep = '\\.') %>% 
+  select(TimeFrame, StationCode, lets, length, medval, minval, maxval) %>% 
+  mutate(
+    TimeFrame = factor(TimeFrame, levels = c('E1A', 'E1C', 'NI', 'E2A', 'E2C')),
+    StationCode = factor(StationCode, levels = c('BL', 'PC', 'BC'))
+    ) %>% 
+  arrange(TimeFrame, StationCode)
+
+tab <- res[, -c(1, 2)]
+tab[, -1] <- round(tab[, -1], 2)
+rows <- res[, 2]
+cap <- 'Within time frame comparisons of monthly orthophosphate data at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for orthophosphate by time frame and station.  Result letters indicate stations within each time frame that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, and PC: Point aux Chenes.  Time frames are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, and E2C: event 2 chronic.'
+
+latex(
+  tab,
+  file = '',
+  rowlabel = 'Site',
+  caption = cap,
+  caption.loc = 'top',
+  rgroup = unique(res$TimeFrame),
+  n.rgroup = rep(3, 5),
+  rowname = rows,
+  colheads = c('Result', 'n', 'Median', 'Min', 'Max'),
+  label = 'tab:orthtab2'
   )
 
 @
@@ -490,7 +572,7 @@ res <- do.call('rbind', res) %>%
 tab <- res[, -c(1, 2)]
 tab[, -1] <- round(tab[, -1], 2)
 rows <- res[, 2]
-cap <- 'Summaries by site and event of monthly ammonium data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of sample size, median, and ranges for ammonium by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
+cap <- 'Within site comparisons  of monthly ammonium data for each time frame at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for ammonium by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, and PC: Point aux Chenes.  Time frames are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, and E2C: event 2 chronic.'
 
 latex(
   tab,
@@ -571,7 +653,7 @@ res <- do.call('rbind', res) %>%
 tab <- res[, -c(1, 2)]
 tab[, -1] <- round(tab[, -1], 2)
 rows <- res[, 2]
-cap <- 'Summaries by site and event of monthly nitrogen (nitrate, nitrite) data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of sample size, median, and ranges for nitrogen by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors.  Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
+cap <- 'Within site comparisons  of monthly nitrogen (nitrate, nitrite) data for each time frame at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for nitrogen by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, and PC: Point aux Chenes.  Time frames are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, and E2C: event 2 chronic.'
 
 latex(
   tab,
@@ -652,7 +734,7 @@ res <- do.call('rbind', res) %>%
 tab <- res[, -c(1, 2)]
 tab[, -1] <- round(tab[, -1], 2)
 rows <- res[, 2]
-cap <- 'Summaries by site and event of monthly chlorophyll data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) in Grand Bay.  Values are within-group summaries of sample size, median, and ranges for chlorophyll by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors.  Timeframes are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.'
+cap <- 'Within site comparisons  of monthly chlorophyll data for each time frame at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for chlorophyll by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, and PC: Point aux Chenes.  Time frames are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, and E2C: event 2 chronic.'
 
 latex(
   tab,
