@@ -133,7 +133,7 @@
 
 }
 
-\caption{Boxplot summaries by event of monthly orthophosphate data at Bangs Lake (BL), and Point aux Chenes (PC), and Bayou Cumbest (BC) sites in Grand Bay.  Boxes represent the interquartile range (IQR, 25\textsuperscript{th} to 75\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\cdot$IQR). Boxes are shaded by medians between sites.  See \cref{tab:orthtab} for a numerical summary. E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.}\label{fig:orthfig}
+\caption{Boxplot summaries by event of monthly orthophosphate data at Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC) sites in Grand Bay.  Boxes represent the interquartile range (IQR, 25\textsuperscript{th} to 75\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\cdot$IQR). Boxes are shaded by medians between sites.  See \cref{tab:orthtab} for a numerical summary. E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.}\label{fig:orthfig}
 \end{figure}
 
 
@@ -145,16 +145,16 @@
 
 }
 
-\caption[Ordination biplot of nutrient values (phosphorus, nitrogen, ammonium, and chlorophyll) by site and time frames]{Ordination biplot of nutrient values (phosphorus, nitrogen, ammonium, and chlorophyll) by site and time frames. Monthly data were averaged by site and time frame prior to ordination.  Site are Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC). E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.}\label{fig:ordfig}
+\caption[Ordination biplot of nutrient values (phosphorus, nitrogen, ammonium, and chlorophyll) by site and time frames]{Ordination biplot of nutrient values (phosphorus, nitrogen, ammonium, and chlorophyll) by site and time frames. Monthly data were averaged by site and time frame prior to ordination.  Site are Bangs Lake (BL), Bangs North (BN), Point aux Chenes (PC), and Bayou Cumbest (BC). E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.}\label{fig:ordfig}
 \end{figure}
 
 
 \clearpage
 
 % within site eval
-%latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$StationCode), n.rgroup = rep(5,         3), rowname = rows, colheads = c("Result", "n", "Median",         "Min", "Max"), label = "tab:orthtab1")%
+%latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$StationCode), n.rgroup = rep(5,         4), rowname = rows, colheads = c("Result", "n", "Median",         "Min", "Max"), label = "tab:orthtab1")%
 \begin{table}[!tbp]
-\caption{Within site comparisons  of monthly orthophosphate data for each time frame at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for orthophosphate by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, and PC: Point aux Chenes.  Time frames are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, and E2C: event 2 chronic.\label{tab:orthtab1}} 
+\caption{Within site comparisons  of monthly orthophosphate data for each time frame at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for orthophosphate by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, BN: Bangs North, and PC: Point aux Chenes.  Time frames are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, and E2C: event 2 chronic.\label{tab:orthtab1}} 
 \begin{center}
 \begin{tabular}{llrrrr}
 \hline\hline
@@ -166,6 +166,13 @@
 ~~NI&d&$52$&$0.01$&$0.01$&$0.03$\tabularnewline
 ~~E2A&a&$16$&$0.06$&$0.03$&$0.97$\tabularnewline
 ~~E2C&b&$11$&$0.03$&$0.01$&$0.04$\tabularnewline
+\hline
+{\bfseries BN}&&&&&\tabularnewline
+~~E1A&ab&$10$&$0.18$&$0.03$&$1.29$\tabularnewline
+~~E1C&c&$14$&$0.02$&$0.01$&$0.12$\tabularnewline
+~~NI&d&$48$&$0.01$&$0.01$&$0.09$\tabularnewline
+~~E2A&a&$14$&$0.18$&$0.08$&$1.16$\tabularnewline
+~~E2C&bc&$11$&$0.05$&$0.02$&$0.08$\tabularnewline
 \hline
 {\bfseries PC}&&&&&\tabularnewline
 ~~E1A&a&$ 9$&$0.01$&$0.01$&$0.02$\tabularnewline
@@ -188,36 +195,41 @@
 \clearpage
 
 % between site eval
-%latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$TimeFrame), n.rgroup = rep(3,         5), rowname = rows, colheads = c("Result", "n", "Median",         "Min", "Max"), label = "tab:orthtab2")%
+%latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$TimeFrame), n.rgroup = rep(4,         5), rowname = rows, colheads = c("Result", "n", "Median",         "Min", "Max"), label = "tab:orthtab2")%
 \begin{table}[!tbp]
-\caption{Within time frame comparisons of monthly orthophosphate data at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for orthophosphate by time frame and station.  Result letters indicate stations within each time frame that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, and PC: Point aux Chenes.  Time frames are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, and E2C: event 2 chronic.\label{tab:orthtab2}} 
+\caption{Within time frame comparisons of monthly orthophosphate data at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for orthophosphate by time frame and station.  Result letters indicate stations within each time frame that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, BN: Bangs North, and PC: Point aux Chenes.  Time frames are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, and E2C: event 2 chronic.\label{tab:orthtab2}} 
 \begin{center}
 \begin{tabular}{llrrrr}
 \hline\hline
 \multicolumn{1}{l}{Site}&\multicolumn{1}{c}{Result}&\multicolumn{1}{c}{n}&\multicolumn{1}{c}{Median}&\multicolumn{1}{c}{Min}&\multicolumn{1}{c}{Max}\tabularnewline
 \hline
 {\bfseries E1A}&&&&&\tabularnewline
-~~BL&b&$13$&$0.02$&$0.01$&$4.29$\tabularnewline
-~~PC&ab&$ 9$&$0.01$&$0.01$&$0.02$\tabularnewline
+~~BL&bc&$13$&$0.02$&$0.01$&$4.29$\tabularnewline
+~~BN&b&$10$&$0.18$&$0.03$&$1.29$\tabularnewline
+~~PC&ac&$ 9$&$0.01$&$0.01$&$0.02$\tabularnewline
 ~~BC&a&$13$&$0.01$&$0.01$&$0.43$\tabularnewline
 \hline
 {\bfseries E1C}&&&&&\tabularnewline
-~~BL&b&$19$&$0.01$&$0.01$&$0.09$\tabularnewline
+~~BL&ab&$19$&$0.01$&$0.01$&$0.09$\tabularnewline
+~~BN&b&$14$&$0.02$&$0.01$&$0.12$\tabularnewline
 ~~PC&a&$18$&$0.01$&$0.01$&$0.01$\tabularnewline
 ~~BC&a&$19$&$0.01$&$0.01$&$0.01$\tabularnewline
 \hline
 {\bfseries NI}&&&&&\tabularnewline
 ~~BL&a&$52$&$0.01$&$0.01$&$0.03$\tabularnewline
+~~BN&b&$48$&$0.01$&$0.01$&$0.09$\tabularnewline
 ~~PC&a&$52$&$0.01$&$0.01$&$0.02$\tabularnewline
 ~~BC&a&$52$&$0.01$&$0.01$&$0.01$\tabularnewline
 \hline
 {\bfseries E2A}&&&&&\tabularnewline
 ~~BL&b&$16$&$0.06$&$0.03$&$0.97$\tabularnewline
-~~PC&c&$15$&$0.01$&$0.01$&$0.16$\tabularnewline
+~~BN&c&$14$&$0.18$&$0.08$&$1.16$\tabularnewline
+~~PC&d&$15$&$0.01$&$0.01$&$0.16$\tabularnewline
 ~~BC&a&$16$&$0.01$&$0.01$&$0.02$\tabularnewline
 \hline
 {\bfseries E2C}&&&&&\tabularnewline
 ~~BL&b&$11$&$0.03$&$0.01$&$0.04$\tabularnewline
+~~BN&c&$11$&$0.05$&$0.02$&$0.08$\tabularnewline
 ~~PC&b&$11$&$0.02$&$0.01$&$0.06$\tabularnewline
 ~~BC&a&$11$&$0.01$&$0.01$&$0.01$\tabularnewline
 \hline
@@ -236,15 +248,15 @@
 
 }
 
-\caption{Boxplot summaries by event of nutrient data at Bayou Cumbest (BC), Bangs Lake (BL), and Point aux Chenes (PC) sites at Grand Bay.  Boxes represent the interquartile range (IQR, 25\textsuperscript{th} to 75\textsuperscript{th} percentile) with the median as the middle horizonal line.  Boxes are colored by relative median nutrients between sites.  Outliers are present beyond whiskers (1.5$\cdot$IQR). See \cref{tab:ammontab,tab:tntab,tab:chltab} for numerical summaries.  E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.}\label{fig:boxplt_all}
+\caption{Boxplot summaries by event of nutrient data at Bayou Cumbest (BC), Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC) sites at Grand Bay.  Boxes represent the interquartile range (IQR, 25\textsuperscript{th} to 75\textsuperscript{th} percentile) with the median as the middle horizonal line.  Boxes are colored by relative median nutrients between sites.  Outliers are present beyond whiskers (1.5$\cdot$IQR). See \cref{tab:ammontab,tab:tntab,tab:chltab} for numerical summaries.  E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, E2C: event 2 chronic.}\label{fig:boxplt_all}
 \end{figure}
 
 
 \clearpage
 
-%latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$StationCode), n.rgroup = rep(5,         3), rowname = rows, colheads = c("Result", "n", "Median",         "Min", "Max"), label = "tab:ammontab")%
+%latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$StationCode), n.rgroup = rep(5,         4), rowname = rows, colheads = c("Result", "n", "Median",         "Min", "Max"), label = "tab:ammontab")%
 \begin{table}[!tbp]
-\caption{Within site comparisons  of monthly ammonium data for each time frame at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for ammonium by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, and PC: Point aux Chenes.  Time frames are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, and E2C: event 2 chronic.\label{tab:ammontab}} 
+\caption{Within site comparisons  of monthly ammonium data for each time frame at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for ammonium by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, BN: Bangs North, and PC: Point aux Chenes.  Time frames are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, and E2C: event 2 chronic.\label{tab:ammontab}} 
 \begin{center}
 \begin{tabular}{llrrrr}
 \hline\hline
@@ -256,6 +268,13 @@
 ~~NI&bc&$49$&$0.01$&$0.01$&$0.08$\tabularnewline
 ~~E2A&abc&$16$&$0.01$&$0.01$&$0.06$\tabularnewline
 ~~E2C&c&$11$&$0.01$&$0.01$&$0.01$\tabularnewline
+\hline
+{\bfseries BN}&&&&&\tabularnewline
+~~E1A&a&$11$&$0.03$&$0.01$&$0.14$\tabularnewline
+~~E1C&a&$15$&$0.03$&$0.01$&$0.16$\tabularnewline
+~~NI&a&$45$&$0.02$&$0.01$&$0.10$\tabularnewline
+~~E2A&a&$14$&$0.01$&$0.01$&$0.11$\tabularnewline
+~~E2C&a&$11$&$0.01$&$0.01$&$0.04$\tabularnewline
 \hline
 {\bfseries PC}&&&&&\tabularnewline
 ~~E1A&ab&$ 8$&$0.02$&$0.01$&$0.13$\tabularnewline
@@ -277,9 +296,54 @@
 
 \clearpage
 
-%latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$StationCode), n.rgroup = rep(5,         3), rowname = rows, colheads = c("Result", "n", "Median",         "Min", "Max"), label = "tab:tntab")%
+% between site eval
+%latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$TimeFrame), n.rgroup = rep(4,         5), rowname = rows, colheads = c("Result", "n", "Median",         "Min", "Max"), label = "tab:ammontab2")%
 \begin{table}[!tbp]
-\caption{Within site comparisons  of monthly nitrogen (nitrate, nitrite) data for each time frame at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for nitrogen by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, and PC: Point aux Chenes.  Time frames are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, and E2C: event 2 chronic.\label{tab:tntab}} 
+\caption{Within time frame comparisons of monthly ammonium data at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for ammonium by time frame and station.  Result letters indicate stations within each time frame that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, BN: Bangs North, and PC: Point aux Chenes.  Time frames are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, and E2C: event 2 chronic.\label{tab:ammontab2}} 
+\begin{center}
+\begin{tabular}{llrrrr}
+\hline\hline
+\multicolumn{1}{l}{Site}&\multicolumn{1}{c}{Result}&\multicolumn{1}{c}{n}&\multicolumn{1}{c}{Median}&\multicolumn{1}{c}{Min}&\multicolumn{1}{c}{Max}\tabularnewline
+\hline
+{\bfseries E1A}&&&&&\tabularnewline
+~~BL&a&$12$&$0.04$&$0.01$&$0.18$\tabularnewline
+~~BN&a&$11$&$0.03$&$0.01$&$0.14$\tabularnewline
+~~PC&a&$ 8$&$0.02$&$0.01$&$0.13$\tabularnewline
+~~BC&a&$12$&$0.03$&$0.01$&$0.21$\tabularnewline
+\hline
+{\bfseries E1C}&&&&&\tabularnewline
+~~BL&a&$18$&$0.03$&$0.01$&$0.13$\tabularnewline
+~~BN&a&$15$&$0.03$&$0.01$&$0.16$\tabularnewline
+~~PC&a&$17$&$0.04$&$0.01$&$0.42$\tabularnewline
+~~BC&a&$18$&$0.03$&$0.01$&$0.20$\tabularnewline
+\hline
+{\bfseries NI}&&&&&\tabularnewline
+~~BL&b&$49$&$0.01$&$0.01$&$0.08$\tabularnewline
+~~BN&a&$45$&$0.02$&$0.01$&$0.10$\tabularnewline
+~~PC&b&$49$&$0.01$&$0.01$&$0.07$\tabularnewline
+~~BC&a&$49$&$0.02$&$0.01$&$0.13$\tabularnewline
+\hline
+{\bfseries E2A}&&&&&\tabularnewline
+~~BL&a&$16$&$0.01$&$0.01$&$0.06$\tabularnewline
+~~BN&a&$14$&$0.01$&$0.01$&$0.11$\tabularnewline
+~~PC&a&$16$&$0.01$&$0.01$&$0.05$\tabularnewline
+~~BC&a&$16$&$0.01$&$0.01$&$0.08$\tabularnewline
+\hline
+{\bfseries E2C}&&&&&\tabularnewline
+~~BL&a&$11$&$0.01$&$0.01$&$0.01$\tabularnewline
+~~BN&a&$11$&$0.01$&$0.01$&$0.04$\tabularnewline
+~~PC&a&$11$&$0.01$&$0.01$&$0.01$\tabularnewline
+~~BC&a&$11$&$0.01$&$0.01$&$0.06$\tabularnewline
+\hline
+\end{tabular}\end{center}
+
+\end{table}
+
+\clearpage
+
+%latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$StationCode), n.rgroup = rep(5,         4), rowname = rows, colheads = c("Result", "n", "Median",         "Min", "Max"), label = "tab:tntab")%
+\begin{table}[!tbp]
+\caption{Within site comparisons  of monthly nitrogen (nitrate, nitrite) data for each time frame at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for nitrogen by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, BN: Bangs North, and PC: Point aux Chenes.  Time frames are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, and E2C: event 2 chronic.\label{tab:tntab}} 
 \begin{center}
 \begin{tabular}{llrrrr}
 \hline\hline
@@ -291,6 +355,13 @@
 ~~NI&ab&$53$&$0.01$&$0.01$&$0.09$\tabularnewline
 ~~E2A&b&$15$&$0.01$&$0.01$&$0.01$\tabularnewline
 ~~E2C&b&$11$&$0.01$&$0.01$&$0.01$\tabularnewline
+\hline
+{\bfseries BN}&&&&&\tabularnewline
+~~E1A&a&$11$&$0.01$&$0.01$&$0.06$\tabularnewline
+~~E1C&a&$16$&$0.01$&$0.01$&$0.02$\tabularnewline
+~~NI&a&$49$&$0.01$&$0.01$&$0.10$\tabularnewline
+~~E2A&a&$13$&$0.01$&$0.01$&$0.02$\tabularnewline
+~~E2C&a&$11$&$0.01$&$0.01$&$0.01$\tabularnewline
 \hline
 {\bfseries PC}&&&&&\tabularnewline
 ~~E1A&a&$10$&$0.02$&$0.01$&$0.08$\tabularnewline
@@ -312,9 +383,54 @@
 
 \clearpage
 
-%latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$StationCode), n.rgroup = rep(5,         3), rowname = rows, colheads = c("Result", "n", "Median",         "Min", "Max"), label = "tab:chltab")%
+% between site eval
+%latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$TimeFrame), n.rgroup = rep(4,         5), rowname = rows, colheads = c("Result", "n", "Median",         "Min", "Max"), label = "tab:tntab2")%
 \begin{table}[!tbp]
-\caption{Within site comparisons  of monthly chlorophyll data for each time frame at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for chlorophyll by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, and PC: Point aux Chenes.  Time frames are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, and E2C: event 2 chronic.\label{tab:chltab}} 
+\caption{Within time frame comparisons of monthly nitrogen (nitrate, nitrite) data at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for nitrogen by time frame and station.  Result letters indicate stations within each time frame that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, BN: Bangs North, and PC: Point aux Chenes.  Time frames are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, and E2C: event 2 chronic.\label{tab:tntab2}} 
+\begin{center}
+\begin{tabular}{llrrrr}
+\hline\hline
+\multicolumn{1}{l}{Site}&\multicolumn{1}{c}{Result}&\multicolumn{1}{c}{n}&\multicolumn{1}{c}{Median}&\multicolumn{1}{c}{Min}&\multicolumn{1}{c}{Max}\tabularnewline
+\hline
+{\bfseries E1A}&&&&&\tabularnewline
+~~BL&a&$14$&$0.01$&$0.01$&$0.06$\tabularnewline
+~~BN&a&$11$&$0.01$&$0.01$&$0.06$\tabularnewline
+~~PC&a&$10$&$0.02$&$0.01$&$0.08$\tabularnewline
+~~BC&a&$14$&$0.01$&$0.01$&$0.05$\tabularnewline
+\hline
+{\bfseries E1C}&&&&&\tabularnewline
+~~BL&a&$19$&$0.01$&$0.01$&$0.04$\tabularnewline
+~~BN&a&$16$&$0.01$&$0.01$&$0.02$\tabularnewline
+~~PC&a&$18$&$0.01$&$0.01$&$0.02$\tabularnewline
+~~BC&a&$19$&$0.01$&$0.01$&$0.02$\tabularnewline
+\hline
+{\bfseries NI}&&&&&\tabularnewline
+~~BL&a&$53$&$0.01$&$0.01$&$0.09$\tabularnewline
+~~BN&a&$49$&$0.01$&$0.01$&$0.10$\tabularnewline
+~~PC&a&$53$&$0.01$&$0.01$&$0.10$\tabularnewline
+~~BC&a&$53$&$0.01$&$0.01$&$0.09$\tabularnewline
+\hline
+{\bfseries E2A}&&&&&\tabularnewline
+~~BL&a&$15$&$0.01$&$0.01$&$0.01$\tabularnewline
+~~BN&a&$13$&$0.01$&$0.01$&$0.02$\tabularnewline
+~~PC&a&$15$&$0.01$&$0.01$&$0.07$\tabularnewline
+~~BC&a&$16$&$0.01$&$0.01$&$0.02$\tabularnewline
+\hline
+{\bfseries E2C}&&&&&\tabularnewline
+~~BL&a&$11$&$0.01$&$0.01$&$0.01$\tabularnewline
+~~BN&a&$11$&$0.01$&$0.01$&$0.01$\tabularnewline
+~~PC&a&$11$&$0.01$&$0.01$&$0.01$\tabularnewline
+~~BC&a&$11$&$0.01$&$0.01$&$0.01$\tabularnewline
+\hline
+\end{tabular}\end{center}
+
+\end{table}
+
+\clearpage
+
+%latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$StationCode), n.rgroup = rep(5,         4), rowname = rows, colheads = c("Result", "n", "Median",         "Min", "Max"), label = "tab:chltab")%
+\begin{table}[!tbp]
+\caption{Within site comparisons  of monthly chlorophyll data for each time frame at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for chlorophyll by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, BN: Bangs North, and PC: Point aux Chenes.  Time frames are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, and E2C: event 2 chronic.\label{tab:chltab}} 
 \begin{center}
 \begin{tabular}{llrrrr}
 \hline\hline
@@ -326,6 +442,13 @@
 ~~NI&b&$54$&$ 4.66$&$0.46$&$21.99$\tabularnewline
 ~~E2A&b&$16$&$ 6.05$&$0.73$&$17.28$\tabularnewline
 ~~E2C&b&$11$&$10.56$&$3.90$&$23.89$\tabularnewline
+\hline
+{\bfseries BN}&&&&&\tabularnewline
+~~E1A&a&$11$&$ 0.50$&$0.50$&$15.22$\tabularnewline
+~~E1C&ab&$15$&$ 3.27$&$0.53$&$ 9.14$\tabularnewline
+~~NI&b&$50$&$ 3.98$&$0.55$&$23.05$\tabularnewline
+~~E2A&b&$14$&$ 5.37$&$2.26$&$13.71$\tabularnewline
+~~E2C&b&$11$&$ 8.56$&$3.02$&$31.29$\tabularnewline
 \hline
 {\bfseries PC}&&&&&\tabularnewline
 ~~E1A&a&$10$&$ 0.57$&$0.50$&$ 7.74$\tabularnewline
@@ -340,6 +463,51 @@
 ~~NI&b&$54$&$ 6.34$&$0.69$&$30.59$\tabularnewline
 ~~E2A&b&$16$&$ 5.91$&$1.78$&$23.12$\tabularnewline
 ~~E2C&b&$11$&$ 8.57$&$3.93$&$47.67$\tabularnewline
+\hline
+\end{tabular}\end{center}
+
+\end{table}
+
+\clearpage
+
+% between site eval
+%latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$TimeFrame), n.rgroup = rep(4,         5), rowname = rows, colheads = c("Result", "n", "Median",         "Min", "Max"), label = "tab:chltab2")%
+\begin{table}[!tbp]
+\caption{Within time frame comparisons of monthly chlorophyll data at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for chlorophyll by time frame and station.  Result letters indicate stations within each time frame that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, BN: Bangs North, and PC: Point aux Chenes.  Time frames are E1A: event 1 acute, E1C: event 1 chronic, NI: non-impact, E2A: event 2 acute, and E2C: event 2 chronic.\label{tab:chltab2}} 
+\begin{center}
+\begin{tabular}{llrrrr}
+\hline\hline
+\multicolumn{1}{l}{Site}&\multicolumn{1}{c}{Result}&\multicolumn{1}{c}{n}&\multicolumn{1}{c}{Median}&\multicolumn{1}{c}{Min}&\multicolumn{1}{c}{Max}\tabularnewline
+\hline
+{\bfseries E1A}&&&&&\tabularnewline
+~~BL&a&$14$&$ 0.50$&$0.50$&$12.68$\tabularnewline
+~~BN&a&$11$&$ 0.50$&$0.50$&$15.22$\tabularnewline
+~~PC&a&$10$&$ 0.57$&$0.50$&$ 7.74$\tabularnewline
+~~BC&a&$13$&$ 1.60$&$0.50$&$11.75$\tabularnewline
+\hline
+{\bfseries E1C}&&&&&\tabularnewline
+~~BL&a&$18$&$ 5.52$&$0.19$&$18.89$\tabularnewline
+~~BN&a&$15$&$ 3.27$&$0.53$&$ 9.14$\tabularnewline
+~~PC&a&$17$&$ 4.61$&$0.29$&$22.56$\tabularnewline
+~~BC&a&$18$&$ 6.61$&$0.44$&$28.02$\tabularnewline
+\hline
+{\bfseries NI}&&&&&\tabularnewline
+~~BL&a&$54$&$ 4.66$&$0.46$&$21.99$\tabularnewline
+~~BN&a&$50$&$ 3.98$&$0.55$&$23.05$\tabularnewline
+~~PC&a&$54$&$ 6.63$&$0.52$&$23.39$\tabularnewline
+~~BC&a&$54$&$ 6.34$&$0.69$&$30.59$\tabularnewline
+\hline
+{\bfseries E2A}&&&&&\tabularnewline
+~~BL&a&$16$&$ 6.05$&$0.73$&$17.28$\tabularnewline
+~~BN&a&$14$&$ 5.37$&$2.26$&$13.71$\tabularnewline
+~~PC&a&$16$&$ 5.57$&$0.55$&$32.52$\tabularnewline
+~~BC&a&$16$&$ 5.91$&$1.78$&$23.12$\tabularnewline
+\hline
+{\bfseries E2C}&&&&&\tabularnewline
+~~BL&a&$11$&$10.56$&$3.90$&$23.89$\tabularnewline
+~~BN&a&$11$&$ 8.56$&$3.02$&$31.29$\tabularnewline
+~~PC&a&$11$&$ 6.81$&$2.44$&$16.46$\tabularnewline
+~~BC&a&$11$&$ 8.57$&$3.93$&$47.67$\tabularnewline
 \hline
 \end{tabular}\end{center}
 
