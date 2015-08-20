@@ -16,8 +16,8 @@ library(SWMPr)
 library(reshape2)
 
 # import
-raw_data <- read.csv('PO4modified2005-2014grabs.csv', stringsAsFactors = F)
-timeframes <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
+raw_data <- read.csv('PO4modified2005-Jul2015grabs.csv', stringsAsFactors = F)
+timeframes <- c('E1A', 'E1C', 'NI1', 'E2A', 'E2C', 'NI2')
 
 # format the data
 nut_dat <- select(raw_data, StationCode, Date, TimeFrame, PO4F, NH4F, NO23F, CHLA_N) %>% 
@@ -84,8 +84,9 @@ wq_dat <- lapply(dat_in,
       
     }
       
-    out <- subset(out, subset = '2015-01-01 00:00', operator = '<') %>% 
-      select(datetimestamp, sal, ph, depth) 
+#     out <- subset(out, subset = '2015-01-01 00:00', operator = '<') %>% 
+#       select(datetimestamp, sal, ph, depth) 
+    out <-  select(out, datetimestamp, sal, ph, depth) 
     
     return(out)
     
@@ -95,10 +96,10 @@ wq_dat <- lapply(dat_in,
 wq_dat <- melt(wq_dat, id.vars = names(wq_dat[[1]])) %>% 
   mutate(StationCode = toupper(gsub('^gnd|wq$', '', L1)))
 wq_dat$L1 <- NULL
-brks <- c('07-01-2006 0:0', '03-01-2008 0:0', '09-01-2012 0:0', '02-01-2014 0:0') %>% 
+brks <- c('07-01-2006 0:0', '03-01-2008 0:0', '09-01-2012 0:0', '02-01-2014 0:0', '12-01-2014 0:0') %>% 
   as.POSIXct(format = '%m-%d-%Y %H:%M', tz = 'America/Regina') %>% 
   c(-Inf, ., Inf)
-labs <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
+labs <- c('E1A', 'E1C', 'NI1', 'E2A', 'E2C', 'NI2')
 wq_dat$TimeFrame <- cut(as.numeric(wq_dat$datetimestamp), breaks = brks, labels = labs, 
   right = FALSE) # open on right
 
@@ -117,13 +118,13 @@ save(wq_dat, file = 'wq_dat.RData')
 load('gndmet_unproc.RData')
 
 met_dat <- qaqc(gndmet, qaqc_keep = c(0, 4, 5)) %>% 
-      subset(subset = '2015-01-01 00:00', operator = '<') %>% 
+      # subset(subset = '2015-01-01 00:00', operator = '<') %>% 
       select(datetimestamp, totprcp) 
 
-brks <- c('07-01-2006 0:0', '03-01-2008 0:0', '09-01-2012 0:0', '02-01-2014 0:0') %>% 
+brks <- c('07-01-2006 0:0', '03-01-2008 0:0', '09-01-2012 0:0', '02-01-2014 0:0', '12-01-2014 0:0') %>% 
   as.POSIXct(format = '%m-%d-%Y %H:%M', tz = 'America/Regina') %>% 
   c(-Inf, ., Inf)
-labs <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
+labs <- c('E1A', 'E1C', 'NI1', 'E2A', 'E2C', 'NI2')
 met_dat$TimeFrame <- cut(as.numeric(met_dat$datetimestamp), breaks = brks, labels = labs, 
   right = FALSE) # open on right
 
@@ -143,10 +144,10 @@ met_supp <- select(met_supp, CDT, PrecipitationIn) %>%
     date = CDT,
     totprcp = PrecipitationIn
   )
-brks <- c('07-01-2006 0:0', '03-01-2008 0:0', '09-01-2012 0:0', '02-01-2014 0:0') %>% 
+brks <- c('07-01-2006 0:0', '03-01-2008 0:0', '09-01-2012 0:0', '02-01-2014 0:0', '12-01-2014 0:0') %>% 
   as.POSIXct(format = '%m-%d-%Y %H:%M', tz = 'America/Regina') %>% 
   c(-Inf, ., Inf)
-labs <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
+labs <- c('E1A', 'E1C', 'NI1', 'E2A', 'E2C', 'NI2')
 met_supp$TimeFrame <- cut(as.numeric(met_supp$date), breaks = brks, labels = labs, 
   right = FALSE) # open on right
 met_supp <- met_supp[, c(1, 3, 2)]
@@ -167,10 +168,10 @@ met_supp_e1 <- select(met_supp_e1, CDT, PrecipitationIn) %>%
     datetimestamp = CDT,
     totprcp = PrecipitationIn
   )
-brks <- c('07-01-2006 0:0', '03-01-2008 0:0', '09-01-2012 0:0', '02-01-2014 0:0') %>% 
+brks <- c('07-01-2006 0:0', '03-01-2008 0:0', '09-01-2012 0:0', '02-01-2014 0:0', '12-01-2014 0:0') %>% 
   as.POSIXct(format = '%m-%d-%Y %H:%M', tz = 'America/Regina') %>% 
   c(-Inf, ., Inf)
-labs <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
+labs <- c('E1A', 'E1C', 'NI1', 'E2A', 'E2C', 'NI2')
 met_supp_e1$TimeFrame <- cut(as.numeric(met_supp_e1$datetimestamp), breaks = brks, labels = labs, 
   right = FALSE) # open on right
 met_supp_e1 <- met_supp_e1[, c(1, 3, 2)]
@@ -191,10 +192,10 @@ met_supp_e2 <- select(met_supp_e2, CDT, PrecipitationIn) %>%
     datetimestamp = CDT,
     totprcp = PrecipitationIn
   )
-brks <- c('07-01-2006 0:0', '03-01-2008 0:0', '09-01-2012 0:0', '02-01-2014 0:0') %>% 
+brks <- c('07-01-2006 0:0', '03-01-2008 0:0', '09-01-2012 0:0', '02-01-2014 0:0', '12-01-2014 0:0') %>% 
   as.POSIXct(format = '%m-%d-%Y %H:%M', tz = 'America/Regina') %>% 
   c(-Inf, ., Inf)
-labs <- c('E1A', 'E1C', 'NI', 'E2A', 'E2C')
+labs <- c('E1A', 'E1C', 'NI1', 'E2A', 'E2C', 'NI2')
 met_supp_e2$TimeFrame <- cut(as.numeric(met_supp_e2$datetimestamp), breaks = brks, labels = labs, 
   right = FALSE) # open on right
 met_supp_e2 <- met_supp_e2[, c(1, 3, 2)]

@@ -28,7 +28,7 @@ dat <- lapply(dat_in,
   function(x) {
     
     x <- qaqc(x, qaqc_keep = c(0, 4, 5)) %>% 
-      subset(subset = '2015-01-01 00:00', operator = '<') %>% 
+      # subset(subset = '2015-01-01 00:00', operator = '<') %>% 
       aggreswmp(., by = 'days', params = c('sal', 'ph', 'do_mgl')) 
     
     return(x)
