@@ -16,7 +16,7 @@ library(SWMPr)
 library(reshape2)
 
 # import
-raw_data <- read.csv('PO4modified2005-Jul2015grabs.csv', stringsAsFactors = F)
+raw_data <- read.csv('PO4modified2005-Aug2015grabs.csv', stringsAsFactors = F)
 timeframes <- c('E1A', 'E1C', 'NI1', 'E2A', 'E2C', 'NI2')
 
 # format the data
