@@ -54,7 +54,7 @@ save(nut_dat, file = 'nut_dat.RData')
 # # import data
 # for(stat in stats){
 # 
-#   dat <- import_local('C:/Users/mbeck/Desktop/939702.zip', stat)
+#   dat <- import_local('C:/Users/mbeck/Desktop/567839.zip', stat)
 #   
 #   dat_in[[stat]] <- dat
 #   
@@ -62,7 +62,7 @@ save(nut_dat, file = 'nut_dat.RData')
 # 
 # # save raw, unprocessed data in R format
 # gndwq <- dat_in
-# save(gndwq, file = 'gndwq_unpro.RData')
+# save(gndwq, file = 'gndwq_unproc.RData')
 
 load('gndwq_unproc.RData')
 dat_in <- gndwq
@@ -81,6 +81,14 @@ wq_dat <- lapply(dat_in,
       subs <- as.POSIXct(subs, format = '%Y-%m-%d', tz = 'America/Regina')
       subs <- out$datetimestamp >= subs[1] & out$datetimestamp <= subs[2]
       out[subs, 'ph'] <- keepph[subs, 'ph']
+      
+      # remove bogus data (Kim's email 9/30)
+      # for sal - 2015-07-09 15:00 and 2015-07-23 09:00
+      # for ph - 2015-07-17 19:15 to 2015-07-23 09:00, 2015-07-09 15:00
+      remsl <- as.POSIXct(c('2015-07-09 15:00', '2015-07-23 09:00'), tz = 'America/Regina')
+      remph <- as.POSIXct(c('2015-07-17 19:15', '2015-07-23 09:00', '2015-07-09 15:00'), tz = 'America/Regina')
+      out[with(out, datetimestamp %in% remsl), 'sal'] <- NA
+      out[with(out, datetimestamp >= remph[1] & datetimestamp <= remph[2] | datetimestamp == remph[3]), 'ph'] <- NA
       
     }
       

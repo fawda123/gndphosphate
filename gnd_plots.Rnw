@@ -32,8 +32,8 @@
 <<setup, echo = FALSE, cache = F>>=
 library(knitr)
 # set global chunk options
-opts_chunk$set(fig.path = 'figs/', fig.align = 'center', fig.show = 'hold',message = F, results = 'asis',dev = 'pdf',dev.args=list(family='serif'), fig.pos = '!ht', warning = F, tangle = TRUE)
-options(replace.assign=TRUE,width=90)
+opts_chunk$set(fig.path = 'figs/', fig.align = 'center', fig.show = 'hold', message = F, results = 'asis', dev = c('pdf', 'tiff'), dev.args = list(pdf = list(family = 'serif'), tiff = list(compression = 'lzw', family = 'serif')), dpi = 600, fig.pos = '!ht', warning = F, tangle = TRUE)
+options(replace.assign = TRUE, width = 90)
 @
 
 <<echo = FALSE, message = FALSE>>=
@@ -58,6 +58,13 @@ library(multcompView)
 load('wq_dat.RData')
 load('met_dat.RData')
 load('nut_dat.RData')
+
+# get ggplot legend
+g_legend<-function(a.gplot){
+  tmp <- ggplot_gtable(ggplot_build(a.gplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)}
 @
 
 \begin{document}
@@ -67,7 +74,7 @@ load('nut_dat.RData')
 
 \begin{landscape}
 \centering\vspace*{\fill}
-<<tsplot, fig.width = 9, fig.height = 5.25, out.height = '4.8in', echo = FALSE, fig.cap = 'Time series of total precipitation, salinity, pH, and phosphate for Bangs Lake, Grand Bay reserve.  All observations are daily averages, excluding phosphate which was sampled monthly.  Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.  Salinity and pH include a loess smooth to reduce variability. Orthophosphate is colored by event categories in relation to the vertical green bars.  E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.'>>=
+<<tsplot, fig.width = 9, fig.height = 5.25, echo = FALSE, fig.cap = 'Time series of total precipitation, salinity, pH, and phosphate for Bangs Lake, Grand Bay reserve.  All observations are daily averages, excluding phosphate which was sampled monthly.  Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.  Salinity and pH include a loess smooth to reduce variability. Orthophosphate is colored by event categories in relation to the vertical green bars.  E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.'>>=
 # ts plots for BL
 # first get cumulative daily precipitation for met
 # then combine wq and met, take daily ave, make long form
@@ -88,46 +95,92 @@ nut_proc <- filter(nut_dat, nutrient == 'PO4F' & StationCode == 'BL') %>%
   rename(logP = logvalue)
   
 # combine wq with met and nut
-toplo <- filter(wq_dat, StationCode == 'BL') %>% 
+toplo_wq <- filter(wq_dat, StationCode == 'BL') %>% 
   select(-StationCode, -depth) %>% 
   mutate(datetimestamp = as.Date(datetimestamp)) %>% 
   rename(date = datetimestamp) %>% 
   group_by(date, TimeFrame) %>% 
   summarise_each(funs(mean(., na.rm = TRUE))) %>% 
-  full_join(met_proc, by = c('date', 'TimeFrame')) %>% 
-  full_join(nut_proc, by = c('date', 'TimeFrame')) %>% 
-  gather('variable', 'value', sal:logP) %>% 
+  full_join(met_proc, by = c('date', 'TimeFrame')) %>%
+  gather('variable', 'value', sal:totprcp) %>% 
   mutate(variable = factor(variable, 
-    levels = c('totprcp', 'sal', 'ph', 'logP'),
-    labels = c('Total precipitation (mm/d)', 'Salinity (ppt)', 'pH', 'log-Orthophosphate (mg/L)')
+    levels = c('totprcp', 'sal', 'ph'),
+    labels = c('Total precipitation (mm/d)', 'Salinity (ppt)', 'pH')
     )) %>% 
   rename(Event = TimeFrame)
+
+# combine wq with met and nut
+toplo_nut <- gather(nut_proc, 'variable', 'value', logP) %>% 
+  mutate(variable = factor(variable, 
+    levels = c('logP'),
+    labels = c('Orthophosphate (mg/L)') # still in log units but axis scaling will show this as back-transformed
+    )) %>% 
+  rename(Event = TimeFrame) %>% 
+  data.frame %>% 
+  na.omit
 
 # event dates
 events <- c('2005-04-11', '2012-08-01')
 events <- as.Date(events)
 
-# the plot
-p <- ggplot(toplo, aes(x = date, y = value)) + 
+mars1 <- grid::unit(c(0, 0, 0, 0), 'mm')
+mars2 <- grid::unit(c(-4, 0, 0, 0), 'mm')
+lims <- as.Date(c('2004-01-01', '2015-12-31'))
+
+# the plots, a shitty mess
+p1 <- ggplot(toplo_wq, aes(x = date, y = value)) + 
   geom_line() +
   geom_vline(xintercept = as.numeric(events), colour = 'lightgreen', alpha = 0.6, size = 3) +
   geom_line() +
-  geom_point(data = filter(toplo, variable == 'log-Orthophosphate (mg/L)'), alpha = 0.8, size = 3, 
-    aes(colour = Event)) + 
   facet_wrap(~variable, scales = 'free_y', ncol = 1) +
   theme_bw() +
   theme(
     axis.title.x = element_blank(), 
-    axis.title.y = element_blank()
+    axis.title.y = element_blank(), 
+    axis.text.x = element_blank(), 
+    axis.ticks.x = element_blank(),
+    plot.margin = mars1
     ) +
-  stat_smooth(data = filter(toplo, variable %in% c('Salinity (ppt)', 'pH')),
+  scale_x_date(limits = lims) + 
+  stat_smooth(data = filter(toplo_wq, variable %in% c('Salinity (ppt)', 'pH')),
     method = 'loess', span = 0.1, n = 2000, se = FALSE, size = 1, colour = 'lightblue')
-p
+p2 <- ggplot(toplo_nut, aes(x = date, y = 10 ^ value)) + 
+  geom_point(alpha = 0.8, size = 3, 
+    aes(colour = Event)) +
+  geom_vline(xintercept = as.numeric(events), colour = 'lightgreen', alpha = 0.6, size = 3) +
+  facet_wrap(~variable, scales = 'free_y') +
+  theme_bw() +
+  theme(
+    axis.title.x = element_blank(), 
+    axis.title.y = element_blank(),
+    plot.margin = mars2
+    ) + 
+  scale_x_date(limits = lims) + 
+  scale_y_log10() 
+pleg <- g_legend(p2)
+p2 <- p2 + theme(legend.position = 'none')
+
+# align
+pA <- ggplot_gtable(ggplot_build(p1))
+pB <- ggplot_gtable(ggplot_build(p2))
+maxWidth = unit.pmax(pA$widths[2:3], pB$widths[2:3])
+
+# Set the widths
+pA$widths[2:3] <- maxWidth
+pB$widths[2:3] <- maxWidth
+
+grid.arrange(
+  arrangeGrob(pA, pB, ncol = 1, heights = c(3, 1.1)),
+  pleg, 
+  ncol = 2, 
+  widths = c(1, 0.1)
+)
+
 @
 \end{landscape}
 \clearpage
 
-<<tsplotexp, fig.width = 9, fig.height = 6, echo = FALSE, fig.cap = 'Time series of daily precipitation, salinity, and pH for Bangs Lake, Grand Bay reserve.  Precipitation data represents daily totals from the Pascagoula International Airport.  Salinity and pH data were collected at 15 minute time steps.  Green shading indicates period of high precipitation for a heavy rain event in 2005 (left, March 31\\textsuperscript{st} to April 1\\textsuperscript{st}) and hurricane Isaac in 2012 (right, August 28\\textsuperscript{th} to 30\\textsuperscript{th}).  Red shading for the first event indicates the date of documented phosphorus spill.  E1A: event 1 acute, E2A: event 2 acute.'>>=
+<<tsplotexp, fig.width = 9, fig.height = 6, echo = FALSE, fig.cap = 'Time series of daily precipitation, salinity, and pH for Bangs Lake, Grand Bay reserve.  Precipitation data are daily totals from the Pascagoula International Airport.  Salinity and pH data were collected at 15 minute time steps.  Green shading indicates period of high precipitation for a heavy rain event in 2005 (left, March 31\\textsuperscript{st} to April 1\\textsuperscript{st}) and hurricane Isaac in 2012 (right, August 28\\textsuperscript{th} to 30\\textsuperscript{th}).  Red shading for the first event indicates the date of documented phosphorus spill.  E1A: event 1 acute, E2A: event 2 acute.'>>=
 # ts plots for BL, wq only expanded about the events
 # first get cumulative daily precipitation for met
 # then combine wq and met, take daily ave, make long form
@@ -234,7 +287,7 @@ p1
 @
 \clearpage
 
-<<orthfig, fig.width = 7.5, fig.height = 5, echo = FALSE, fig.cap = 'Boxplot summaries by event of monthly orthophosphate data at Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC) sites in Grand Bay.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). Boxes are shaded by medians between sites.  See \\cref{tab:orthtab} for a numerical summary. E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.'>>=
+<<orthfig, fig.width = 7.5, fig.height = 5, echo = FALSE, fig.cap = 'Boxplot summaries by event of monthly orthophosphate data at Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC) sites in Grand Bay.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). Boxes are shaded by medians between sites.  See \\cref{tab:orthtab1} for a numerical summary. E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.'>>=
 
 load(file = 'nut_dat.RData')
 
@@ -265,7 +318,7 @@ p1
 @
 \clearpage
 
-<<ordfig, fig.width = 8, fig.height = 7, echo = FALSE, fig.cap = 'Ordination biplot of nutrient values (phosphorus, nitrogen, ammonium, and chlorophyll) by site and time frames. Monthly data were averaged by site and time frame prior to ordination.  Site are Bangs Lake (BL), Bangs North (BN), Point aux Chenes (PC), and Bayou Cumbest (BC). E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.'>>=
+<<ordfig, fig.width = 8, fig.height = 7, echo = FALSE, fig.cap = 'Ordination biplot of nutrient values (phosphorus, nitrogen, ammonium, and chlorophyll) by site and time frames. Monthly data were averaged by site and time frame prior to ordination.  Sites are Bangs Lake (BL), Bangs North (BN), Point aux Chenes (PC), and Bayou Cumbest (BC). E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.'>>=
 
 load(file = 'nut_dat.RData')
 
@@ -289,7 +342,7 @@ p1
 \clearpage
 
 % within site eval
-<<orthtab, echo = FALSE>>=
+<<orthtab1, echo = FALSE>>=
 load(file = 'nut_dat.RData')
 
 toplo <- filter(nut_dat, nutrient == 'PO4F')
@@ -454,9 +507,15 @@ latex(
 % supplements
 \beginsupplement
 
-<<boxplt_all, fig.width = 8, fig.height = 6,, fig.cap = 'Boxplot summaries by event of nutrient data at Bayou Cumbest (BC), Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC) sites at Grand Bay.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Boxes are colored by relative median nutrients between sites.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). See \\cref{tab:ammontab,tab:tntab,tab:chltab} for numerical summaries.  E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.', echo = FALSE>>=
+<<boxplt_all, fig.width = 8, fig.height = 6, fig.cap = 'Boxplot summaries by event of nutrient data at Bayou Cumbest (BC), Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC) sites at Grand Bay.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizontal line.  Boxes are colored by relative median nutrients between sites.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). See \\cref{tab:ammontab,tab:tntab,tab:chltab} for numerical summaries.  E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.', echo = FALSE>>=
 
 load(file = 'nut_dat.RData')
+load(file = 'wq_dat.RData')
+
+# get ph data on monthly time step
+wq_dat <- setstep(wq_dat, date_col = 'datetimestamp', timestep = 'months')
+
+
 
 # remove BN, phosphorus
 toplo <- filter(nut_dat, nutrient != 'PO4F') 
