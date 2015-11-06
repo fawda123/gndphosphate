@@ -38,9 +38,8 @@ nut_dat <- select(raw_data, StationCode, Date, TimeFrame, PO4F, NH4F, NO23F, CHL
   mutate(logvalue = log(value, 10)) %>% 
   data.frame(.)
 
-# remove chl data up to May 2007
-torm <- as.numeric(as.Date('2007-05-01'))
-torm <- with(nut_dat, as.numeric(date) < torm & nutrient == 'CHLA_N')
+# chl data up to May 2007 is bonk, just remove E1A and E1C
+torm <- with(nut_dat, TimeFrame %in% c('E1A', 'E1C') & nutrient == 'CHLA_N')
 nut_dat[torm, 'value'] <- NaN
 nut_dat[torm, 'logvalue'] <- NaN
 
