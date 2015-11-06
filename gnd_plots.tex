@@ -458,45 +458,37 @@
 
 \clearpage
 
-%latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$StationCode), n.rgroup = rep(6,         4), rowname = rows, colheads = c("Result", "n", "Median",         "Min", "Max"), label = "tab:chltab")%
+%latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$StationCode), n.rgroup = rep(4,         4), rowname = rows, colheads = c("Result", "n", "Median",         "Min", "Max"), label = "tab:chltab")%
 \begin{table}[!tbp]
-\caption{Within site comparisons  of monthly chlorophyll data for each time frame at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for chlorophyll by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, BN: Bangs North, and PC: Point aux Chenes.  Time frames are E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.\label{tab:chltab}} 
+\caption{Within site comparisons  of monthly chlorophyll data for each time frame at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for chlorophyll by station and time frame.  Result letters indicate time frames within each station that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, BN: Bangs North, and PC: Point aux Chenes.  Time frames are NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.\label{tab:chltab}} 
 \begin{center}
 \begin{tabular}{llrrrr}
 \hline\hline
 \multicolumn{1}{l}{Site}&\multicolumn{1}{c}{Result}&\multicolumn{1}{c}{n}&\multicolumn{1}{c}{Median}&\multicolumn{1}{c}{Min}&\multicolumn{1}{c}{Max}\tabularnewline
 \hline
 {\bfseries BL}&&&&&\tabularnewline
-~~E1A&a&$ 5$&$ 1.07$&$0.50$&$ 1.47$\tabularnewline
-~~E1C&ab&$18$&$ 5.52$&$0.19$&$18.89$\tabularnewline
-~~NI1&b&$54$&$ 4.66$&$0.46$&$21.99$\tabularnewline
-~~E2A&b&$16$&$ 6.05$&$0.73$&$17.28$\tabularnewline
-~~E2C&b&$11$&$10.56$&$3.90$&$23.89$\tabularnewline
-~~NI2&b&$ 9$&$ 8.21$&$2.10$&$41.98$\tabularnewline
+~~NI1&a&$54$&$ 4.66$&$0.46$&$21.99$\tabularnewline
+~~E2A&a&$16$&$ 6.05$&$0.73$&$17.28$\tabularnewline
+~~E2C&a&$11$&$10.56$&$3.90$&$23.89$\tabularnewline
+~~NI2&a&$ 9$&$ 8.21$&$2.10$&$41.98$\tabularnewline
 \hline
 {\bfseries BN}&&&&&\tabularnewline
-~~E1A&a&$ 3$&$ 1.34$&$1.27$&$ 1.34$\tabularnewline
-~~E1C&a&$15$&$ 3.27$&$0.53$&$ 9.14$\tabularnewline
 ~~NI1&a&$50$&$ 3.98$&$0.55$&$23.05$\tabularnewline
 ~~E2A&a&$14$&$ 5.37$&$2.26$&$13.71$\tabularnewline
 ~~E2C&a&$11$&$ 8.56$&$3.02$&$31.29$\tabularnewline
 ~~NI2&a&$ 9$&$10.47$&$2.78$&$36.71$\tabularnewline
 \hline
 {\bfseries PC}&&&&&\tabularnewline
-~~E1A&a&$ 5$&$ 0.74$&$0.50$&$ 1.54$\tabularnewline
-~~E1C&ab&$17$&$ 4.61$&$0.29$&$22.56$\tabularnewline
-~~NI1&b&$54$&$ 6.63$&$0.52$&$23.39$\tabularnewline
-~~E2A&ab&$16$&$ 5.57$&$0.55$&$32.52$\tabularnewline
-~~E2C&b&$11$&$ 6.81$&$2.44$&$16.46$\tabularnewline
-~~NI2&ab&$ 9$&$ 6.00$&$1.47$&$33.95$\tabularnewline
+~~NI1&a&$54$&$ 6.63$&$0.52$&$23.39$\tabularnewline
+~~E2A&a&$16$&$ 5.57$&$0.55$&$32.52$\tabularnewline
+~~E2C&a&$11$&$ 6.81$&$2.44$&$16.46$\tabularnewline
+~~NI2&a&$ 9$&$ 6.00$&$1.47$&$33.95$\tabularnewline
 \hline
 {\bfseries BC}&&&&&\tabularnewline
-~~E1A&a&$ 5$&$ 1.67$&$1.21$&$ 2.54$\tabularnewline
-~~E1C&ab&$18$&$ 6.61$&$0.44$&$28.02$\tabularnewline
-~~NI1&ab&$54$&$ 6.34$&$0.69$&$30.59$\tabularnewline
-~~E2A&ab&$16$&$ 5.91$&$1.78$&$23.12$\tabularnewline
-~~E2C&b&$11$&$ 8.57$&$3.93$&$47.67$\tabularnewline
-~~NI2&b&$ 9$&$12.35$&$3.33$&$43.42$\tabularnewline
+~~NI1&a&$54$&$ 6.34$&$0.69$&$30.59$\tabularnewline
+~~E2A&a&$16$&$ 5.91$&$1.78$&$23.12$\tabularnewline
+~~E2C&a&$11$&$ 8.57$&$3.93$&$47.67$\tabularnewline
+~~NI2&a&$ 9$&$12.35$&$3.33$&$43.42$\tabularnewline
 \hline
 \end{tabular}\end{center}
 
@@ -505,25 +497,13 @@
 \clearpage
 
 % between site eval
-%latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$TimeFrame), n.rgroup = rep(4,         6), rowname = rows, colheads = c("Result", "n", "Median",         "Min", "Max"), label = "tab:chltab2")%
+%latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$TimeFrame), n.rgroup = rep(4,         4), rowname = rows, colheads = c("Result", "n", "Median",         "Min", "Max"), label = "tab:chltab2")%
 \begin{table}[!tbp]
-\caption{Within time frame comparisons of monthly chlorophyll data at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for chlorophyll by time frame and station.  Result letters indicate stations within each time frame that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, BN: Bangs North, and PC: Point aux Chenes.  Time frames are E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.\label{tab:chltab2}} 
+\caption{Within time frame comparisons of monthly chlorophyll data at Grand Bay.  Values are within-group summaries of sample size, median, and ranges for chlorophyll by time frame and station.  Result letters indicate stations within each time frame that were not significantly different based on multiple comparisons with Mann-Whitney rank sum tests.  P-values were adjusted using the sequential Bonferroni method to reduce the probability of Type I errors. Sites are BC: Bayou Cumbest, BL: Bangs Lake, BN: Bangs North, and PC: Point aux Chenes.  Time frames are NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.\label{tab:chltab2}} 
 \begin{center}
 \begin{tabular}{llrrrr}
 \hline\hline
 \multicolumn{1}{l}{Site}&\multicolumn{1}{c}{Result}&\multicolumn{1}{c}{n}&\multicolumn{1}{c}{Median}&\multicolumn{1}{c}{Min}&\multicolumn{1}{c}{Max}\tabularnewline
-\hline
-{\bfseries E1A}&&&&&\tabularnewline
-~~BL&a&$ 5$&$ 1.07$&$0.50$&$ 1.47$\tabularnewline
-~~BN&a&$ 3$&$ 1.34$&$1.27$&$ 1.34$\tabularnewline
-~~PC&a&$ 5$&$ 0.74$&$0.50$&$ 1.54$\tabularnewline
-~~BC&a&$ 5$&$ 1.67$&$1.21$&$ 2.54$\tabularnewline
-\hline
-{\bfseries E1C}&&&&&\tabularnewline
-~~BL&a&$18$&$ 5.52$&$0.19$&$18.89$\tabularnewline
-~~BN&a&$15$&$ 3.27$&$0.53$&$ 9.14$\tabularnewline
-~~PC&a&$17$&$ 4.61$&$0.29$&$22.56$\tabularnewline
-~~BC&a&$18$&$ 6.61$&$0.44$&$28.02$\tabularnewline
 \hline
 {\bfseries NI1}&&&&&\tabularnewline
 ~~BL&a&$54$&$ 4.66$&$0.46$&$21.99$\tabularnewline
