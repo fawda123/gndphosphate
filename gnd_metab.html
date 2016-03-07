@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+<title></title>
+
+<script src="gnd_metab_files/jquery-1.11.0/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="gnd_metab_files/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" />
+<script src="gnd_metab_files/bootstrap-3.3.1/js/bootstrap.min.js"></script>
+<script src="gnd_metab_files/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
+<script src="gnd_metab_files/bootstrap-3.3.1/shim/respond.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<link rel="stylesheet"
+      href="gnd_metab_files/highlight/default.css"
+      type="text/css" />
+<script src="gnd_metab_files/highlight/highlight.js"></script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img { 
+  max-width:100%; 
+  height: auto; 
+}
+</style>
+<div class="container-fluid main-container">
+
+
+
+
+<div id="estimates-of-ecosystem-metabolism-for-grand-bay-wq-stations" class="section level2">
+<h2>Estimates of ecosystem metabolism for Grand Bay wq stations</h2>
+<p>The data were downloaded from CDMO, imported into R, and processed with SWMPr. Water quality stations included Bayou Cumbest (bc), Bangs Lake (bl), and Point Aux Chenes (pc). Water quality data were combined with weather data from Crooked Bayou.</p>
+<pre class="r"><code>library(SWMPr)
+library(dplyr)
+
+# process met for metab
+met &lt;- import_local(&#39;C:/Users/mbeck/Desktop/813213.zip&#39;, &#39;gndcrmet&#39;)
+met_proc &lt;- qaqc(met, qaqc_keep = c(0, 4)) %&gt;% 
+  subset(., select = c(&#39;atemp&#39;, &#39;bp&#39;, &#39;wspd&#39;), subset = &#39;2005-01-01 0:0&#39;, operator = &#39;&gt;=&#39;)
+
+# wq stations to process
+sta &lt;- c(&#39;gndbcwq&#39;, &#39;gndblwq&#39;, &#39;gndpcwq&#39;)
+
+# output list to append results
+gnd_metab &lt;- vector(&#39;list&#39;, length = length(sta))
+names(gnd_metab) &lt;- sta
+
+# iterate through stations
+for(st in sta){
+  
+  # import
+  dat &lt;- import_local(&#39;C:/Users/mbeck/Desktop/813213.zip&#39;, st, trace = TRUE)
+  
+  # qaqc, subset, combine with met, get ecometab
+  dat_proc &lt;- qaqc(dat, qaqc_keep = c(0, 4)) %&gt;% 
+    subset(., select = c(&#39;do_mgl&#39;, &#39;depth&#39;, &#39;temp&#39;, &#39;sal&#39;), subset = &#39;2005-01-01 0:0&#39;, operator = &#39;&gt;=&#39;) %&gt;% 
+    comb(., met_proc, timestep = 15) %&gt;% 
+    ecometab(., trace = TRUE)
+  
+  # append to output list
+  gnd_metab[[st]] &lt;- dat_proc
+  
+}
+
+# save data file
+save(gnd_metab, file = &#39;gnd_metab.RData&#39;)</code></pre>
+<p>Plots of DO and ecosystem metabolism by station:</p>
+<pre class="r"><code>load(file = &#39;gnd_metab.RData&#39;)
+
+for(i in 1:length(gnd_metab)){
+  
+  # station
+  dat &lt;- gnd_metab[[i]]
+  
+  # do plot
+  p1 &lt;- ggplot(dat, aes(x = datetimestamp, y = do_mgl)) +
+    geom_line() + 
+    theme_minimal() +
+    theme(axis.title.x = element_blank()) + 
+    ggtitle(names(gnd_metab)[i])
+  
+  # metab plot
+  p2 &lt;- plot_metab(dat) +
+    theme_minimal() +
+    theme(legend.position = &#39;top&#39;, legend.title = element_blank(), axis.title.x = element_blank())
+  
+  grid.arrange(p1, p2, ncol = 1)
+   
+}</code></pre>
+<p><img src="gnd_metab_files/figure-html/unnamed-chunk-3-1.png" /><img src="gnd_metab_files/figure-html/unnamed-chunk-3-2.png" /><img src="gnd_metab_files/figure-html/unnamed-chunk-3-3.png" /></p>
+<p>Tabular summaries can be obtained with <code>aggremetab</code>.</p>
+<pre class="r"><code>st &lt;- &#39;gndbcwq&#39;
+summ &lt;- aggremetab(gnd_metab[[st]], by = &#39;years&#39;)
+knitr::kable(summ)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">date</th>
+<th align="left">Estimate</th>
+<th align="right">val</th>
+<th align="right">lower</th>
+<th align="right">upper</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">2005-01-01</td>
+<td align="left">NEM</td>
+<td align="right">-26.16372</td>
+<td align="right">-20.21009</td>
+<td align="right">-32.11735</td>
+</tr>
+<tr class="even">
+<td align="left">2006-01-01</td>
+<td align="left">NEM</td>
+<td align="right">-14.57644</td>
+<td align="right">-10.04787</td>
+<td align="right">-19.10500</td>
+</tr>
+<tr class="odd">
+<td align="left">2007-01-01</td>
+<td align="left">NEM</td>
+<td align="right">-23.93143</td>
+<td align="right">-17.14122</td>
+<td align="right">-30.72164</td>
+</tr>
+<tr class="even">
+<td align="left">2008-01-01</td>
+<td align="left">NEM</td>
+<td align="right">-24.59738</td>
+<td align="right">-16.51222</td>
+<td align="right">-32.68254</td>
+</tr>
+<tr class="odd">
+<td align="left">2009-01-01</td>
+<td align="left">NEM</td>
+<td align="right">-34.15823</td>
+<td align="right">-28.96579</td>
+<td align="right">-39.35067</td>
+</tr>
+<tr class="even">
+<td align="left">2010-01-01</td>
+<td align="left">NEM</td>
+<td align="right">-34.21961</td>
+<td align="right">-23.53343</td>
+<td align="right">-44.90578</td>
+</tr>
+<tr class="odd">
+<td align="left">2011-01-01</td>
+<td align="left">NEM</td>
+<td align="right">-24.43925</td>
+<td align="right">-16.55321</td>
+<td align="right">-32.32530</td>
+</tr>
+<tr class="even">
+<td align="left">2012-01-01</td>
+<td align="left">NEM</td>
+<td align="right">-36.29182</td>
+<td align="right">-29.43948</td>
+<td align="right">-43.14417</td>
+</tr>
+<tr class="odd">
+<td align="left">2013-01-01</td>
+<td align="left">NEM</td>
+<td align="right">-30.46346</td>
+<td align="right">-24.89666</td>
+<td align="right">-36.03025</td>
+</tr>
+<tr class="even">
+<td align="left">2014-01-01</td>
+<td align="left">NEM</td>
+<td align="right">-25.43430</td>
+<td align="right">-20.07210</td>
+<td align="right">-30.79650</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-01-01</td>
+<td align="left">NEM</td>
+<td align="right">-32.78027</td>
+<td align="right">-27.49370</td>
+<td align="right">-38.06685</td>
+</tr>
+<tr class="even">
+<td align="left">2005-01-01</td>
+<td align="left">Pg</td>
+<td align="right">126.04403</td>
+<td align="right">137.96846</td>
+<td align="right">114.11961</td>
+</tr>
+<tr class="odd">
+<td align="left">2006-01-01</td>
+<td align="left">Pg</td>
+<td align="right">179.78716</td>
+<td align="right">192.13308</td>
+<td align="right">167.44123</td>
+</tr>
+<tr class="even">
+<td align="left">2007-01-01</td>
+<td align="left">Pg</td>
+<td align="right">139.20126</td>
+<td align="right">152.91801</td>
+<td align="right">125.48450</td>
+</tr>
+<tr class="odd">
+<td align="left">2008-01-01</td>
+<td align="left">Pg</td>
+<td align="right">132.13317</td>
+<td align="right">144.29814</td>
+<td align="right">119.96820</td>
+</tr>
+<tr class="even">
+<td align="left">2009-01-01</td>
+<td align="left">Pg</td>
+<td align="right">112.35720</td>
+<td align="right">124.92602</td>
+<td align="right">99.78837</td>
+</tr>
+<tr class="odd">
+<td align="left">2010-01-01</td>
+<td align="left">Pg</td>
+<td align="right">156.73704</td>
+<td align="right">177.05963</td>
+<td align="right">136.41446</td>
+</tr>
+<tr class="even">
+<td align="left">2011-01-01</td>
+<td align="left">Pg</td>
+<td align="right">134.57406</td>
+<td align="right">147.29708</td>
+<td align="right">121.85105</td>
+</tr>
+<tr class="odd">
+<td align="left">2012-01-01</td>
+<td align="left">Pg</td>
+<td align="right">111.59022</td>
+<td align="right">121.83120</td>
+<td align="right">101.34924</td>
+</tr>
+<tr class="even">
+<td align="left">2013-01-01</td>
+<td align="left">Pg</td>
+<td align="right">109.81777</td>
+<td align="right">122.86616</td>
+<td align="right">96.76937</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-01-01</td>
+<td align="left">Pg</td>
+<td align="right">144.91187</td>
+<td align="right">158.06774</td>
+<td align="right">131.75599</td>
+</tr>
+<tr class="even">
+<td align="left">2015-01-01</td>
+<td align="left">Pg</td>
+<td align="right">137.76460</td>
+<td align="right">150.05995</td>
+<td align="right">125.46925</td>
+</tr>
+<tr class="odd">
+<td align="left">2005-01-01</td>
+<td align="left">Rt</td>
+<td align="right">-152.20775</td>
+<td align="right">-139.15620</td>
+<td align="right">-165.25931</td>
+</tr>
+<tr class="even">
+<td align="left">2006-01-01</td>
+<td align="left">Rt</td>
+<td align="right">-194.36359</td>
+<td align="right">-182.50665</td>
+<td align="right">-206.22054</td>
+</tr>
+<tr class="odd">
+<td align="left">2007-01-01</td>
+<td align="left">Rt</td>
+<td align="right">-163.13269</td>
+<td align="right">-149.70343</td>
+<td align="right">-176.56195</td>
+</tr>
+<tr class="even">
+<td align="left">2008-01-01</td>
+<td align="left">Rt</td>
+<td align="right">-156.73055</td>
+<td align="right">-144.20126</td>
+<td align="right">-169.25984</td>
+</tr>
+<tr class="odd">
+<td align="left">2009-01-01</td>
+<td align="left">Rt</td>
+<td align="right">-146.51543</td>
+<td align="right">-133.86465</td>
+<td align="right">-159.16621</td>
+</tr>
+<tr class="even">
+<td align="left">2010-01-01</td>
+<td align="left">Rt</td>
+<td align="right">-190.95665</td>
+<td align="right">-170.95387</td>
+<td align="right">-210.95943</td>
+</tr>
+<tr class="odd">
+<td align="left">2011-01-01</td>
+<td align="left">Rt</td>
+<td align="right">-159.01332</td>
+<td align="right">-144.03903</td>
+<td align="right">-173.98761</td>
+</tr>
+<tr class="even">
+<td align="left">2012-01-01</td>
+<td align="left">Rt</td>
+<td align="right">-147.88204</td>
+<td align="right">-136.61080</td>
+<td align="right">-159.15329</td>
+</tr>
+<tr class="odd">
+<td align="left">2013-01-01</td>
+<td align="left">Rt</td>
+<td align="right">-140.28122</td>
+<td align="right">-127.23433</td>
+<td align="right">-153.32811</td>
+</tr>
+<tr class="even">
+<td align="left">2014-01-01</td>
+<td align="left">Rt</td>
+<td align="right">-170.34617</td>
+<td align="right">-157.17495</td>
+<td align="right">-183.51738</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-01-01</td>
+<td align="left">Rt</td>
+<td align="right">-170.54488</td>
+<td align="right">-158.08765</td>
+<td align="right">-183.00211</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
