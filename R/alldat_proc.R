@@ -16,7 +16,7 @@ library(SWMPr)
 library(reshape2)
 
 # import
-raw_data <- read.csv('PO4modified2005-Aug2015grabs.csv', stringsAsFactors = F)
+raw_data <- read.csv('ignore/PO4modified2005-Aug2015grabs.csv', stringsAsFactors = F)
 timeframes <- c('E1A', 'E1C', 'NI1', 'E2A', 'E2C', 'NI2')
 
 # format the data
@@ -44,7 +44,7 @@ nut_dat[torm, 'value'] <- NaN
 nut_dat[torm, 'logvalue'] <- NaN
 
 # save
-save(nut_dat, file = 'nut_dat.RData')
+save(nut_dat, file = 'data/nut_dat.RData')
 
 ######
 # wq data processing
@@ -68,7 +68,7 @@ save(nut_dat, file = 'nut_dat.RData')
 # 
 # # save raw, unprocessed data in R format
 # gndwq <- dat_in
-# save(gndwq, file = 'gndwq_unproc.RData')
+# save(gndwq, file = 'data/gndwq_unproc.RData')
 
 load('gndwq_unproc.RData')
 dat_in <- gndwq
@@ -117,7 +117,7 @@ labs <- c('E1A', 'E1C', 'NI1', 'E2A', 'E2C', 'NI2')
 wq_dat$TimeFrame <- cut(as.numeric(wq_dat$datetimestamp), breaks = brks, labels = labs, 
   right = FALSE) # open on right
 
-save(wq_dat, file = 'wq_dat.RData')
+save(wq_dat, file = 'data/wq_dat.RData')
 
 ######
 # met proc
@@ -127,7 +127,7 @@ save(wq_dat, file = 'wq_dat.RData')
 #  
 # # save raw, unprocessed data in R format
 # gndmet <- met_dat
-# save(gndmet, file = 'gndmet_unproc.RData')
+# save(gndmet, file = 'data/gndmet_unproc.RData')
 
 load('gndmet_unproc.RData')
 
@@ -142,7 +142,7 @@ labs <- c('E1A', 'E1C', 'NI1', 'E2A', 'E2C', 'NI2')
 met_dat$TimeFrame <- cut(as.numeric(met_dat$datetimestamp), breaks = brks, labels = labs, 
   right = FALSE) # open on right
 
-save(met_dat, file = 'met_dat.RData')
+save(met_dat, file = 'data/met_dat.RData')
 
 ##
 # some minor processing of supplementary precip data from KPQL
@@ -166,7 +166,7 @@ met_supp$TimeFrame <- cut(as.numeric(met_supp$date), breaks = brks, labels = lab
   right = FALSE) # open on right
 met_supp <- met_supp[, c(1, 3, 2)]
 
-save(met_supp, file = 'met_supp.RData')
+save(met_supp, file = 'data/met_supp.RData')
 
 ##
 # some minor processing of supplementary precip data from KPQL
@@ -190,7 +190,7 @@ met_supp_e1$TimeFrame <- cut(as.numeric(met_supp_e1$datetimestamp), breaks = brk
   right = FALSE) # open on right
 met_supp_e1 <- met_supp_e1[, c(1, 3, 2)]
 
-save(met_supp_e1, file = 'met_supp_e1.RData')
+save(met_supp_e1, file = 'data/met_supp_e1.RData')
 
 ##
 # some minor processing of supplementary precip data from KPQL
@@ -214,5 +214,5 @@ met_supp_e2$TimeFrame <- cut(as.numeric(met_supp_e2$datetimestamp), breaks = brk
   right = FALSE) # open on right
 met_supp_e2 <- met_supp_e2[, c(1, 3, 2)]
 
-save(met_supp_e2, file = 'met_supp_e2.RData')
+save(met_supp_e2, file = 'data/met_supp_e2.RData')
 

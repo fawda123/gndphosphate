@@ -1,7 +1,3 @@
-To do:
-
-* detection limits
-
 Data processed with alldat_proc.R include:
 
 * met_dat.RData

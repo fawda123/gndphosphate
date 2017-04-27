@@ -39,13 +39,11 @@ options(replace.assign = TRUE, width = 90)
 <<echo = FALSE, message = FALSE>>=
 # libraries to use
 library(ggord)
-# devtools::load_all('M:/docs/ggord')
 library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(stargazer)
-# library(SWMPr)
-devtools::load_all('M:/docs/SWMPr')
+library(SWMPr)
 library(agricolae)
 library(reshape2)
 library(Hmisc)
@@ -53,11 +51,12 @@ library(gridExtra)
 library(nlme)
 library(vegan)
 library(multcompView)
+library(grid)
 
 # load data
-load('wq_dat.RData')
-load('met_dat.RData')
-load('nut_dat.RData')
+data(wq_dat)
+data(met_dat)
+data(nut_dat)
 
 # get ggplot legend
 g_legend<-function(a.gplot){
@@ -79,13 +78,14 @@ g_legend<-function(a.gplot){
 # first get cumulative daily precipitation for met
 # then combine wq and met, take daily ave, make long form
 
-load(file = 'met_supp.RData')
+data(met_supp)
 
 # met process for totprcp
 met_proc <- mutate(met_dat, datetimestamp = as.Date(datetimestamp)) %>% 
   rename(date = datetimestamp) %>% 
   group_by(date, TimeFrame) %>% 
-  summarise(totprcp = sum(totprcp, na.rm = TRUE))
+  summarise(totprcp = sum(totprcp, na.rm = TRUE)) %>% 
+  as.data.frame
 met_proc <- rbind(met_proc, met_supp) %>% 
   arrange(date)
 
@@ -185,8 +185,8 @@ grid.arrange(
 # first get cumulative daily precipitation for met
 # then combine wq and met, take daily ave, make long form
 
-load(file = 'met_supp_e1.RData')
-load(file = 'met_supp_e2.RData')
+data(met_supp_e1)
+data(met_supp_e2)
 met_supp_all <- rbind(met_supp_e1, met_supp_e2)
 
 # met process for totprcp
@@ -257,7 +257,7 @@ grid.arrange(p1, p2, ncol = 2)
 
 <<orthtsfig, fig.width = 7.5, fig.height = 6, echo = FALSE, fig.cap = 'Monthly phosphate time series at Bangs North (BN), Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC) sites at Grand Bay. Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.'>>=
 
-load(file = 'nut_dat.RData')
+data(nut_dat)
 
 toplo <- filter(nut_dat, nutrient == 'PO4F')
 
@@ -289,7 +289,7 @@ p1
 
 <<orthfig, fig.width = 7.5, fig.height = 5, echo = FALSE, fig.cap = 'Boxplot summaries by event of monthly orthophosphate data at Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC) sites in Grand Bay.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). Boxes are shaded by medians between sites.  See \\cref{tab:orthtab1} for a numerical summary. E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.'>>=
 
-load(file = 'nut_dat.RData')
+data(nut_dat)
 
 toplo <- filter(nut_dat, nutrient == 'PO4F')
 
@@ -320,7 +320,7 @@ p1
 
 % within site eval
 <<orthtab1, echo = FALSE>>=
-load(file = 'nut_dat.RData')
+data(nut_dat)
 
 toplo <- filter(nut_dat, nutrient == 'PO4F')
 
@@ -402,7 +402,7 @@ latex(
 
 % between site eval
 <<orthtab2, echo = FALSE>>=
-load(file = 'nut_dat.RData')
+data(nut_dat)
 
 toplo <- filter(nut_dat, nutrient == 'PO4F') %>% 
   select(-stat_nut)
@@ -486,13 +486,11 @@ latex(
 
 <<boxplt_all, fig.width = 8, fig.height = 6, fig.cap = 'Boxplot summaries by event of nutrient data at Bayou Cumbest (BC), Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC) sites at Grand Bay.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizontal line.  Boxes are colored by relative median nutrients between sites.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). See \\cref{tab:ammontab,tab:tntab,tab:chltab} for numerical summaries.  Insufficient chlorophyll data were removed for E1A and E1C. E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.', echo = FALSE>>=
 
-load(file = 'nut_dat.RData')
-load(file = 'wq_dat.RData')
+data(nut_dat)
+data(wq_dat)
 
 # get ph data on monthly time step
 wq_dat <- setstep(wq_dat, date_col = 'datetimestamp', timestep = 'months')
-
-
 
 # remove BN, phosphorus
 toplo <- filter(nut_dat, nutrient != 'PO4F') 
@@ -547,7 +545,7 @@ p1
 \clearpage
 
 <<ammontab, echo = FALSE>>=
-load(file = 'nut_dat.RData')
+data(nut_dat)
 
 toplo <- filter(nut_dat, nutrient == 'NH4F')
 
@@ -629,7 +627,7 @@ latex(
 
 % between site eval
 <<ammontab2, echo = FALSE>>=
-load(file = 'nut_dat.RData')
+data(nut_dat)
 
 toplo <- filter(nut_dat, nutrient == 'NH4F') %>% 
   select(-stat_nut)
@@ -709,7 +707,7 @@ latex(
 \clearpage
 
 <<tntab, echo = FALSE>>=
-load(file = 'nut_dat.RData')
+data(nut_dat)
 
 toplo <- filter(nut_dat, nutrient == 'NO23F')
 
@@ -791,7 +789,7 @@ latex(
 
 % between site eval
 <<tntab2, echo = FALSE>>=
-load(file = 'nut_dat.RData')
+data(nut_dat)
 
 toplo <- filter(nut_dat, nutrient == 'NO23F') %>% 
   select(-stat_nut)
@@ -871,7 +869,7 @@ latex(
 \clearpage
 
 <<chltab, echo = FALSE>>=
-load(file = 'nut_dat.RData')
+data(nut_dat)
 
 timeframes <- c('NI1', 'E2A', 'E2C', 'NI2')
 
@@ -954,7 +952,7 @@ latex(
 
 % between site eval
 <<chltab2, echo = FALSE>>=
-load(file = 'nut_dat.RData')
+data(nut_dat)
 
 timeframes <- c('NI1', 'E2A', 'E2C', 'NI2')
 
