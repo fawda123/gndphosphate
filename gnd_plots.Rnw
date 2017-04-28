@@ -32,7 +32,11 @@
 <<setup, echo = FALSE, cache = F>>=
 library(knitr)
 # set global chunk options
-opts_chunk$set(fig.path = 'figs/', fig.align = 'center', fig.show = 'hold', message = F, results = 'asis', dev = c('pdf', 'tiff'), dev.args = list(pdf = list(family = 'serif'), tiff = list(compression = 'lzw', family = 'serif')), dpi = 600, fig.pos = '!ht', warning = F, tangle = TRUE)
+opts_chunk$set(fig.path = 'figs/', fig.align = 'center', fig.show = 'hold', message = F, results = 'asis', dev = c('pdf', 'tiff'), dev.args = list(pdf = list(family = 'serif'), tiff = list(compression = 'lzw', family = 'serif')), dpi = 600, fig.pos = '!ht', warning = F, tangle = TRUE, 
+  fig.process = function(x) {
+  x2 = sub('-\\d+([.][a-z]+)$', '\\1', x)
+  if (file.rename(x, x2)) x2 else x
+  })
 options(replace.assign = TRUE, width = 90)
 @
 
@@ -73,7 +77,7 @@ g_legend<-function(a.gplot){
 
 \begin{landscape}
 \centering\vspace*{\fill}
-<<tsplot, fig.width = 9, fig.height = 5, out.width = '1.3\\textwidth', echo = FALSE, fig.cap = 'Time series of total precipitation, salinity, pH, and phosphate for Bangs Lake, Grand Bay reserve.  All observations are daily averages, excluding phosphate which was sampled monthly.  Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.  Salinity and pH include a loess smooth to reduce variability. Orthophosphate is colored by event categories in relation to the vertical green bars.  E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.'>>=
+<<Fig2, fig.width = 9, fig.height = 5, out.width = '1.3\\textwidth', echo = FALSE, fig.cap = 'Time series of total precipitation, salinity, pH, and phosphate for Bangs Lake, Grand Bay reserve.  All observations are daily averages, excluding phosphate which was sampled monthly.  Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.  Salinity and pH include a loess smooth to reduce variability. Orthophosphate is colored by event categories in relation to the vertical green bars.  E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.'>>=
 # ts plots for BL
 # first get cumulative daily precipitation for met
 # then combine wq and met, take daily ave, make long form
@@ -180,7 +184,7 @@ grid.arrange(
 \end{landscape}
 \clearpage
 
-<<tsplotexp, fig.width = 9, fig.height = 6, echo = FALSE, fig.cap = 'Time series of daily precipitation, salinity, and pH for Bangs Lake, Grand Bay reserve.  Precipitation data are daily totals from the Pascagoula International Airport.  Salinity and pH data were collected at 15 minute time steps.  Green shading indicates period of high precipitation for a heavy rain event in 2005 (left, March 31\\textsuperscript{st} to April 1\\textsuperscript{st}) and hurricane Isaac in 2012 (right, August 28\\textsuperscript{th} to 30\\textsuperscript{th}).  Red shading for the first event indicates the date of documented phosphorus spill.  E1A: event 1 acute, E2A: event 2 acute.'>>=
+<<Fig3, fig.width = 9, fig.height = 6, echo = FALSE, fig.cap = 'Time series of daily precipitation, salinity, and pH for Bangs Lake, Grand Bay reserve.  Precipitation data are daily totals from the Pascagoula International Airport.  Salinity and pH data were collected at 15 minute time steps.  Green shading indicates period of high precipitation for a heavy rain event in 2005 (left, March 31\\textsuperscript{st} to April 1\\textsuperscript{st}) and hurricane Isaac in 2012 (right, August 28\\textsuperscript{th} to 30\\textsuperscript{th}).  Red shading for the first event indicates the date of documented phosphorus spill.  E1A: event 1 acute, E2A: event 2 acute.'>>=
 # ts plots for BL, wq only expanded about the events
 # first get cumulative daily precipitation for met
 # then combine wq and met, take daily ave, make long form
@@ -255,7 +259,7 @@ grid.arrange(p1, p2, ncol = 2)
 @
 \clearpage
 
-<<orthtsfig, fig.width = 7.5, fig.height = 6, echo = FALSE, fig.cap = 'Monthly phosphate time series at Bangs North (BN), Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC) sites at Grand Bay. Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.'>>=
+<<Fig4, fig.width = 7.5, fig.height = 6, echo = FALSE, fig.cap = 'Monthly phosphate time series at Bangs North (BN), Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC) sites at Grand Bay. Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.'>>=
 
 data(nut_dat)
 
@@ -287,7 +291,7 @@ p1
 @
 \clearpage
 
-<<orthfig, fig.width = 7.5, fig.height = 5, echo = FALSE, fig.cap = 'Boxplot summaries by event of monthly orthophosphate data at Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC) sites in Grand Bay.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). Boxes are shaded by medians between sites.  See \\cref{tab:orthtab1} for a numerical summary. E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.'>>=
+<<Fig5, fig.width = 7.5, fig.height = 5, echo = FALSE, fig.cap = 'Boxplot summaries by event of monthly orthophosphate data at Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC) sites in Grand Bay.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). Boxes are shaded by medians between sites.  See \\cref{tab:orthtab1} for a numerical summary. E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.'>>=
 
 data(nut_dat)
 
@@ -484,7 +488,7 @@ latex(
 % supplements
 \beginsupplement
 
-<<boxplt_all, fig.width = 8, fig.height = 6, fig.cap = 'Boxplot summaries by event of nutrient data at Bayou Cumbest (BC), Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC) sites at Grand Bay.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizontal line.  Boxes are colored by relative median nutrients between sites.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). See \\cref{tab:ammontab,tab:tntab,tab:chltab} for numerical summaries.  Insufficient chlorophyll data were removed for E1A and E1C. E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.', echo = FALSE>>=
+<<FigS1, fig.width = 8, fig.height = 6, fig.cap = 'Boxplot summaries by event of nutrient data at Bayou Cumbest (BC), Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC) sites at Grand Bay.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizontal line.  Boxes are colored by relative median nutrients between sites.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). See \\cref{tab:ammontab,tab:tntab,tab:chltab} for numerical summaries.  Insufficient chlorophyll data were removed for E1A and E1C. E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.', echo = FALSE>>=
 
 data(nut_dat)
 data(wq_dat)
