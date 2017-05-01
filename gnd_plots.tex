@@ -143,7 +143,7 @@
 % summary charactistics table
 %latex.default(tab, file = "", rowlabel = "Stations", caption = cap,     caption.loc = "top", rgroup = rgrps, n.rgroup = rep(4, 7),     rowname = rows, colheads = c("Average", "Median", "St. Dev",         "Min", "Max"), label = "tab:summtab")%
 \begin{table}[!tbp]
-\caption{Site summaries of water quality (hourly) and nutrient (monthly) observations from 2005 to 2015.  Units are mg L$^{-1}$ for all variables, except Chl-\textit{a} as $\mu$g L$^{-1}$, pH from 0-12, and salinity as psu. Nutrient summaries are based on maximum likelihood estimates for left-censored data.  Sites are BC: Bayou Cumbest, BH: Bayou Heron (no nutrient data), BL: Bangs Lake, BN: Bangs North (no water quality data), and PC: Point aux Chenes.\label{tab:summtab}} 
+\caption{Site summaries of water quality (hourly) and nutrient (monthly) observations from 2005 to 2015.  Units are mg L$^{-1}$ for all variables, except Chl-\textit{a} as $\mu$g L$^{-1}$, DO\textit{sat} as percent, pH from 0-12, and salinity as psu. Nutrient summaries are based on maximum likelihood estimates for left-censored data.  Sites are BC: Bayou Cumbest, BH: Bayou Heron (no nutrient data), BL: Bangs Lake, BN: Bangs North (no water quality data), and PC: Point aux Chenes.\label{tab:summtab}} 
 \begin{center}
 \begin{tabular}{lrrrrr}
 \hline\hline
@@ -194,7 +194,10 @@
 \end{tabular}\end{center}
 \end{table}
 
+\clearpage
 
+% table 2
+\setcounter{table}{2}
 
 % within site eval
 %latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$StationCode), n.rgroup = rep(6,         4), rowname = rows, colheads = c("Result", "n", "Median",         "Min", "Max"), label = "tab:orthtab1")%

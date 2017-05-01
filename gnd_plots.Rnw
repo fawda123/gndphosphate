@@ -368,7 +368,7 @@ totab <- rbind(wq_dat, nut_dat) %>%
 tab <- totab[, -c(1, 2)]
 tab <- round(tab, 2)
 rows <- totab[, 2]
-cap <- 'Site summaries of water quality (hourly) and nutrient (monthly) observations from 2005 to 2015.  Units are mg L$^{-1}$ for all variables, except Chl-\\textit{a} as $\\mu$g L$^{-1}$, pH from 0-12, and salinity as psu. Nutrient summaries are based on maximum likelihood estimates for left-censored data.  Sites are BC: Bayou Cumbest, BH: Bayou Heron (no nutrient data), BL: Bangs Lake, BN: Bangs North (no water quality data), and PC: Point aux Chenes.'
+cap <- 'Site summaries of water quality (hourly) and nutrient (monthly) observations from 2005 to 2015.  Units are mg L$^{-1}$ for all variables, except Chl-\\textit{a} as $\\mu$g L$^{-1}$, DO\\textit{sat} as percent, pH from 0-12, and salinity as psu. Nutrient summaries are based on maximum likelihood estimates for left-censored data.  Sites are BC: Bayou Cumbest, BH: Bayou Heron (no nutrient data), BL: Bangs Lake, BN: Bangs North (no water quality data), and PC: Point aux Chenes.'
 rgrps <- unique(totab$var) %>% 
   factor(., 
     levels = c('CHLA_N', 'do_pct', 'NH4F', 'NO23F', 'ph', 'PO4F', 'sal'), 
@@ -390,7 +390,10 @@ latex(
   )
 
 @
+\clearpage
 
+% table 2
+\setcounter{table}{2}
 
 % within site eval
 <<orthtab1, echo = FALSE>>=

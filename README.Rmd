@@ -1,3 +1,5 @@
+### Data
+
 Data processed with alldat_proc.R include:
 
 * met_dat.RData
@@ -8,4 +10,43 @@ Data processed with alldat_proc.R include:
 Data processed elsewhere:
 
 * wq_noseas.RData - includes wq values with seasonal component removed, created in gnd_plots.Rnw
+
+### Precipitation summary
+
+```{r, warning = F, message = F}
+library(tidyverse)
+library(lubridate)
+
+data(met_dat)
+data(met_supp_e1)
+data(met_supp_e2)
+
+# missing data in 2006 and 2012, added from supp datasets
+# 2015 data incomplete
+
+met_sum <- rbind(met_dat, met_supp_e1, met_supp_e2) %>% 
+  mutate(
+    date = as.Date(datetimestamp, tz = 'America/Regina'),
+    yr = year(datetimestamp)
+  ) %>% 
+  filter(yr > 2004 & yr < 2015) %>% 
+  group_by(date) %>% 
+  summarise(totprcp = sum(totprcp, na.rm = T)) %>% 
+  ungroup %>% 
+  mutate(
+    yr = year(date)
+  ) %>% 
+  group_by(yr) %>% 
+  summarise(
+    totprcp = sum(totprcp, na.rm = T)/10
+  ) %>% 
+  ungroup %>% 
+  mutate(
+    perc = ecdf(totprcp)(totprcp)
+  ) %>% 
+  arrange(perc)
+
+met_sum  
+mean(met_sum$totprcp)
+```
 
