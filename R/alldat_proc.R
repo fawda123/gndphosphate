@@ -60,17 +60,17 @@ save(nut_dat, file = 'data/nut_dat.RData')
 # # import data
 # for(stat in stats){
 # 
-#   dat <- import_local('C:/Users/mbeck/Desktop/567839.zip', stat)
-#   
+#   dat <- import_local('C:/Users/mbeck/Desktop/972699.zip', stat)
+# 
 #   dat_in[[stat]] <- dat
-#   
+# 
 # }
 # 
 # # save raw, unprocessed data in R format
 # gndwq <- dat_in
 # save(gndwq, file = 'data/gndwq_unproc.RData')
 
-load('gndwq_unproc.RData')
+data(gndwq_unproc)
 dat_in <- gndwq
 
 # process data
@@ -100,7 +100,7 @@ wq_dat <- lapply(dat_in,
       
 #     out <- subset(out, subset = '2015-01-01 00:00', operator = '<') %>% 
 #       select(datetimestamp, sal, ph, depth) 
-    out <-  select(out, datetimestamp, sal, ph, depth) 
+    out <-  select(out, datetimestamp, do_pct, c_do_pct, sal, c_sal, ph, c_ph, depth, c_depth) 
     
     return(out)
     
@@ -129,7 +129,7 @@ save(wq_dat, file = 'data/wq_dat.RData')
 # gndmet <- met_dat
 # save(gndmet, file = 'data/gndmet_unproc.RData')
 
-load('gndmet_unproc.RData')
+data(gndmet_unproc)
 
 met_dat <- qaqc(gndmet, qaqc_keep = c(0, 4, 5)) %>% 
       # subset(subset = '2015-01-01 00:00', operator = '<') %>% 

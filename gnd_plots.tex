@@ -87,7 +87,7 @@
 \begin{document}
 
 \setcounter{figure}{1}
-\setcounter{table}{1}
+% \setcounter{table}{1}
 
 \begin{landscape}
 \centering\vspace*{\fill}
@@ -139,6 +139,62 @@
 
 
 \clearpage
+
+% summary charactistics table
+%latex.default(tab, file = "", rowlabel = "Stations", caption = cap,     caption.loc = "top", rgroup = rgrps, n.rgroup = rep(4, 7),     rowname = rows, colheads = c("Average", "Median", "St. Dev",         "Min", "Max"), label = "tab:summtab")%
+\begin{table}[!tbp]
+\caption{Site summaries of water quality (hourly) and nutrient (monthly) observations from 2005 to 2015.  Units are mg L$^{-1}$ for all variables, except Chl-\textit{a} as $\mu$g L$^{-1}$, pH from 0-12, and salinity as psu. Nutrient summaries are based on maximum likelihood estimates for left-censored data.  Sites are BC: Bayou Cumbest, BH: Bayou Heron (no nutrient data), BL: Bangs Lake, BN: Bangs North (no water quality data), and PC: Point aux Chenes.\label{tab:summtab}} 
+\begin{center}
+\begin{tabular}{lrrrrr}
+\hline\hline
+\multicolumn{1}{l}{Stations}&\multicolumn{1}{c}{Average}&\multicolumn{1}{c}{Median}&\multicolumn{1}{c}{St. Dev}&\multicolumn{1}{c}{Min}&\multicolumn{1}{c}{Max}\tabularnewline
+\hline
+{\bfseries Chl-\textit{a}}&&&&&\tabularnewline
+~~BC&$10.82$&$ 6.69$&$13.76$&$0.69$&$ 47.67$\tabularnewline
+~~BL&$ 8.25$&$ 5.43$&$ 9.44$&$0.46$&$ 41.98$\tabularnewline
+~~BN&$ 7.94$&$ 5.01$&$ 9.79$&$0.55$&$ 36.71$\tabularnewline
+~~PC&$ 7.98$&$ 5.17$&$ 9.39$&$0.52$&$ 33.95$\tabularnewline
+\hline
+{\bfseries DO$_{sat}$}&&&&&\tabularnewline
+~~BC&$80.12$&$80.90$&$19.11$&$1.80$&$221.90$\tabularnewline
+~~BH&$45.26$&$47.00$&$27.19$&$0.00$&$165.80$\tabularnewline
+~~BL&$92.05$&$93.10$&$16.26$&$8.60$&$297.70$\tabularnewline
+~~PC&$97.08$&$97.90$&$15.52$&$8.40$&$221.90$\tabularnewline
+\hline
+{\bfseries NH$_4^+$}&&&&&\tabularnewline
+~~BC&$ 0.04$&$ 0.01$&$ 0.08$&$0.01$&$  0.21$\tabularnewline
+~~BL&$ 0.02$&$ 0.01$&$ 0.06$&$0.01$&$  0.18$\tabularnewline
+~~BN&$ 0.03$&$ 0.01$&$ 0.07$&$0.01$&$  0.16$\tabularnewline
+~~PC&$ 0.02$&$ 0.01$&$ 0.06$&$0.01$&$  0.42$\tabularnewline
+\hline
+{\bfseries NO$_2^-$/NO$_3^{2-}$}&&&&&\tabularnewline
+~~BC&$ 0.01$&$ 0.01$&$ 0.02$&$0.01$&$  0.09$\tabularnewline
+~~BL&$ 0.01$&$ 0.00$&$ 0.03$&$0.01$&$  0.09$\tabularnewline
+~~BN&$ 0.01$&$ 0.00$&$ 0.02$&$0.01$&$  0.10$\tabularnewline
+~~PC&$ 0.01$&$ 0.00$&$ 0.04$&$0.01$&$  0.10$\tabularnewline
+\hline
+{\bfseries pH}&&&&&\tabularnewline
+~~BC&$ 7.26$&$ 7.30$&$ 0.46$&$5.10$&$  9.00$\tabularnewline
+~~BH&$ 6.88$&$ 7.00$&$ 0.64$&$4.00$&$  8.40$\tabularnewline
+~~BL&$ 7.75$&$ 7.70$&$ 0.37$&$3.70$&$  9.60$\tabularnewline
+~~PC&$ 8.06$&$ 8.10$&$ 0.22$&$7.00$&$  9.00$\tabularnewline
+\hline
+{\bfseries PO$_4^{3-}$}&&&&&\tabularnewline
+~~BC&$ 0.00$&$ 0.00$&$ 0.03$&$0.01$&$  0.43$\tabularnewline
+~~BL&$ 0.09$&$ 0.00$&$ 2.13$&$0.01$&$  4.29$\tabularnewline
+~~BN&$ 0.12$&$ 0.02$&$ 0.90$&$0.01$&$  1.29$\tabularnewline
+~~PC&$ 0.01$&$ 0.00$&$ 0.02$&$0.01$&$  0.16$\tabularnewline
+\hline
+{\bfseries Salinity}&&&&&\tabularnewline
+~~BC&$17.22$&$18.00$&$ 7.86$&$0.00$&$ 33.50$\tabularnewline
+~~BH&$17.93$&$19.50$&$ 7.50$&$0.00$&$ 32.40$\tabularnewline
+~~BL&$22.02$&$22.40$&$ 5.49$&$1.50$&$ 32.10$\tabularnewline
+~~PC&$23.30$&$24.30$&$ 5.37$&$4.30$&$ 33.20$\tabularnewline
+\hline
+\end{tabular}\end{center}
+\end{table}
+
+
 
 % within site eval
 %latex.default(tab, file = "", rowlabel = "Site", caption = cap,     caption.loc = "top", rgroup = unique(res$StationCode), n.rgroup = rep(6,         4), rowname = rows, colheads = c("Result", "n", "Median",         "Min", "Max"), label = "tab:orthtab1")%

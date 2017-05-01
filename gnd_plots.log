@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.8.29)  28 APR 2017 08:32
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.8.29)  1 MAY 2017 15:00
 entering extended mode
 **gnd_plots.tex
 (M:\docs\manuscripts\gndphosphate\gnd_plots.tex
@@ -671,53 +671,57 @@ Package pdftex.def Info: figs/Fig5.pdf used on input line 133.
 (pdftex.def)             Requested size: 469.75502pt x 313.181pt.
  [4
 
- <M:/docs/manuscripts/gndphosphate/figs/Fig5.pdf>] [5] [6]
-<figs/FigS1.pdf, id=79, 578.16pt x 433.62pt>
+ <M:/docs/manuscripts/gndphosphate/figs/Fig5.pdf>] [5] [6] [7]
+<figs/FigS1.pdf, id=89, 578.16pt x 433.62pt>
 File: figs/FigS1.pdf Graphic file (type pdf)
  <use figs/FigS1.pdf>
-Package pdftex.def Info: figs/FigS1.pdf used on input line 244.
+Package pdftex.def Info: figs/FigS1.pdf used on input line 300.
 (pdftex.def)             Requested size: 469.75502pt x 352.31538pt.
- [7
+ [8
 
 
 
- <M:/docs/manuscripts/gndphosphate/figs/FigS1.pdf>] [8] [9] [10]
+ <M:/docs/manuscripts/gndphosphate/figs/FigS1.pdf>] [9] [10] [11]
 
-LaTeX Warning: Text page 11 contains only floats.
+LaTeX Warning: Text page 12 contains only floats.
 
-[11
-
-
+[12
 
 
-] [12]
-Package atenddvi Info: Last page = 13.
- [13]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 519.
-Package atveryend Info: Executing hook `AfterLastShipout' on input line 519.
+
+
+] [13]
+Package atenddvi Info: Last page = 14.
+ [14]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 575.
+Package atveryend Info: Executing hook `AfterLastShipout' on input line 575.
  (M:\docs\manuscripts\gndphosphate\gnd_plots.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 519.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 519.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 575.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 575.
 Package rerunfilecheck Info: File `gnd_plots.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 519.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 575.
  ) 
 Here is how much of TeX's memory you used:
- 10762 strings out of 493921
- 175272 string characters out of 3147282
- 309547 words of memory out of 3000000
- 13878 multiletter control sequences out of 15000+200000
- 6683 words of font info for 24 fonts, out of 3000000 for 9000
+ 10772 strings out of 493921
+ 175402 string characters out of 3147282
+ 321547 words of memory out of 3000000
+ 13884 multiletter control sequences out of 15000+200000
+ 7389 words of font info for 26 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 44i,9n,47p,844b,405s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 44i,10n,47p,844b,405s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Pr
-ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Program Fi
-les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTe
-X 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9/font
-s/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on gnd_plots.pdf (13 pages, 313235 bytes).
+ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbxti10.pfb><C:/Program 
+Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Program Files/Mi
+KTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Program Files/MiKTeX 2.9/
+fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTeX 2.9/fonts/typ
+e1/public/amsfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/
+amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts
+/cm/cmsy8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti1
+2.pfb>
+Output written on gnd_plots.pdf (14 pages, 352969 bytes).
 PDF statistics:
- 153 PDF objects out of 1000 (max. 8388607)
- 27 named destinations out of 1000 (max. 500000)
+ 174 PDF objects out of 1000 (max. 8388607)
+ 29 named destinations out of 1000 (max. 500000)
  26 words of extra memory for PDF output out of 10000 (max. 10000000)
 

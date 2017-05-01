@@ -56,6 +56,7 @@ library(nlme)
 library(vegan)
 library(multcompView)
 library(grid)
+library(NADA)
 
 # load data
 data(wq_dat)
@@ -73,7 +74,7 @@ g_legend<-function(a.gplot){
 \begin{document}
 
 \setcounter{figure}{1}
-\setcounter{table}{1}
+% \setcounter{table}{1}
 
 \begin{landscape}
 \centering\vspace*{\fill}
@@ -321,6 +322,75 @@ p1 <- ggplot(toplo, aes(x = TimeFrame, y = value)) +
 p1
 @
 \clearpage
+
+% summary charactistics table
+<<summtab, echo = FALSE>>=
+
+data(nut_dat)
+data(wq_dat)
+
+# nutrient summary, uses cenmle for censored data
+nut_dat <- select(nut_dat, StationCode, nutrient, value) %>% 
+  rename(
+    var = nutrient,
+    val = value
+  ) %>% 
+  mutate(
+    c_val = ifelse(val <= 0.01, T, F)
+  ) %>% 
+  group_by(StationCode, var) %>% 
+  summarise(
+    avev = mean(cenmle(val, c_val))[1],
+    medv = median(cenmle(val, c_val)),
+    stdv = sd(cenmle(val, c_val))[1],
+    minv = min(val, na.rm = T), 
+    maxv = max(val, na.rm = T)
+  )
+
+# wq summary
+wq_dat <- select(wq_dat, StationCode, do_pct, sal, ph) %>% 
+  gather('var', 'val', do_pct:ph) %>% 
+  group_by(StationCode, var) %>% 
+  summarise(
+    avev  = mean(val, na.rm = T), 
+    medv = median(val, na.rm = T), 
+    stdv = sd(val, na.rm = T),
+    minv = min(val, na.rm = T), 
+    maxv = max(val, na.rm = T)
+  )
+
+# combine prep
+totab <- rbind(wq_dat, nut_dat) %>% 
+  select(var, StationCode, everything()) %>% 
+  arrange(var, StationCode) %>% 
+  as.data.frame(stringsAsFactors = F)
+
+tab <- totab[, -c(1, 2)]
+tab <- round(tab, 2)
+rows <- totab[, 2]
+cap <- 'Site summaries of water quality (hourly) and nutrient (monthly) observations from 2005 to 2015.  Units are mg L$^{-1}$ for all variables, except Chl-\\textit{a} as $\\mu$g L$^{-1}$, pH from 0-12, and salinity as psu. Nutrient summaries are based on maximum likelihood estimates for left-censored data.  Sites are BC: Bayou Cumbest, BH: Bayou Heron (no nutrient data), BL: Bangs Lake, BN: Bangs North (no water quality data), and PC: Point aux Chenes.'
+rgrps <- unique(totab$var) %>% 
+  factor(., 
+    levels = c('CHLA_N', 'do_pct', 'NH4F', 'NO23F', 'ph', 'PO4F', 'sal'), 
+    labels = c('Chl-\\textit{a}', 'DO$_{sat}$', 'NH$_4^+$', 'NO$_2^-$/NO$_3^{2-}$', 'pH', 'PO$_4^{3-}$', 'Salinity')
+  ) %>% 
+  as.character
+
+latex(
+  tab,
+  file = '',
+  rowlabel = 'Stations',
+  caption = cap,
+  caption.loc = 'top',
+  rgroup = rgrps,
+  n.rgroup = rep(4, 7),
+  rowname = rows,
+  colheads = c('Average', 'Median', 'St. Dev', 'Min', 'Max'),
+  label = 'tab:summtab'
+  )
+
+@
+
 
 % within site eval
 <<orthtab1, echo = FALSE>>=
