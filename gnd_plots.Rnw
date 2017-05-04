@@ -150,8 +150,8 @@ p1 <- ggplot(toplo_wq, aes(x = date, y = value)) +
   stat_smooth(data = filter(toplo_wq, variable %in% c('Salinity (ppt)', 'pH')),
     method = 'loess', span = 0.1, n = 2000, se = FALSE, size = 1, colour = 'lightblue')
 p2 <- ggplot(toplo_nut, aes(x = date, y = 10 ^ value)) + 
-  geom_point(alpha = 0.8, size = 3, 
-    aes(colour = Event)) +
+  geom_point(alpha = 0.8, size = 3, pch = 21,
+    aes(fill = Event)) +
   geom_vline(xintercept = as.numeric(events), colour = 'lightgreen', alpha = 0.6, size = 3) +
   facet_wrap(~variable, scales = 'free_y') +
   theme_bw() +
@@ -161,6 +161,7 @@ p2 <- ggplot(toplo_nut, aes(x = date, y = 10 ^ value)) +
     plot.margin = mars2
     ) + 
   scale_x_date(limits = lims) + 
+  scale_fill_brewer(palette = 'Paired') +
   scale_y_log10() 
 pleg <- g_legend(p2)
 p2 <- p2 + theme(legend.position = 'none')
