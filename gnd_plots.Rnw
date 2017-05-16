@@ -118,7 +118,7 @@ toplo_wq <- filter(wq_dat, StationCode == 'BL') %>%
 toplo_nut <- gather(nut_proc, 'variable', 'value', logP) %>% 
   mutate(variable = factor(variable, 
     levels = c('logP'),
-    labels = c('Orthophosphate (mg/L)') # still in log units but axis scaling will show this as back-transformed
+    labels = c('Orthophosphate (mg P/L)') # still in log units but axis scaling will show this as back-transformed
     )) %>% 
   rename(Event = TimeFrame) %>% 
   data.frame %>% 
@@ -269,7 +269,7 @@ toplo <- filter(nut_dat, nutrient == 'PO4F')
 
 timeframes <- c('E1A', 'E1C', 'NI1', 'E2A', 'E2C', 'NI2')
 
-ylab <- expression(paste('Orthophosphate (mg ', L^-1, ')'))
+ylab <- expression(paste('Orthophosphate (mg P/L)'))
 
 toplo$StationCode <- factor(toplo$StationCode, levels = c('BN', 'BL', 'PC', 'BC'))
 
@@ -307,7 +307,7 @@ meds <- group_by(toplo, StationCode, nutrient, TimeFrame) %>%
 
 toplo <- left_join(toplo, meds, by = c('StationCode', 'nutrient', 'TimeFrame'))
 
-ylab <- expression(paste('Orthophosphate (mg ', L^-1, ')'))
+ylab <- expression(paste('Orthophosphate (mg P/L)'))
 
 toplo$StationCode <- factor(toplo$StationCode, levels = c('BL', 'BN', 'PC', 'BC'))
 
@@ -596,9 +596,9 @@ facet1_names <- list(
   'PC' =  'PC'
   )
 facet2_names <- list(
-  'NH4F' = expression(paste('Ammonium (mg', L^-1, ')')), 
-  'NO23F' = expression(paste('Nitrite + Nitrate (mg', L^-1, ')')),
-  'CHLA_N' = expression(paste('Chlorophyll-a (ug', L^-1, ')'))
+  'NH4F' = expression(paste('Ammonium (mg/L)')), 
+  'NO23F' = expression(paste('Nitrite + Nitrate (mg N/L)')),
+  'CHLA_N' = expression(paste('Chlorophyll-a (ug/L)'))
   )
 
 plot_labeller <- function(variable,value){

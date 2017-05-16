@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.8.29)  4 MAY 2017 11:38
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.8.29)  16 MAY 2017 09:56
 entering extended mode
 **gnd_plots.tex
 (M:\docs\manuscripts\gndphosphate\gnd_plots.tex
@@ -70,7 +70,7 @@ File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
 )
 Package color Info: Driver file: pdftex.def on input line 130.
 )
-(C:\Users\mbeck\AppData\Roaming\MiKTeX\2.9\tex\latex\framed\framed.sty
+(M:\docs\manuscripts\gndphosphate\framed.sty
 Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
 \OuterFrameSep=\skip43
 \fb@frw=\dimen105
@@ -664,7 +664,7 @@ Package pdftex.def Info: figs/Fig4.pdf used on input line 121.
  [3
 
  <M:/docs/manuscripts/gndphosphate/figs/Fig4.pdf>]
-<figs/Fig5.pdf, id=52, 542.025pt x 361.35pt>
+<figs/Fig5.pdf, id=51, 542.025pt x 361.35pt>
 File: figs/Fig5.pdf Graphic file (type pdf)
  <use figs/Fig5.pdf>
 Package pdftex.def Info: figs/Fig5.pdf used on input line 133.
@@ -675,7 +675,7 @@ Package pdftex.def Info: figs/Fig5.pdf used on input line 133.
 
 LaTeX Warning: Float too large for page by 0.56937pt on input line 195.
 
-[5] [6] [7] <figs/FigS1.pdf, id=89, 578.16pt x 433.62pt>
+[5] [6] [7] <figs/FigS1.pdf, id=87, 578.16pt x 433.62pt>
 File: figs/FigS1.pdf Graphic file (type pdf)
  <use figs/FigS1.pdf>
 Package pdftex.def Info: figs/FigS1.pdf used on input line 303.
@@ -708,8 +708,8 @@ Package rerunfilecheck Info: File `gnd_plots.out' has not changed.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 578.
  ) 
 Here is how much of TeX's memory you used:
- 10772 strings out of 493921
- 175402 string characters out of 3147282
+ 10771 strings out of 493921
+ 175291 string characters out of 3147282
  310547 words of memory out of 3000000
  13884 multiletter control sequences out of 15000+200000
  7389 words of font info for 26 fonts, out of 3000000 for 9000
@@ -724,9 +724,9 @@ e1/public/amsfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/
 amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts
 /cm/cmsy8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti1
 2.pfb>
-Output written on gnd_plots.pdf (14 pages, 353373 bytes).
+Output written on gnd_plots.pdf (14 pages, 352952 bytes).
 PDF statistics:
- 174 PDF objects out of 1000 (max. 8388607)
+ 171 PDF objects out of 1000 (max. 8388607)
  29 named destinations out of 1000 (max. 500000)
  26 words of extra memory for PDF output out of 10000 (max. 10000000)
 
