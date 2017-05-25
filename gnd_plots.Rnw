@@ -110,7 +110,7 @@ toplo_wq <- filter(wq_dat, StationCode == 'BL') %>%
   gather('variable', 'value', sal:totprcp) %>% 
   mutate(variable = factor(variable, 
     levels = c('totprcp', 'sal', 'ph'),
-    labels = c('Total precipitation (mm/d)', 'Salinity (ppt)', 'pH')
+    labels = c('Total precipitation (mm/d)', 'Salinity', 'pH')
     )) %>% 
   rename(Event = TimeFrame)
 
@@ -147,7 +147,7 @@ p1 <- ggplot(toplo_wq, aes(x = date, y = value)) +
     plot.margin = mars1
     ) +
   scale_x_date(limits = lims) + 
-  stat_smooth(data = filter(toplo_wq, variable %in% c('Salinity (ppt)', 'pH')),
+  stat_smooth(data = filter(toplo_wq, variable %in% c('Salinity', 'pH')),
     method = 'loess', span = 0.1, n = 2000, se = FALSE, size = 1, colour = 'lightblue')
 p2 <- ggplot(toplo_nut, aes(x = date, y = 10 ^ value)) + 
   geom_point(alpha = 0.8, size = 3, pch = 21,
@@ -206,7 +206,7 @@ toplo <- filter(wq_dat, StationCode == 'BL') %>%
   gather('variable', 'value', sal:totprcp) %>% 
   mutate(variable = factor(variable, 
     levels = c('totprcp', 'sal', 'ph'),
-    labels = c('Total precipitation (cm/d)', 'Salinity (ppt)', 'pH')
+    labels = c('Total precipitation (cm/d)', 'Salinity', 'pH')
     )) %>% 
   rename(Event = TimeFrame)
 
@@ -293,7 +293,8 @@ p1
 @
 \clearpage
 
-<<Fig5, fig.width = 7.5, fig.height = 5, echo = FALSE, fig.cap = 'Boxplot summaries by event of monthly orthophosphate data at Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC) sites in Grand Bay.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). Boxes are shaded by medians between sites.  See \\cref{tab:orthtab1} for a numerical summary. E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.'>>=
+\setcounter{figure}{5}
+<<Fig6, fig.width = 7.5, fig.height = 5, echo = FALSE, fig.cap = 'Boxplot summaries by event of monthly orthophosphate data at Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC) sites in Grand Bay.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). Boxes are shaded by medians between sites.  See \\cref{tab:orthtab1} for a numerical summary. E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.'>>=
 
 data(nut_dat)
 
