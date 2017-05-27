@@ -216,3 +216,8 @@ met_supp_e2 <- met_supp_e2[, c(1, 3, 2)]
 
 save(met_supp_e2, file = 'data/met_supp_e2.RData')
 
+######
+# ISCO data for fig 5
+
+isco <- read.csv('ignore/BC_WQandNUT_2012.csv')
+save(isco, file = 'data/isco.RData')
