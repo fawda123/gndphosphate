@@ -287,7 +287,7 @@ p1
 @
 \clearpage
 
-<<Fig5, fig.width = 11, fig.height = 5, echo = FALSE, fig.cap = 'Diel phosphate and salinity data before and after Hurricane Isaac. Bayou Cumbest, is approximately 7 km (hydrologically) from the spill site and elevated phosphorus is observed with tidal influx (depth) following the event.'>>=
+<<Fig5, fig.width = 11, fig.height = 5, echo = FALSE, fig.cap = 'Diel phosphate and salinity data before and after Hurricane Isaac during the second spill event. Bayou Cumbest, is approximately 7 km (hydrologically) from the spill site and elevated phosphorus is observed with tidal influx (depth) following the event.'>>=
 # get data
 dat <- get(load(file = 'data/isco.RData'))
 
@@ -305,9 +305,10 @@ Nov.dat <- subset(dat, dat$DateTime >= '2012-11-01' & dat$DateTime <= '2012-11-3
 # graph august and september
 # for before and after Isaac
 # do 3 axes: po4, depth, and salinity
+cols <- RColorBrewer::brewer.pal(10, 'Paired')[c(1, 3, 5)]
 par(mar=c(3, 0.2, 1, 1), oma=c(1,9.5,1,1), mfrow=c(1,2))
-iscoplot3(Aug.dat, "Pre-spill tidal cycle")
-iscoplot2(Sept.dat, "Post-spill tidal cycle")
+iscoplot3(Aug.dat, "Pre-spill tidal cycle", cols = cols, cex = 1.7, lwd = 1.5)
+iscoplot2(Sept.dat, "Post-spill tidal cycle", cols = cols, cex = 1.7, lwd = 1.5)
 @
 
 <<Fig6, fig.width = 7.5, fig.height = 5, echo = FALSE, fig.cap = 'Boxplot summaries by event of monthly orthophosphate data at Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC) sites in Grand Bay.  Boxes represent the interquartile range (IQR, 25\\textsuperscript{th} to 75\\textsuperscript{th} percentile) with the median as the middle horizonal line.  Outliers are present beyond whiskers (1.5$\\cdot$IQR). Boxes are shaded by medians between sites.  See \\cref{tab:orthtab1} for a numerical summary. E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.'>>=

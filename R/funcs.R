@@ -6,11 +6,14 @@ g_legend<-function(a.gplot){
   return(legend)}
 
 # iscoplot2
-iscoplot2 <- function(graph.dat, title) {
+iscoplot2 <- function(graph.dat, title, cols = NULL, cex = 1.5,lwd = 1) {
+  
+  if(is.null(cols)) cols <- c('black', 'gray22', 'gray22')
   
   # plot PO4
-  plot(PO4~DateTime, data=graph.dat, axes=F, ylim=c(0, 0.25), 
-       xlab="", ylab="", type="l", lwd = 2.5, col="black", main=title)
+  plot(PO4~DateTime, data=graph.dat, axes=F, ylim = c(0, 0.25), 
+       xlab="", ylab="", type="l", lwd = lwd, lty = 2, main=title)
+  points(graph.dat$DateTime, graph.dat$PO4, bg = cols[1], pch = 21, cex = cex)
 
   #we just did two lines calling the y-axis because R will automatically
   #make tick marks at certain intervals, and R wants to stop the axis at a tick mark
@@ -21,12 +24,14 @@ iscoplot2 <- function(graph.dat, title) {
   #plot depth
   par(new=T)
   plot(Depth~DateTime, data=graph.dat, axes=F, ylim=c(0,1), xlab="", ylab="", 
-       type="l",lty=2, main="",lwd=1.5, col="gray22")
+       type="l",lty=2, main="",lwd=lwd)
+  points(graph.dat$DateTime, graph.dat$Depth, bg = cols[2], pch = 22, cex = cex)
 
   #plot salinity
   par(new=T)
   plot(Sal~DateTime, data=graph.dat, axes=F, ylim=c(0,25), xlab="", ylab="", 
-       type="l",lty=3, main="",lwd=1.5, col="gray22")
+       type="l",lty=2, main="",lwd=lwd)
+  points(graph.dat$DateTime, graph.dat$Sal, bg = cols[3], pch = 24, cex = cex)
 
   
   #plot x axis
@@ -50,17 +55,20 @@ iscoplot2 <- function(graph.dat, title) {
   #   text(x=axisdate, par("usr")[3]-0.005, srt = 45, adj=c(1.125, 1.2), labels = axisdate2, xpd = TRUE, cex=0.9)
   
   #plot the legend
-  legend(x = 'topright', inset = -0.04, legend=c(expression("PO"[4]),"Depth","Sal"),lty=c(1,2,3), xpd = TRUE, cex=0.9)
+  legend(x = 'topright', inset = -0.04, legend=c(expression("PO"[4]),"Depth","Sal"),lty=2, pch = c(21, 22, 24), pt.bg = cols, col = 'black', xpd = TRUE, cex=0.9)
 }
 
 # iscoplot3
-iscoplot3 <- function(graph.dat, title) {
+iscoplot3 <- function(graph.dat, title, cols = NULL, cex = 1.5, lwd = 1) {
+  
+   if(is.null(cols)) cols <- c('black', 'gray22', 'gray22')
   
   # plot PO4
   plot(PO4~DateTime, data=graph.dat, axes=F, ylim=c(0, 0.25), 
-       xlab="", ylab="", type="l", lwd = 2.5, col="black", main=title)
+       xlab="", ylab="", type="l", lty = 2, lwd = lwd, main=title)
+  points(graph.dat$DateTime, graph.dat$PO4, bg = cols[1], pch = 21, cex = cex)
   axis(2, at=c(0,1000),lwd=1, labels = F)
-  axis(2, ylim=c(0,0.25), col="black",lwd=1, tcl = -0.4, cex.axis = 0.95, mgp = c(3, 0.6, 0))
+  axis(2, ylim=c(0,0.25),lwd=1, tcl = -0.4, cex.axis = 0.95, mgp = c(3, 0.6, 0))
   mtext(2,text=expression("PO"[4]*" (mg P/L)"), line=1.6)
   
   #we just did two lines calling the y-axis because R will automatically
@@ -72,7 +80,8 @@ iscoplot3 <- function(graph.dat, title) {
   #plot depth
   par(new=T)
   plot(Depth~DateTime, data=graph.dat, axes=F, ylim=c(0,1), xlab="", ylab="", 
-       type="l",lty=2, main="",lwd=1.5, col="gray22")
+       type="l",lty=2, main="",lwd=lwd)
+  points(graph.dat$DateTime, graph.dat$Depth, bg = cols[2], pch = 22, cex = cex)
   axis(2, at=c(0,1000),line = 3.3, lwd = 1, labels = F)
   axis(2, ylim=c(0,1),lwd=1,line=3.3, tcl = -0.4, cex.axis = 0.95, mgp = c(3, 0.6, 0))
   mtext(2,text="Depth (m)",line=5.1)
@@ -80,7 +89,8 @@ iscoplot3 <- function(graph.dat, title) {
   #plot salinity
   par(new=T)
   plot(Sal~DateTime, data=graph.dat, axes=F, ylim=c(0,25), xlab="", ylab="", 
-       type="l",lty=3, main="",lwd=1.5, col="gray22")
+       type="l",lty=2, main="",lwd=lwd)
+  points(graph.dat$DateTime, graph.dat$Sal, bg = cols[3], pch = 24, cex = cex)
   axis(2, at=c(0,1000), lwd=1, line = 6.7, labels = F)
   axis(2, ylim=c(0,25),lwd=1,line=6.7, tcl = -0.4, cex.axis = 0.95, mgp = c(3, 0.6, 0))
   mtext(2,text="Salinity",line=8.4)
