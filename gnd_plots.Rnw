@@ -391,7 +391,7 @@ cap <- 'Site summaries of water quality (hourly) and nutrient (monthly) observat
 rgrps <- unique(totab$var) %>% 
   factor(., 
     levels = c('CHLA_N', 'do_pct', 'NH4F', 'NO23F', 'ph', 'PO4F', 'sal'), 
-    labels = c('Chl-\\textit{a}', 'DO$_{sat}$', 'NH$_4^+$', 'NO$_2^-$/NO$_3^{2-}$', 'pH', 'PO$_4^{3-}$', 'Salinity')
+    labels = c('Chl-\\textit{a}', 'DO$_{sat}$', 'NH$_4^+$', 'NO$_2^-$/NO$_3^-$', 'pH', 'PO$_4^{3-}$', 'Salinity')
   ) %>% 
   as.character
 

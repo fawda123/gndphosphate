@@ -55,7 +55,7 @@ iscoplot2 <- function(graph.dat, title, cols = NULL, cex = 1.5,lwd = 1) {
   #   text(x=axisdate, par("usr")[3]-0.005, srt = 45, adj=c(1.125, 1.2), labels = axisdate2, xpd = TRUE, cex=0.9)
   
   #plot the legend
-  legend(x = 'topright', inset = -0.04, legend=c(expression("PO"[4]),"Depth","Sal"),lty=2, pch = c(21, 22, 24), pt.bg = cols, col = 'black', xpd = TRUE, cex=0.9)
+  legend(x = 'topright', inset = -0.04, legend=c(expression("PO"[4]^'3-'),"Depth","Sal"),lty=2, pch = c(21, 22, 24), pt.bg = cols, col = 'black', xpd = TRUE, cex=0.9)
 }
 
 # iscoplot3
@@ -69,7 +69,7 @@ iscoplot3 <- function(graph.dat, title, cols = NULL, cex = 1.5, lwd = 1) {
   points(graph.dat$DateTime, graph.dat$PO4, bg = cols[1], pch = 21, cex = cex)
   axis(2, at=c(0,1000),lwd=1, labels = F)
   axis(2, ylim=c(0,0.25),lwd=1, tcl = -0.4, cex.axis = 0.95, mgp = c(3, 0.6, 0))
-  mtext(2,text=expression("PO"[4]*" (mg P/L)"), line=1.6)
+  mtext(2,text=expression("PO"[4]^"3-"*" (mg P/L)"), line=1.6)
   
   #we just did two lines calling the y-axis because R will automatically
   #make tick marks at certain intervals, and R wants to stop the axis at a tick mark
