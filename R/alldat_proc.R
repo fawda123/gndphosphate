@@ -221,3 +221,106 @@ save(met_supp_e2, file = 'data/met_supp_e2.RData')
 
 isco <- read.csv('ignore/BC_WQandNUT_2012.csv')
 save(isco, file = 'data/isco.RData')
+
+######
+# multiple comparisons within sites (insites) and within time frames (intimes)
+
+data(nut_dat)
+
+# remove stat_nut, E1A/E1C time frames from chla
+nut_dat <- nut_dat %>% 
+  select(-stat_nut) %>% 
+  filter(!(nutrient == 'CHLA_N' & TimeFrame %in% c('E1A', 'E1C')))
+
+# multiple comparisons of time frames within sites, all nutrients
+insites <- nut_dat %>% 
+  group_by(StationCode, nutrient) %>% 
+  nest %>% 
+  mutate(
+    ests = map(data, function(x){
+ 
+      # pairwise comparisons with mann-whitney (wilcox)
+      grps <- unique(x$TimeFrame)
+      grps <- combn(grps, 2)
+      pval <- rep(NA, ncol(grps))
+      for(col in 1:ncol(grps)){
+        grp <- x$TimeFrame %in% grps[, col, drop = TRUE]
+        res <- wilcox.test(logvalue ~ TimeFrame, data = x[grp, ], exact = FALSE, 
+          alternative = 'two.sided')
+        pval[col] <- res$p.value
+      }
+      
+      # adjust p-values using holm sequential bonferroni 
+      pval <- p.adjust(pval, method = 'holm')
+      
+      # pval as t/f using bonferroni correction
+      vecs <- rep(FALSE, ncol(grps))
+      vecs[pval < 0.05] <- TRUE
+      names(vecs) <- paste(grps[1, ], grps[2, ], sep = '-')
+      
+      # group membership based on multiple comparisons
+      lets <- multcompLetters(vecs)$Letters
+      
+      # standard summary stats
+      sums <- group_by(x, TimeFrame) %>% 
+        summarise(
+          length = length(na.omit(value)),
+          medval = median(value, na.rm = TRUE),
+          minval = min(value, na.rm = TRUE),
+          maxval = max(value, na.rm = TRUE)
+          )
+      
+      data.frame(lets, sums, stringsAsFactors = FALSE)
+      
+    })
+  ) %>% 
+  select(-data) %>% 
+  unnest
+
+# multiple comparisons of sites within time frames, all nutrients
+intimes<- nut_dat %>% 
+  group_by(TimeFrame, nutrient) %>% 
+  nest %>% 
+  mutate(
+    ests = map(data, function(x){
+ 
+      # pairwise comparisons with mann-whitney (wilcox)
+      grps <- unique(x$StationCode)
+      grps <- combn(grps, 2)
+      pval <- rep(NA, ncol(grps))
+      for(col in 1:ncol(grps)){
+        grp <- x$StationCode %in% grps[, col, drop = TRUE]
+        res <- wilcox.test(logvalue ~ StationCode, data = x[grp, ], exact = FALSE, 
+          alternative = 'two.sided')
+        pval[col] <- res$p.value
+      }
+      
+      # adjust p-values using holm sequential bonferroni 
+      pval <- p.adjust(pval, method = 'holm')
+      
+      # pval as t/f using bonferroni correction
+      vecs <- rep(FALSE, ncol(grps))
+      vecs[pval < 0.05] <- TRUE
+      names(vecs) <- paste(grps[1, ], grps[2, ], sep = '-')
+      
+      # group membership based on multiple comparisons
+      lets <- multcompLetters(vecs)$Letters
+      
+      # standard summary stats
+      sums <- group_by(x, StationCode) %>% 
+        summarise(
+          length = length(na.omit(value)),
+          medval = median(value, na.rm = TRUE),
+          minval = min(value, na.rm = TRUE),
+          maxval = max(value, na.rm = TRUE)
+          )
+      
+      data.frame(lets, sums, stringsAsFactors = FALSE)
+      
+    })
+  ) %>% 
+  select(-data) %>% 
+  unnest
+
+save(insites, file = 'data/insites.RData', compress = 'xz')
+save(intimes, file = 'data/intimes.RData', compress = 'xz')

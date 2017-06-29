@@ -2,6 +2,8 @@
 
 Data processed with alldat_proc.R include:
 
+* insites.RData
+* intimes.RData
 * met_dat.RData
 * met_supp.RData
 * nut_dat.RData
