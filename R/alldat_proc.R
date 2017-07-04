@@ -100,7 +100,7 @@ wq_dat <- lapply(dat_in,
       
 #     out <- subset(out, subset = '2015-01-01 00:00', operator = '<') %>% 
 #       select(datetimestamp, sal, ph, depth) 
-    out <-  select(out, datetimestamp, do_pct, c_do_pct, sal, c_sal, ph, c_ph, depth, c_depth) 
+    out <-  select(out, datetimestamp, do_pct, sal, ph, ph, depth, depth, turb, turb) 
     
     return(out)
     
