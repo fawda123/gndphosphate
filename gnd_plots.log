@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.8.29)  4 JUL 2017 12:25
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.8.29)  6 JUL 2017 17:54
 entering extended mode
 **gnd_plots.tex
 (M:\docs\manuscripts\gndphosphate\gnd_plots.tex
@@ -679,48 +679,50 @@ Package pdftex.def Info: figs/Fig6.pdf used on input line 147.
 <figs/Fig7.pdf, id=53, 505.89pt x 361.35pt>
 File: figs/Fig7.pdf Graphic file (type pdf)
  <use figs/Fig7.pdf>
-Package pdftex.def Info: figs/Fig7.pdf used on input line 159.
+Package pdftex.def Info: figs/Fig7.pdf used on input line 158.
 (pdftex.def)             Requested size: 469.75502pt x 335.54477pt.
  [4
 
  <M:/docs/manuscripts/gndphosphate/figs/Fig5.pdf> <M:/docs/manuscripts/gndphosp
 hate/figs/Fig7.pdf>] [5 <M:/docs/manuscripts/gndphosphate/figs/Fig6.pdf>]
 
-LaTeX Warning: Float too large for page by 0.56937pt on input line 223.
+LaTeX Warning: Float too large for page by 0.56937pt on input line 222.
 
-[6] <figs/FigS1.pdf, id=93, 578.16pt x 433.62pt>
+[6] [7] [8] [9] <figs/FigS1.pdf, id=110, 578.16pt x 433.62pt>
 File: figs/FigS1.pdf Graphic file (type pdf)
- <use figs/FigS1.pdf>
-Package pdftex.def Info: figs/FigS1.pdf used on input line 232.
+
+<use figs/FigS1.pdf>
+Package pdftex.def Info: figs/FigS1.pdf used on input line 341.
 (pdftex.def)             Requested size: 469.75502pt x 352.31538pt.
- [7
+ [10
+
 
 
  <M:/docs/manuscripts/gndphosphate/figs/FigS1.pdf>]
-<figs/FigS2.pdf, id=106, 578.16pt x 433.62pt>
+<figs/FigS2.pdf, id=122, 578.16pt x 433.62pt>
 File: figs/FigS2.pdf Graphic file (type pdf)
  <use figs/FigS2.pdf>
-Package pdftex.def Info: figs/FigS2.pdf used on input line 244.
+Package pdftex.def Info: figs/FigS2.pdf used on input line 353.
 (pdftex.def)             Requested size: 469.75502pt x 352.31538pt.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 253.
-Package atenddvi Info: Last page = 8.
- [8
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 362.
+Package atenddvi Info: Last page = 11.
+ [11
 
  <M:/docs/manuscripts/gndphosphate/figs/FigS2.pdf>]
-Package atveryend Info: Executing hook `AfterLastShipout' on input line 253.
+Package atveryend Info: Executing hook `AfterLastShipout' on input line 362.
 
 (M:\docs\manuscripts\gndphosphate\gnd_plots.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 253.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 253.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 362.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 362.
 Package rerunfilecheck Info: File `gnd_plots.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 253.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 362.
  ) 
 Here is how much of TeX's memory you used:
- 10750 strings out of 493921
- 175003 string characters out of 3147282
- 310547 words of memory out of 3000000
- 13872 multiletter control sequences out of 15000+200000
+ 10773 strings out of 493921
+ 175362 string characters out of 3147282
+ 315547 words of memory out of 3000000
+ 13888 multiletter control sequences out of 15000+200000
  7389 words of font info for 26 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
  44i,10n,42p,822b,405s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -732,9 +734,9 @@ fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTeX 2.9/fonts/typ
 e1/public/amsfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/
 amsfonts/cm/cmsy8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/
 cm/cmti12.pfb>
-Output written on gnd_plots.pdf (8 pages, 438119 bytes).
+Output written on gnd_plots.pdf (11 pages, 445028 bytes).
 PDF statistics:
- 149 PDF objects out of 1000 (max. 8388607)
- 17 named destinations out of 1000 (max. 500000)
+ 166 PDF objects out of 1000 (max. 8388607)
+ 24 named destinations out of 1000 (max. 500000)
  41 words of extra memory for PDF output out of 10000 (max. 10000000)
 

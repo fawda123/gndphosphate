@@ -58,6 +58,8 @@ library(multcompView)
 library(grid)
 library(NADA)
 library(purrr)
+library(lubridate)
+library(EnvStats)
 source('R/funcs.R')
 
 # load data
@@ -392,7 +394,6 @@ p2 <- ggplot(toplo, aes(x = StationCode, y = value)) +
 grid.arrange(p1, p2, ncol = 1)
 @
 
-
 <<Fig7, fig.height = 5, fig.width = 7, echo = F>>=
 
 dat <- wq_dat %>%
@@ -561,6 +562,90 @@ latex(
   colheads = c('Average', 'Median', 'St. Dev', 'Min', 'Max'),
   label = 'tab:summtab'
   )
+
+@
+\clearpage
+
+% kendall tests
+<<kendtab, echo = FALSE>>=
+data(nut_dat)
+
+trnds <- nut_dat %>% 
+  na.omit %>% 
+  mutate(
+    mo = month(date), 
+    yr = year(date), 
+    TimeFrame = gsub('A|C', '', TimeFrame)
+  ) %>% 
+  filter(!TimeFrame %in% c('NI2')) %>% 
+  select(TimeFrame, StationCode, nutrient, date, value, mo, yr) %>% 
+  group_by(TimeFrame, StationCode, nutrient) %>% 
+  nest %>% 
+  mutate(
+    sk_res = map(data, ~ kendallSeasonalTrendTest(value ~ mo + yr, .)), 
+    tau = map(sk_res, ~ .$estimate[1]), 
+    slope = map(sk_res, ~ .$estimate[2]),
+    med = map(data, ~ median(.$value, na.rm = TRUE)), 
+    ztest = map(sk_res, ~ .$p.value[2])
+  ) %>% 
+  select(-data, -sk_res) %>% 
+  unnest %>% 
+  mutate(
+    perchg = 100 * slope/med, 
+    perchg = sapply(perchg, form_fun),
+    med = sapply(med, form_fun),
+    tau = sapply(tau, form_fun),
+    slope = sapply(slope, form_fun),
+    ztest = sapply(ztest, p_ast),
+    TimeFrame = factor(TimeFrame, 
+      levels = c('E1', 'NI1', 'E2'), 
+      labels = c('E1A, E1C', 'NI1', 'E2A, E2C')
+    ), 
+    StationCode = factor(StationCode, 
+      levels = c('BN', 'BL', 'PC', 'BC')
+    )
+  ) %>% 
+  tidyr::unite('tau', tau, ztest, sep = '') %>% 
+  arrange(nutrient, TimeFrame, StationCode) %>% 
+  group_by(nutrient) %>% 
+  nest
+
+nutnms <- c('orthophosphate (mg P/L)', 'ammonium (mg N/L)', 'nitrite/nitrate (mg N/L)', 'chlorophyll-a ($\\mu$g/L)')
+names(nutnms) <- c('PO4F', 'NH4F', 'NO23F', 'CHLA_N')
+      
+for(nut in trnds$nutrient){
+    
+  nut <- as.character(nut)
+  tab <- filter(trnds, nutrient %in% nut) %>% 
+    .$data %>% 
+    .[[1]] %>% 
+    data.frame
+  
+  rgrp <- as.character(tab[, 1])
+  nrgrp <- as.numeric(table(rgrp))
+  rgrp <- unique(rgrp)
+  
+  rows <- as.character(tab[, 2])
+  cap <- paste0('Summary of ', nutnms[nut], ' trends for time periods with sufficient data.  Trends are based on seasonal Kendall tests, where $\\tau$ is the direction and strength of the trend, slope is the change per year, median is the median in the time period, and percent change is the slope divided by the median.')
+  tab <- tab[, -c(1, 2)]
+  
+  latex(
+    tab,
+    file = '',
+    rowlabel = '',
+    caption = cap,
+    caption.loc = 'top',
+    rgroup = rgrp,
+    n.rgroup = nrgrp,
+    rowname = rows,
+    colheads = c('$\\tau$', 'slope', 'median', '\\% change'),
+    label = paste0('tab:', nut, 'trnd')
+    )
+  # p <- paste(p, collapse = '\n')
+  # 
+  # cat(p)
+  # 
+}
 
 @
 \clearpage

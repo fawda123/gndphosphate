@@ -5,6 +5,24 @@ g_legend<-function(a.gplot){
   legend <- tmp$grobs[[leg]]
   return(legend)}
 
+# formatting of values in S expressions
+form_fun <- function(x, rnd_val = 2, dig_val = 2, nsm_val = 2, ...) {
+  format(round(x, rnd_val), digits = dig_val, nsmall = nsm_val, ...)
+}
+
+# function for formatting p-values in tables
+p_ast <- function(x){
+  
+  sig_cats <- c('**', '*', '')
+  sig_vals <- c(-Inf, 0.005, 0.05, Inf)
+  
+  out <- cut(x, breaks = sig_vals, labels = sig_cats, right = FALSE)
+  out <- as.character(out)
+  
+  return(out)
+  
+}
+
 # iscoplot2
 iscoplot2 <- function(graph.dat, title, cols = NULL, cex = 1.5,lwd = 1) {
   
