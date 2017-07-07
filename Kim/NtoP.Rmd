@@ -1,0 +1,107 @@
+---
+title: "N and P relationships - visual exploration"
+author: "Kim Cressman"
+date: "`r Sys.Date()`"
+output: 
+    html_document:
+        keep_md: true
+        code_folding: 'hide'
+        fig_width: 8
+        fig_height: 4
+---
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(lubridate)
+
+setwd("C:/Users/kimberly.cressman/Desktop/Main Docs/Phosphate Publication/gndphosphate/Kim")
+load("../data/nut_dat.RData")
+```
+
+### Data processing code chunk  
+Expand this if you want to check either my reshaping of the dataset (I loaded `nut_dat.RData` from the gndphosphate GitHub repo) or my math going from mg/L to micromolar. The math I used was: 
+
++  PuM = Pmg/L * 1000 / 30.97  
++  NuM = Nmg/L * 1000 / 14  
++  DIN: NO23 + NH4, after converting both forms of N to micromolar
+
+
+```{r, warning=FALSE}
+BL <- nut_dat %>%
+    filter(StationCode=="BL")
+
+# make it wide; add in columns for molarity (MICROMOLAR is the unit) and ratios
+BL <- BL %>%
+    select(TimeFrame, date, nutrient, value) %>%
+    spread(key=nutrient, value=value) %>%
+    mutate(PO4M = PO4F * 1000/30.97, 
+           NO23M = NO23F * 1000/14, 
+           NH4M = NH4F * 1000/14,
+           DINM = NH4M + NO23M,
+           NtoP = DINM/PO4M,
+           NH4toP = NH4M/PO4M)
+```
+
+******
+
+### Scatterplot of DIN (as NO23 + NH4) and PO4, colored by time period 
+
++  These have been converted to micromolar.  
++  I ignored "below detection" data points and just allowed 0.01 to be used.
+
+```{r, warning=FALSE}
+# scatter plot of DIN and PO4, colored by time
+ggplot(BL) +
+    geom_point(aes(x=DINM, y=PO4M, col=TimeFrame), size=3) +
+    scale_y_log10() +
+    scale_x_log10() +
+    theme_bw() +
+    ggtitle("Scatterplot of PO4 and DIN across time") +
+    xlab("DIN (= NO23 + NH4; uM)") +
+    ylab("PO4 (uM)")
+```
+
+******
+
+### Time series of DIN (as NO23 + NH4) to PO4 ratio  
+
++  These were converted to micromolar.  
++  I again ignored "below detection" data points. 
+
+```{r, warning=FALSE}
+# time series, as points, of N:P molar ratio
+ggplot(BL) +
+    geom_point(aes(x=date, y=NtoP, col=TimeFrame), size=3) +
+    theme_bw() +
+    ggtitle("Molar N:P ratio through time") +
+    xlab("Date") +
+    ylab("DIN (as NO23 + NH4):P")
+```
+
+******
+
+### Time series of NH4:PO4 ratio 
+
++  Made this one because NO23 is almost always below detection, and NH4 almost always _isn't_.  
++  Again, converted to micromolar and ignoring "below detection" data points.  
++  This looks almost exactly like the DIN:P ratio graph, with a few exceptions in NI1.
+
+```{r, warning=FALSE}
+# and NH4:P
+ggplot(BL) +
+    geom_point(aes(x=date, y=NH4toP, col=TimeFrame), size=3) +
+    theme_bw() +
+    ggtitle("Molar NH4:P ratio through time") +
+    xlab("Date") +
+    ylab("NH4:P")
+```
+
+
+******
+
+__Housekeeping__  
+
+```{r}
+sessionInfo()
+Sys.info()
+```
+
