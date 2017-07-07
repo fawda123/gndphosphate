@@ -77,6 +77,32 @@ ggplot(nut_bd) +
 
 ![](NUTs_bd_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
+```r
+ggplot(nut_bd) +
+    geom_col(aes(x=TimeFrame, y=prop_bd, fill=StationCode), col="black", position = "dodge") +
+    geom_hline(yintercept = 0.5, col="firebrick3", lwd=2) +
+    facet_wrap(~nutrient) +
+    theme_bw() +
+    ggtitle("Proportion of below-detection samples \nfor each nutrient, in each time frame, at each site")
+```
+
+![](NUTs_bd_files/figure-html/unnamed-chunk-5-2.png)<!-- -->
+
+Out of curiosity, facet by site instead of nutrient, and arrange the bars a little differently (group by nutrient and color by time period).
+
+
+```r
+ggplot(nut_bd) +
+    geom_col(aes(x=nutrient, y=prop_bd, fill=TimeFrame), col="black", position = "dodge") +
+    geom_hline(yintercept = 0.5, col="firebrick3", lwd=2) +
+    facet_wrap(~StationCode) +
+    theme_bw() +
+    ggtitle("Proportion of below-detection samples \nfor each nutrient, in each time frame, at each site") +
+    ylab("proportion below or at 0.01")
+```
+
+![](NUTs_bd_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+
 
 Trying to use knitr functions to print the whole darn data frame. This isn't pretty, but it's all there.
 

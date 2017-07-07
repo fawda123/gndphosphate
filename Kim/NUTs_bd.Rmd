@@ -78,6 +78,26 @@ ggplot(nut_bd) +
     facet_wrap(~nutrient) +
     theme_bw() +
     ggtitle("Count of below-detection samples (black) and total samples (color) \nfor each nutrient, in each time frame, at each site")
+
+
+ggplot(nut_bd) +
+    geom_col(aes(x=TimeFrame, y=prop_bd, fill=StationCode), col="black", position = "dodge") +
+    geom_hline(yintercept = 0.5, col="firebrick3", lwd=2) +
+    facet_wrap(~nutrient) +
+    theme_bw() +
+    ggtitle("Proportion of below-detection samples \nfor each nutrient, in each time frame, at each site")
+```
+
+Out of curiosity, facet by site instead of nutrient, and arrange the bars a little differently (group by nutrient and color by time period).
+
+```{r, fig.height=6, fig.width=8}
+ggplot(nut_bd) +
+    geom_col(aes(x=nutrient, y=prop_bd, fill=TimeFrame), col="black", position = "dodge") +
+    geom_hline(yintercept = 0.5, col="firebrick3", lwd=2) +
+    facet_wrap(~StationCode) +
+    theme_bw() +
+    ggtitle("Proportion of below-detection samples \nfor each nutrient, in each time frame, at each site") +
+    ylab("proportion below or at 0.01")
 ```
 
 
