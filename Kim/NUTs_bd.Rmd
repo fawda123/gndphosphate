@@ -59,6 +59,27 @@ What I want to do now is make either one nice pretty table, or separate tables f
 
 `split` is easy, and then it should just be a `spread` command.... i think.  
 
+```{r}
+
+nut_bdwide <- nut_bd %>%
+    gather(key=var, value=value, -StationCode, -nutrient, -TimeFrame) %>%
+    mutate(newvar = paste0(TimeFrame, "_", var)) %>%
+    select(-TimeFrame, -var) %>%
+    spread(key=newvar, value=value)
+```
+
+
+Forget tables; I can make graphs!
+
+```{r, fig.height=6, fig.width=8}
+ggplot(nut_bd) +
+    geom_col(aes(x=TimeFrame, y=totalvalues, fill=StationCode), position = "dodge") +
+    geom_col(aes(x=TimeFrame, y=bdvalues, col=StationCode), position="dodge") +
+    facet_wrap(~nutrient) +
+    theme_bw() +
+    ggtitle("Count of below-detection samples (black) and total samples (color) \nfor each nutrient, in each time frame, at each site")
+```
+
 
 Trying to use knitr functions to print the whole darn data frame. This isn't pretty, but it's all there.
 

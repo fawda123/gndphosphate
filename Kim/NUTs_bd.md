@@ -54,6 +54,30 @@ What I want to do now is make either one nice pretty table, or separate tables f
 `split` is easy, and then it should just be a `spread` command.... i think.  
 
 
+```r
+nut_bdwide <- nut_bd %>%
+    gather(key=var, value=value, -StationCode, -nutrient, -TimeFrame) %>%
+    mutate(newvar = paste0(TimeFrame, "_", var)) %>%
+    select(-TimeFrame, -var) %>%
+    spread(key=newvar, value=value)
+```
+
+
+Forget tables; I can make graphs!
+
+
+```r
+ggplot(nut_bd) +
+    geom_col(aes(x=TimeFrame, y=totalvalues, fill=StationCode), position = "dodge") +
+    geom_col(aes(x=TimeFrame, y=bdvalues, col=StationCode), position="dodge") +
+    facet_wrap(~nutrient) +
+    theme_bw() +
+    ggtitle("Count of below-detection samples (black) and total samples (color) \nfor each nutrient, in each time frame, at each site")
+```
+
+![](NUTs_bd_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
+
 Trying to use knitr functions to print the whole darn data frame. This isn't pretty, but it's all there.
 
 
@@ -886,7 +910,7 @@ sessionInfo()
 ## [25] readxl_0.1.1     foreign_0.8-67   rmarkdown_1.5    modelr_0.1.0    
 ## [29] reshape2_1.4.2   magrittr_1.5     backports_1.0.5  scales_0.4.1    
 ## [33] htmltools_0.3.5  rvest_0.3.2      assertthat_0.1   mnormt_1.5-5    
-## [37] colorspace_1.2-7 stringi_1.1.2    lazyeval_0.2.0   munsell_0.4.3   
-## [41] broom_0.4.2
+## [37] colorspace_1.2-7 labeling_0.3     stringi_1.1.2    lazyeval_0.2.0  
+## [41] munsell_0.4.3    broom_0.4.2
 ```
 
