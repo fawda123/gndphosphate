@@ -148,7 +148,7 @@
 
 }
 
-\caption[Boxplot summaries of monthly orthophosphate data for (A) time frames group by site and (B) sites grouped by time frame]{Boxplot summaries of monthly orthophosphate data for (A) time frames group by site and (B) sites grouped by time frame. Boxplots within each panel that do not share a letter have significantly different concentrations. Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC).  Time frames are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), event 2 chronic (E2C), and non-impact 2 (NI2).}\label{fig:Fig6}
+\caption[Boxplot summaries of monthly orthophosphate data for (A) time periods group by site and (B) sites grouped by time period]{Boxplot summaries of monthly orthophosphate data for (A) time periods group by site and (B) sites grouped by time period. Boxplots within each panel that do not share a letter have significantly different concentrations. Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC).  Time frames are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), event 2 chronic (E2C), and non-impact 2 (NI2).}\label{fig:Fig6}
 \end{figure}
 
 
@@ -185,7 +185,7 @@
 ~~PC&$ 0.02$&$ 0.01$&$ 0.06$&$0.01$&$  0.42$\tabularnewline
 ~~BC&$ 0.04$&$ 0.01$&$ 0.08$&$0.01$&$  0.21$\tabularnewline
 \hline
-{\bfseries NO$_2^-$/NO$_3^{2-}$}&&&&&\tabularnewline
+{\bfseries NO$_2^-$/NO$_3^-$}&&&&&\tabularnewline
 ~~BN&$ 0.01$&$ 0.00$&$ 0.02$&$0.01$&$  0.10$\tabularnewline
 ~~BL&$ 0.01$&$ 0.00$&$ 0.03$&$0.01$&$  0.09$\tabularnewline
 ~~PC&$ 0.01$&$ 0.00$&$ 0.04$&$0.01$&$  0.10$\tabularnewline
@@ -214,14 +214,16 @@
 
 \clearpage
 
-% kendall tests
-%latex.default(tab, file = "", rowlabel = "", caption = cap, caption.loc = "top",     rgroup = rgrp, n.rgroup = nrgrp, rowname = rows, colheads = c("$\\tau$",         "slope", "median", "\\% change"), label = paste0("tab:",         nut, "trnd"))%
+\setcounter{table}{2}
+
+% kendall tests, phosphate
+%latex.default(tab, file = "", rowlabel = "Time periods, sites",     caption = cap, caption.loc = "top", rgroup = rgrp, n.rgroup = nrgrp,     rowname = rows, colheads = c("$\\tau$", "slope", "median",         "\\% change"), label = paste0("tab:", nut, "trnd"))%
 \begin{table}[!tbp]
-\caption{Summary of orthophosphate (mg P/L) trends for time periods with sufficient data.  Trends are based on seasonal Kendall tests, where $\tau$ is the direction and strength of the trend, slope is the change per year, median is the median in the time period, and percent change is the slope divided by the median.\label{tab:PO4Ftrnd}} 
+\caption{Summary of PO$_4^{-3}$ (mg P/L) trends for time periods with sufficient data.  Trends are based on seasonal Kendall tests, where $\tau$ is the direction and strength of the trend, slope is the change per year, median is the median in the time period, and percent change is the slope divided by the median.  Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC). Time periods are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), and event 2 chronic (E2C). *$p <$ 0.05; **$p <$ 0.005\label{tab:PO4Ftrnd}} 
 \begin{center}
 \begin{tabular}{lllll}
 \hline\hline
-\multicolumn{1}{l}{}&\multicolumn{1}{c}{$\tau$}&\multicolumn{1}{c}{slope}&\multicolumn{1}{c}{median}&\multicolumn{1}{c}{\% change}\tabularnewline
+\multicolumn{1}{l}{Time periods, sites}&\multicolumn{1}{c}{$\tau$}&\multicolumn{1}{c}{slope}&\multicolumn{1}{c}{median}&\multicolumn{1}{c}{\% change}\tabularnewline
 \hline
 {\bfseries E1A, E1C}&&&&\tabularnewline
 ~~BN&-0.48&-0.03&0.04&-79.25\tabularnewline
@@ -243,13 +245,65 @@
 \hline
 \end{tabular}\end{center}
 \end{table}
-%latex.default(tab, file = "", rowlabel = "", caption = cap, caption.loc = "top",     rgroup = rgrp, n.rgroup = nrgrp, rowname = rows, colheads = c("$\\tau$",         "slope", "median", "\\% change"), label = paste0("tab:",         nut, "trnd"))%
+
+\clearpage
+
+% supplements
+\beginsupplement
+
+\begin{figure}[!ht]
+
+{\centering \includegraphics[width=\maxwidth]{figs/FigS1} 
+
+}
+
+\caption[Boxplot summaries of nutrient data for time periods grouped by site]{Boxplot summaries of nutrient data for time periods grouped by site. Boxplots within each panel that do not share a letter have significantly different concentrations. Insufficient chlorophyll data were removed for E1A and E1C. Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC).  Time frames are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), event 2 chronic (E2C), and non-impact 2 (NI2).}\label{fig:FigS1}
+\end{figure}
+
+
+\clearpage
+
+\begin{figure}[!ht]
+
+{\centering \includegraphics[width=\maxwidth]{figs/FigS2} 
+
+}
+
+\caption[Boxplot summaries of nutrient data for sites grouped by time periods]{Boxplot summaries of nutrient data for sites grouped by time periods. Boxplots within each panel that do not share a letter have significantly different concentrations. Insufficient chlorophyll data were removed for E1A and E1C. Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC).  Time frames are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), event 2 chronic (E2C), and non-impact 2 (NI2).}\label{fig:FigS2}
+\end{figure}
+
+
+
+% kendall tests, nh4, chla
+%latex.default(tab, file = "", rowlabel = "Time periods, sites",     caption = cap, caption.loc = "top", rgroup = rgrp, n.rgroup = nrgrp,     rowname = rows, colheads = c("$\\tau$", "slope", "median",         "\\% change"), label = paste0("tab:", nut, "trnd"))%
 \begin{table}[!tbp]
-\caption{Summary of ammonium (mg N/L) trends for time periods with sufficient data.  Trends are based on seasonal Kendall tests, where $\tau$ is the direction and strength of the trend, slope is the change per year, median is the median in the time period, and percent change is the slope divided by the median.\label{tab:NH4Ftrnd}} 
+\caption{Summary of Chl-\textit{a} ($\mu$g/L) trends for time periods with sufficient data.  Trends are based on seasonal Kendall tests, where $\tau$ is the direction and strength of the trend, slope is the change per year, median is the median in the time period, and percent change is the slope divided by the median. Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC). Time periods are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), and event 2 chronic (E2C). *$p <$ 0.05; **$p <$ 0.005\label{tab:CHLA_Ntrnd}} 
 \begin{center}
 \begin{tabular}{lllll}
 \hline\hline
-\multicolumn{1}{l}{}&\multicolumn{1}{c}{$\tau$}&\multicolumn{1}{c}{slope}&\multicolumn{1}{c}{median}&\multicolumn{1}{c}{\% change}\tabularnewline
+\multicolumn{1}{l}{Time periods, sites}&\multicolumn{1}{c}{$\tau$}&\multicolumn{1}{c}{slope}&\multicolumn{1}{c}{median}&\multicolumn{1}{c}{\% change}\tabularnewline
+\hline
+{\bfseries NI1}&&&&\tabularnewline
+~~BN&0.61**&2.24&3.98&56.36\tabularnewline
+~~BL&0.67**&2.14&4.66&45.98\tabularnewline
+~~PC&0.59**&2.12&6.63&31.90\tabularnewline
+~~BC&0.39**&2.17&6.34&34.29\tabularnewline
+\hline
+{\bfseries E2A, E2C}&&&&\tabularnewline
+~~BN&0.36&1.21&6.12&19.69\tabularnewline
+~~BL&0.56&1.25&6.86&18.23\tabularnewline
+~~PC&-0.04&0.01&5.96&0.13\tabularnewline
+~~BC&0.26&1.42&6.92&20.52\tabularnewline
+\hline
+\end{tabular}\end{center}
+\end{table}
+%latex.default(tab, file = "", rowlabel = "Time periods, sites",     caption = cap, caption.loc = "top", rgroup = rgrp, n.rgroup = nrgrp,     rowname = rows, colheads = c("$\\tau$", "slope", "median",         "\\% change"), label = paste0("tab:", nut, "trnd"))%
+\begin{table}[!tbp]
+\caption{Summary of NH$_4^+$ (mg N/L) trends for time periods with sufficient data.  Trends are based on seasonal Kendall tests, where $\tau$ is the direction and strength of the trend, slope is the change per year, median is the median in the time period, and percent change is the slope divided by the median. Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC). Time periods are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), and event 2 chronic (E2C). *$p <$ 0.05; **$p <$ 0.005\label{tab:NH4Ftrnd}} 
+\begin{center}
+\begin{tabular}{lllll}
+\hline\hline
+\multicolumn{1}{l}{Time periods, sites}&\multicolumn{1}{c}{$\tau$}&\multicolumn{1}{c}{slope}&\multicolumn{1}{c}{median}&\multicolumn{1}{c}{\% change}\tabularnewline
 \hline
 {\bfseries E1A, E1C}&&&&\tabularnewline
 ~~BN&-0.12&-0.01&0.03&-26.03\tabularnewline
@@ -271,83 +325,5 @@
 \hline
 \end{tabular}\end{center}
 \end{table}
-%latex.default(tab, file = "", rowlabel = "", caption = cap, caption.loc = "top",     rgroup = rgrp, n.rgroup = nrgrp, rowname = rows, colheads = c("$\\tau$",         "slope", "median", "\\% change"), label = paste0("tab:",         nut, "trnd"))%
-\begin{table}[!tbp]
-\caption{Summary of nitrite/nitrate (mg N/L) trends for time periods with sufficient data.  Trends are based on seasonal Kendall tests, where $\tau$ is the direction and strength of the trend, slope is the change per year, median is the median in the time period, and percent change is the slope divided by the median.\label{tab:NO23Ftrnd}} 
-\begin{center}
-\begin{tabular}{lllll}
-\hline\hline
-\multicolumn{1}{l}{}&\multicolumn{1}{c}{$\tau$}&\multicolumn{1}{c}{slope}&\multicolumn{1}{c}{median}&\multicolumn{1}{c}{\% change}\tabularnewline
-\hline
-{\bfseries E1A, E1C}&&&&\tabularnewline
-~~BN&0.08&0.00&0.01&0.00\tabularnewline
-~~BL&-0.21&0.00&0.01&0.00\tabularnewline
-~~PC&-0.48*&0.00&0.01&0.00\tabularnewline
-~~BC&-0.18&0.00&0.01&0.00\tabularnewline
-\hline
-{\bfseries NI1}&&&&\tabularnewline
-~~BN&-0.09&0.00&0.01&0.00\tabularnewline
-~~BL&-0.10&0.00&0.01&0.00\tabularnewline
-~~PC&-0.08&0.00&0.01&0.00\tabularnewline
-~~BC&-0.11&0.00&0.01&0.00\tabularnewline
-\hline
-{\bfseries E2A, E2C}&&&&\tabularnewline
-~~BN&-0.09&0.00&0.01&0.00\tabularnewline
-~~BL&-0.08&0.00&0.01&0.00\tabularnewline
-~~PC&-0.08&0.00&0.01&0.00\tabularnewline
-~~BC&0.00&0.00&0.01&0.00\tabularnewline
-\hline
-\end{tabular}\end{center}
-\end{table}
-%latex.default(tab, file = "", rowlabel = "", caption = cap, caption.loc = "top",     rgroup = rgrp, n.rgroup = nrgrp, rowname = rows, colheads = c("$\\tau$",         "slope", "median", "\\% change"), label = paste0("tab:",         nut, "trnd"))%
-\begin{table}[!tbp]
-\caption{Summary of chlorophyll-a ($\mu$g/L) trends for time periods with sufficient data.  Trends are based on seasonal Kendall tests, where $\tau$ is the direction and strength of the trend, slope is the change per year, median is the median in the time period, and percent change is the slope divided by the median.\label{tab:CHLA_Ntrnd}} 
-\begin{center}
-\begin{tabular}{lllll}
-\hline\hline
-\multicolumn{1}{l}{}&\multicolumn{1}{c}{$\tau$}&\multicolumn{1}{c}{slope}&\multicolumn{1}{c}{median}&\multicolumn{1}{c}{\% change}\tabularnewline
-\hline
-{\bfseries NI1}&&&&\tabularnewline
-~~BN&0.61**&2.24&3.98&56.36\tabularnewline
-~~BL&0.67**&2.14&4.66&45.98\tabularnewline
-~~PC&0.59**&2.12&6.63&31.90\tabularnewline
-~~BC&0.39**&2.17&6.34&34.29\tabularnewline
-\hline
-{\bfseries E2A, E2C}&&&&\tabularnewline
-~~BN&0.36&1.21&6.12&19.69\tabularnewline
-~~BL&0.56&1.25&6.86&18.23\tabularnewline
-~~PC&-0.04&0.01&5.96&0.13\tabularnewline
-~~BC&0.26&1.42&6.92&20.52\tabularnewline
-\hline
-\end{tabular}\end{center}
-\end{table}
-
-\clearpage
-
-% supplements
-\beginsupplement
-
-\begin{figure}[!ht]
-
-{\centering \includegraphics[width=\maxwidth]{figs/FigS1} 
-
-}
-
-\caption[Boxplot summaries of nutrient data for time frames grouped by site]{Boxplot summaries of nutrient data for time frames grouped by site. Boxplots within each panel that do not share a letter have significantly different concentrations. Insufficient chlorophyll data were removed for E1A and E1C. Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC).  Time frames are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), event 2 chronic (E2C), and non-impact 2 (NI2).}\label{fig:FigS1}
-\end{figure}
-
-
-\clearpage
-
-\begin{figure}[!ht]
-
-{\centering \includegraphics[width=\maxwidth]{figs/FigS2} 
-
-}
-
-\caption[Boxplot summaries of nutrient data for sitres grouped by time frames]{Boxplot summaries of nutrient data for sitres grouped by time frames. Boxplots within each panel that do not share a letter have significantly different concentrations. Insufficient chlorophyll data were removed for E1A and E1C. Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC).  Time frames are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), event 2 chronic (E2C), and non-impact 2 (NI2).}\label{fig:FigS2}
-\end{figure}
-
-
 
 \end{document}

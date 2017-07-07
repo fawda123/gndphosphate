@@ -101,7 +101,7 @@ nut_proc <- filter(nut_dat, nutrient == 'PO4F' & StationCode == 'BL') %>%
   
 # combine wq with met and nut
 toplo_wq <- filter(wq_dat, StationCode == 'BL') %>% 
-  select(-StationCode, -depth) %>% 
+  select(-StationCode, -depth, -turb) %>% 
   mutate(datetimestamp = as.Date(datetimestamp)) %>% 
   rename(date = datetimestamp) %>% 
   group_by(date, TimeFrame) %>% 
@@ -203,13 +203,13 @@ met_proc <- select(met_dat, datetimestamp, totprcp)
 # combine wq with met and nut
 toplo <- filter(wq_dat, StationCode == 'BL') %>% 
   select(-StationCode) %>% 
-  filter(turb < 250) %>%  # remove anom value
+  # filter(turb < 250) %>%  # remove anom value
   left_join(., met_supp_all, by = c('datetimestamp', 'TimeFrame')) %>% 
   select(datetimestamp, TimeFrame, sal, ph, turb, depth, totprcp) %>% 
   gather('variable', 'value', sal:totprcp) %>% 
   mutate(variable = factor(variable, 
     levels = c('totprcp', 'depth', 'sal', 'turb', 'ph'),
-    labels = c('Total precipitation (cm/d)', 'Sea level elevation (m)', 'Salinity', 'Turbidty (NTU)', 'pH')
+    labels = c('Total precipitation (cm/d)', 'Sea level elevation (m)', 'Salinity', 'Turbidity (NTU)', 'pH')
     )) %>% 
   rename(Event = TimeFrame)
 
@@ -323,7 +323,7 @@ iscoplot3(Aug.dat, "Pre-spill tidal cycle", cols = cols, cex = 1.7, lwd = 1.5)
 iscoplot2(Sept.dat, "Post-spill tidal cycle", cols = cols, cex = 1.7, lwd = 1.5)
 @
 
-<<Fig6, fig.width = 7, fig.height = 8, echo = FALSE, fig.cap = 'Boxplot summaries of monthly orthophosphate data for (A) time frames group by site and (B) sites grouped by time frame. Boxplots within each panel that do not share a letter have significantly different concentrations. Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC).  Time frames are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), event 2 chronic (E2C), and non-impact 2 (NI2).'>>=
+<<Fig6, fig.width = 7, fig.height = 8, echo = FALSE, fig.cap = 'Boxplot summaries of monthly orthophosphate data for (A) time periods group by site and (B) sites grouped by time period. Boxplots within each panel that do not share a letter have significantly different concentrations. Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC).  Time frames are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), event 2 chronic (E2C), and non-impact 2 (NI2).'>>=
 
 data(nut_dat)
 data(insites)
@@ -376,7 +376,7 @@ p1 <- ggplot(toplo, aes(x = TimeFrame, y = value)) +
     ) + 
   ggtitle('(A) Within sites')
 
-# boxplot, within time frames
+# boxplot, within time periods
 p2 <- ggplot(toplo, aes(x = StationCode, y = value)) +
   geom_boxplot(aes(fill = meds), outlier.size = 1) + 
   geom_text(data = intimes, aes(label = lets), nudge_y = 0.2, parse = T) + 
@@ -389,7 +389,7 @@ p2 <- ggplot(toplo, aes(x = StationCode, y = value)) +
     legend.position = 'none',
     strip.background = element_blank()
     ) + 
-  ggtitle('(B) Within time frames')
+  ggtitle('(B) Within time periods')
 
 grid.arrange(p1, p2, ncol = 1)
 @
@@ -452,7 +452,7 @@ cap <- 'Site summaries of water quality (hourly) and nutrient (monthly) observat
 rgrps <- unique(totab$var) %>% 
   factor(., 
     levels = c('CHLA_N', 'do_pct', 'NH4F', 'NO23F', 'ph', 'PO4F', 'sal'), 
-    labels = c('Chl-\\textit{a}', 'DO$_{sat}$', 'NH$_4^+$', 'NO$_2^-$/NO$_3^{2-}$', 'pH', 'PO$_4^{3-}$', 'Salinity')
+    labels = c('Chl-\\textit{a}', 'DO$_{sat}$', 'NH$_4^+$', 'NO$_2^-$/NO$_3^-$', 'pH', 'PO$_4^{3-}$', 'Salinity')
   ) %>% 
   as.character
 
@@ -472,8 +472,10 @@ latex(
 @
 \clearpage
 
-% kendall tests
-<<kendtab, echo = FALSE>>=
+\setcounter{table}{2}
+
+% kendall tests, phosphate
+<<Table3, echo = FALSE>>=
 data(nut_dat)
 
 trnds <- nut_dat %>% 
@@ -483,7 +485,7 @@ trnds <- nut_dat %>%
     yr = year(date), 
     TimeFrame = gsub('A|C', '', TimeFrame)
   ) %>% 
-  filter(!TimeFrame %in% c('NI2')) %>% 
+  filter(!TimeFrame %in% c('NI2') & nutrient %in% 'PO4F') %>% 
   select(TimeFrame, StationCode, nutrient, date, value, mo, yr) %>% 
   group_by(TimeFrame, StationCode, nutrient) %>% 
   nest %>% 
@@ -516,10 +518,10 @@ trnds <- nut_dat %>%
   group_by(nutrient) %>% 
   nest
 
-nutnms <- c('orthophosphate (mg P/L)', 'ammonium (mg N/L)', 'nitrite/nitrate (mg N/L)', 'chlorophyll-a ($\\mu$g/L)')
-names(nutnms) <- c('PO4F', 'NH4F', 'NO23F', 'CHLA_N')
+nutnms <- c('PO$_4^{-3}$ (mg P/L)')
+names(nutnms) <- c('PO4F')
       
-for(nut in trnds$nutrient){
+for(nut in names(nutnms)){
     
   nut <- as.character(nut)
   tab <- filter(trnds, nutrient %in% nut) %>% 
@@ -532,13 +534,13 @@ for(nut in trnds$nutrient){
   rgrp <- unique(rgrp)
   
   rows <- as.character(tab[, 2])
-  cap <- paste0('Summary of ', nutnms[nut], ' trends for time periods with sufficient data.  Trends are based on seasonal Kendall tests, where $\\tau$ is the direction and strength of the trend, slope is the change per year, median is the median in the time period, and percent change is the slope divided by the median.')
+  cap <- paste0('Summary of ', nutnms[nut], ' trends for time periods with sufficient data.  Trends are based on seasonal Kendall tests, where $\\tau$ is the direction and strength of the trend, slope is the change per year, median is the median in the time period, and percent change is the slope divided by the median.  Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC). Time periods are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), and event 2 chronic (E2C). *$p <$ 0.05; **$p <$ 0.005')
   tab <- tab[, -c(1, 2)]
   
   latex(
     tab,
     file = '',
-    rowlabel = '',
+    rowlabel = 'Time periods, sites',
     caption = cap,
     caption.loc = 'top',
     rgroup = rgrp,
@@ -559,7 +561,7 @@ for(nut in trnds$nutrient){
 % supplements
 \beginsupplement
 
-<<FigS1, fig.width = 8, fig.height = 6, fig.cap = 'Boxplot summaries of nutrient data for time frames grouped by site. Boxplots within each panel that do not share a letter have significantly different concentrations. Insufficient chlorophyll data were removed for E1A and E1C. Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC).  Time frames are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), event 2 chronic (E2C), and non-impact 2 (NI2).', echo = FALSE>>=
+<<FigS1, fig.width = 8, fig.height = 6, fig.cap = 'Boxplot summaries of nutrient data for time periods grouped by site. Boxplots within each panel that do not share a letter have significantly different concentrations. Insufficient chlorophyll data were removed for E1A and E1C. Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC).  Time frames are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), event 2 chronic (E2C), and non-impact 2 (NI2).', echo = FALSE>>=
 
 data(nut_dat)
 data(insites)
@@ -631,7 +633,7 @@ p1
 @
 \clearpage
 
-<<FigS2, fig.width = 8, fig.height = 6, fig.cap = 'Boxplot summaries of nutrient data for sitres grouped by time frames. Boxplots within each panel that do not share a letter have significantly different concentrations. Insufficient chlorophyll data were removed for E1A and E1C. Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC).  Time frames are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), event 2 chronic (E2C), and non-impact 2 (NI2).', echo = FALSE>>=
+<<FigS2, fig.width = 8, fig.height = 6, fig.cap = 'Boxplot summaries of nutrient data for sites grouped by time periods. Boxplots within each panel that do not share a letter have significantly different concentrations. Insufficient chlorophyll data were removed for E1A and E1C. Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC).  Time frames are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), event 2 chronic (E2C), and non-impact 2 (NI2).', echo = FALSE>>=
 
 data(nut_dat)
 data(intimes)
@@ -704,4 +706,83 @@ p1
 
 @
 
+% kendall tests, nh4, chla
+<<TablesS1S2, echo = FALSE>>=
+data(nut_dat)
+
+trnds <- nut_dat %>% 
+  na.omit %>% 
+  mutate(
+    mo = month(date), 
+    yr = year(date), 
+    TimeFrame = gsub('A|C', '', TimeFrame)
+  ) %>% 
+  filter(!TimeFrame %in% c('NI2') & nutrient %in% c('NH4F', 'CHLA_N')) %>% 
+  select(TimeFrame, StationCode, nutrient, date, value, mo, yr) %>% 
+  group_by(TimeFrame, StationCode, nutrient) %>% 
+  nest %>% 
+  mutate(
+    sk_res = map(data, ~ kendallSeasonalTrendTest(value ~ mo + yr, .)), 
+    tau = map(sk_res, ~ .$estimate[1]), 
+    slope = map(sk_res, ~ .$estimate[2]),
+    med = map(data, ~ median(.$value, na.rm = TRUE)), 
+    ztest = map(sk_res, ~ .$p.value[2])
+  ) %>% 
+  select(-data, -sk_res) %>% 
+  unnest %>% 
+  mutate(
+    perchg = 100 * slope/med, 
+    perchg = sapply(perchg, form_fun),
+    med = sapply(med, form_fun),
+    tau = sapply(tau, form_fun),
+    slope = sapply(slope, form_fun),
+    ztest = sapply(ztest, p_ast),
+    TimeFrame = factor(TimeFrame, 
+      levels = c('E1', 'NI1', 'E2'), 
+      labels = c('E1A, E1C', 'NI1', 'E2A, E2C')
+    ), 
+    StationCode = factor(StationCode, 
+      levels = c('BN', 'BL', 'PC', 'BC')
+    )
+  ) %>% 
+  tidyr::unite('tau', tau, ztest, sep = '') %>% 
+  arrange(nutrient, TimeFrame, StationCode) %>% 
+  group_by(nutrient) %>% 
+  nest
+
+nutnms <- c('Chl-\\textit{a} ($\\mu$g/L)', 'NH$_4^+$ (mg N/L)')
+names(nutnms) <- c('CHLA_N', 'NH4F')
+      
+for(nut in names(nutnms)){
+    
+  nut <- as.character(nut)
+  tab <- filter(trnds, nutrient %in% nut) %>% 
+    .$data %>% 
+    .[[1]] %>% 
+    data.frame
+  
+  rgrp <- as.character(tab[, 1])
+  nrgrp <- as.numeric(table(rgrp))
+  rgrp <- unique(rgrp)
+  
+  rows <- as.character(tab[, 2])
+  cap <- paste0('Summary of ', nutnms[nut], ' trends for time periods with sufficient data.  Trends are based on seasonal Kendall tests, where $\\tau$ is the direction and strength of the trend, slope is the change per year, median is the median in the time period, and percent change is the slope divided by the median. Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC). Time periods are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), and event 2 chronic (E2C). *$p <$ 0.05; **$p <$ 0.005')
+  tab <- tab[, -c(1, 2)]
+  
+  latex(
+    tab,
+    file = '',
+    rowlabel = 'Time periods, sites',
+    caption = cap,
+    caption.loc = 'top',
+    rgroup = rgrp,
+    n.rgroup = nrgrp,
+    rowname = rows,
+    colheads = c('$\\tau$', 'slope', 'median', '\\% change'),
+    label = paste0('tab:', nut, 'trnd')
+    )
+
+}
+
+@
 \end{document}
