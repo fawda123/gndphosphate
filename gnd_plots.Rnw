@@ -203,7 +203,7 @@ met_proc <- select(met_dat, datetimestamp, totprcp)
 # combine wq with met and nut
 toplo <- filter(wq_dat, StationCode == 'BL') %>% 
   select(-StationCode) %>% 
-  # filter(turb < 250) %>%  # remove anom value
+  filter(turb < 250) %>%  # remove anom value
   left_join(., met_supp_all, by = c('datetimestamp', 'TimeFrame')) %>% 
   select(datetimestamp, TimeFrame, sal, ph, turb, depth, totprcp) %>% 
   gather('variable', 'value', sal:totprcp) %>% 
