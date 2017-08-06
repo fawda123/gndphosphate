@@ -113,7 +113,7 @@
 
 }
 
-\caption[Time series of daily precipitation, sea level elevation, salinity, turbidity, and pH for Bangs Lake, Grand Bay reserve]{Time series of daily precipitation, sea level elevation, salinity, turbidity, and pH for Bangs Lake, Grand Bay reserve.  Precipitation data are daily totals from the Pascagoula International Airport.  All other data were collected at 15 minute time steps.  Green shading indicates period of high precipitation for a heavy rain event in 2005 (left, March 31\textsuperscript{st} to April 1\textsuperscript{st}) and hurricane Isaac in 2012 (right, August 28\textsuperscript{th} to 30\textsuperscript{th}).  Red shading for the first event indicates the date of documented phosphorus spill.  E1A: event 1 acute, E2A: event 2 acute.}\label{fig:Fig3}
+\caption[Time series of daily precipitation, sensor depth, salinity, turbidity, and pH for Bangs Lake, Grand Bay reserve]{Time series of daily precipitation, sensor depth, salinity, turbidity, and pH for Bangs Lake, Grand Bay reserve.  Precipitation data are daily totals from the Pascagoula International Airport.  All other data were collected at 15 minute time steps.  Green shading indicates period of high precipitation for a heavy rain event in 2005 (left, March 31\textsuperscript{st} to April 1\textsuperscript{st}) and hurricane Isaac in 2012 (right, August 28\textsuperscript{th} to 30\textsuperscript{th}).  Red shading for the first event indicates the date of documented phosphorus spill.  E1A: event 1 acute, E2A: event 2 acute.}\label{fig:Fig3}
 \end{figure}
 
 
@@ -125,7 +125,7 @@
 
 }
 
-\caption[Monthly phosphate time series at Bangs North (BN), Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC) sites at Grand Bay]{Monthly phosphate time series at Bangs North (BN), Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC) sites at Grand Bay. Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.}\label{fig:Fig4}
+\caption[Monthly phosphate time series at Bangs North (BN), Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC) sites at Grand Bay]{Monthly phosphate time series at Bangs North (BN), Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC) sites at Grand Bay. Distance from spill increases from top to bottom. Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012. E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.}\label{fig:Fig4}
 \end{figure}
 
 
@@ -158,10 +158,13 @@
 %%%%%%
 % tables
 
+% Table 1, time periods
+
+\setcounter{table}{1}
 % summary charactistics table
 %latex.default(tab, file = "", rowlabel = "Stations", caption = cap,     caption.loc = "top", rgroup = rgrps, n.rgroup = rep(4, 7),     rowname = rows, colheads = c("Average", "Median", "St. Dev",         "Min", "Max"), label = "tab:summtab")%
 \begin{table}[!tbp]
-\caption{Site summaries of water quality (hourly) and nutrient (monthly) observations from 2005 to 2015.  Units are mg L$^{-1}$ for all variables, except Chl-\textit{a} as $\mu$g L$^{-1}$, DO\textit{sat} as percent, pH from 0-12, and salinity as psu. Nutrient summaries are based on maximum likelihood estimates for left-censored data.  Sites are BC: Bayou Cumbest, BH: Bayou Heron (no nutrient data), BL: Bangs Lake, BN: Bangs North (no water quality data), and PC: Point aux Chenes.\label{tab:summtab}} 
+\caption{Site summaries of water quality (hourly) and nutrient (monthly) observations from 2005 to 2015.  Units are mg L$^{-1}$ for all variables, except Chl-\textit{a} as $\mu$g L$^{-1}$, DO\textit{sat} as percent, pH from 0-12, and salinity as psu. Nutrient summaries are based on maximum likelihood estimates for left-censored data and summary values less than the detection limit (0.01 mg/L) are estimated accordingly.  Sites are BC: Bayou Cumbest, BH: Bayou Heron (no nutrient data), BL: Bangs Lake, BN: Bangs North (no water quality data), and PC: Point aux Chenes.\label{tab:summtab}} 
 \begin{center}
 \begin{tabular}{lrrrrr}
 \hline\hline
@@ -212,10 +215,8 @@
 \end{tabular}\end{center}
 \end{table}
 
+
 \clearpage
-
-\setcounter{table}{2}
-
 % kendall tests, phosphate
 %latex.default(tab, file = "", rowlabel = "Time periods, sites",     caption = cap, caption.loc = "top", rgroup = rgrp, n.rgroup = nrgrp,     rowname = rows, colheads = c("$\\tau$", "slope", "median",         "\\% change"), label = paste0("tab:", nut, "trnd"))%
 \begin{table}[!tbp]

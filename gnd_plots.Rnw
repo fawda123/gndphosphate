@@ -188,7 +188,7 @@ grid.arrange(
 \end{landscape}
 \clearpage
 
-<<Fig3, fig.width = 9, fig.height = 10, echo = FALSE, fig.cap = 'Time series of daily precipitation, sea level elevation, salinity, turbidity, and pH for Bangs Lake, Grand Bay reserve.  Precipitation data are daily totals from the Pascagoula International Airport.  All other data were collected at 15 minute time steps.  Green shading indicates period of high precipitation for a heavy rain event in 2005 (left, March 31\\textsuperscript{st} to April 1\\textsuperscript{st}) and hurricane Isaac in 2012 (right, August 28\\textsuperscript{th} to 30\\textsuperscript{th}).  Red shading for the first event indicates the date of documented phosphorus spill.  E1A: event 1 acute, E2A: event 2 acute.'>>=
+<<Fig3, fig.width = 9, fig.height = 10, echo = FALSE, fig.cap = 'Time series of daily precipitation, sensor depth, salinity, turbidity, and pH for Bangs Lake, Grand Bay reserve.  Precipitation data are daily totals from the Pascagoula International Airport.  All other data were collected at 15 minute time steps.  Green shading indicates period of high precipitation for a heavy rain event in 2005 (left, March 31\\textsuperscript{st} to April 1\\textsuperscript{st}) and hurricane Isaac in 2012 (right, August 28\\textsuperscript{th} to 30\\textsuperscript{th}).  Red shading for the first event indicates the date of documented phosphorus spill.  E1A: event 1 acute, E2A: event 2 acute.'>>=
 # ts plots for BL, wq only expanded about the events
 # first get cumulative daily precipitation for met
 # then combine wq and met, take daily ave, make long form
@@ -209,17 +209,19 @@ toplo <- filter(wq_dat, StationCode == 'BL') %>%
   gather('variable', 'value', sal:totprcp) %>% 
   mutate(variable = factor(variable, 
     levels = c('totprcp', 'depth', 'sal', 'turb', 'ph'),
-    labels = c('Total precipitation (cm/d)', 'Sea level elevation (m)', 'Salinity', 'Turbidity (NTU)', 'pH')
+    labels = c('Daily precipitation (cm/d)', 'Sensor depth (m)', 'Salinity', 'Turbidity (NTU)', 'pH')
     )) %>% 
   rename(Event = TimeFrame)
 
 # precip dates
 events1 <- c('2005-03-31', '2005-04-01')
 events1 <- as.POSIXct(events1, format = '%Y-%m-%d', tz = 'America/Regina')
-events1 <- data.frame(xmin = events1[1], xmax = events1[2], ymin = -Inf, ymax = Inf)
+events1 <- data.frame(xmin = events1[1], xmax = events1[2], ymin = -Inf, ymax = Inf, Event = 'E1A')
 events2 <- c('2012-08-28', '2012-08-30')
 events2 <- as.POSIXct(events2, format = '%Y-%m-%d', tz = 'America/Regina')
-events2 <- data.frame(xmin = events2[1], xmax = events2[2], ymin = -Inf, ymax = Inf)
+events2 <- data.frame(xmin = events2[1], xmax = events2[2], ymin = -Inf, ymax = Inf, Event = 'E2A')
+events <- rbind(events1, events2)
+events$Event <- as.character(events$Event)
 
 spill <- as.POSIXct('2005-04-14', format = '%Y-%m-%d', tz = 'America/Regina')
 
@@ -230,49 +232,103 @@ toplo1 <- filter(toplo, datetimestamp >= subdts[1] & datetimestamp <= subdts[2])
   mutate(Event = 'E1A')
 toplo2 <- filter(toplo, datetimestamp >= subdts[3] & datetimestamp <= subdts[4]) %>% 
   mutate(Event = 'E2A')
+toplo <- rbind(toplo1, toplo2)
 
-# plots
-p1 <- ggplot(toplo1) + 
-  geom_rect(data = events1, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
-    fill = 'lightgreen', alpha = 0.6) + 
+
+# precip
+toplopr <- filter(toplo, variable %in% 'Daily precipitation (cm/d)')
+p1 <- ggplot() + 
+  geom_rect(data = events, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+    fill = 'lightgreen', alpha = 0.6) +
   geom_vline(xintercept = as.numeric(spill), colour = 'tomato', alpha = 0.6, size = 1) +
-  geom_line(aes(x = datetimestamp, y = value)) +
-  geom_bar(data = na.omit(toplo1[toplo1$variable == 'Total precipitation (cm/d)', ]), 
-    aes(x = datetimestamp, y = 0.1 + value),
-    stat = 'identity') + 
-  facet_wrap(variable ~ Event, scales = 'free', ncol = 1) +
+  geom_bar(data = na.omit(toplopr), aes(x = datetimestamp, y = 0.1 + value),
+    stat = 'identity') +
+  scale_y_continuous('Daily precipitation (cm/d)') + 
+  facet_wrap(~ Event, scales = 'free_x', ncol = 2) +
   theme_bw() +
   theme(
     axis.title.x = element_blank(), 
-    axis.title.y = element_blank(),
     strip.background = element_blank()
   )
-p2 <- ggplot(toplo2) + 
-  geom_rect(data = events2, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
-    fill = 'lightgreen', alpha = 0.6) + 
-  geom_line(aes(x = datetimestamp, y = value)) +
-  geom_bar(data = na.omit(toplo2[toplo2$variable == 'Total precipitation (cm/d)', ]), 
-    aes(x = datetimestamp, y = 0.1 + value),
-    stat = 'identity') + 
-  facet_wrap(variable ~ Event, scales = 'free', ncol = 1) +
+
+# depth
+toplodp<- filter(toplo, variable %in% 'Sensor depth (m)')
+p2 <- ggplot() + 
+  geom_rect(data = events, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+    fill = 'lightgreen', alpha = 0.6) +
+  geom_vline(xintercept = as.numeric(spill), colour = 'tomato', alpha = 0.6, size = 1) +
+  geom_line(data = na.omit(toplodp), aes(x = datetimestamp, y = value)) +
+  scale_y_continuous('Sensor depth (m)') + 
+  facet_wrap(~ Event, scales = 'free_x', ncol = 2) +
   theme_bw() +
   theme(
     axis.title.x = element_blank(), 
-    axis.title.y = element_blank(), 
     strip.background = element_blank()
   )
-grid.arrange(p1, p2, ncol = 2)
+
+
+# salinity
+toplosl <- filter(toplo, variable %in% 'Salinity')
+p3 <- ggplot() + 
+  geom_rect(data = events, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+    fill = 'lightgreen', alpha = 0.6) +
+  geom_vline(xintercept = as.numeric(spill), colour = 'tomato', alpha = 0.6, size = 1) +
+  geom_line(data = na.omit(toplosl), aes(x = datetimestamp, y = value)) +
+  scale_y_continuous('Salinity') + 
+  facet_wrap(~ Event, scales = 'free_x', ncol = 2) +
+  theme_bw() +
+  theme(
+    axis.title.x = element_blank(), 
+    strip.background = element_blank()
+  )
+
+# salinity
+toplotr <- filter(toplo, variable %in% 'Turbidity (NTU)')
+p4 <- ggplot() + 
+  geom_rect(data = events, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+    fill = 'lightgreen', alpha = 0.6) +
+  geom_vline(xintercept = as.numeric(spill), colour = 'tomato', alpha = 0.6, size = 1) +
+  geom_line(data = na.omit(toplotr), aes(x = datetimestamp, y = value)) +
+  scale_y_continuous('Turbidity (NTU)') + 
+  facet_wrap(~ Event, scales = 'free_x', ncol = 2) +
+  theme_bw() +
+  theme(
+    axis.title.x = element_blank(), 
+    strip.background = element_blank()
+  )
+
+# salinity
+toploph <- filter(toplo, variable %in% 'pH')
+p5 <- ggplot() + 
+  geom_rect(data = events, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+    fill = 'lightgreen', alpha = 0.6) +
+  geom_vline(xintercept = as.numeric(spill), colour = 'tomato', alpha = 0.6, size = 1) +
+  geom_line(data = na.omit(toploph), aes(x = datetimestamp, y = value)) +
+  scale_y_continuous('pH') + 
+  facet_wrap(~ Event, scales = 'free_x', ncol = 2) +
+  theme_bw() +
+  theme(
+    axis.title.x = element_blank(), 
+    strip.background = element_blank()
+  )
+
+grid.arrange(p1, p2, p3, p4, p5, ncol = 1)
 
 @
 \clearpage
 
-<<Fig4, fig.width = 7.5, fig.height = 6, echo = FALSE, fig.cap = 'Monthly phosphate time series at Bangs North (BN), Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC) sites at Grand Bay. Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012.'>>=
+<<Fig4, fig.width = 7.5, fig.height = 7, echo = FALSE, fig.cap = 'Monthly phosphate time series at Bangs North (BN), Bangs Lake (BL), Point aux Chenes (PC), and Bayou Cumbest (BC) sites at Grand Bay. Distance from spill increases from top to bottom. Vertical green bars indicate a heavy rain event in April 2005 and hurricane Isaac in August 2012. E1A: event 1 acute, E1C: event 1 chronic, NI1: non-impact 1, E2A: event 2 acute, E2C: event 2 chronic, and NI2: non-impact 2.'>>=
 
 data(nut_dat)
-
-toplo <- filter(nut_dat, nutrient == 'PO4F')
-
 timeframes <- c('E1A', 'E1C', 'NI1', 'E2A', 'E2C', 'NI2')
+
+toplo <- filter(nut_dat, nutrient == 'PO4F') %>% 
+  rename(
+    Event = TimeFrame
+  ) %>% 
+  mutate(Event = factor(Event, levels = timeframes))
+
+
 
 ylab <- expression(paste('Orthophosphate (mg P/L)'))
 
@@ -282,16 +338,18 @@ toplo$StationCode <- factor(toplo$StationCode, levels = c('BN', 'BL', 'PC', 'BC'
 events <- c('2005-04-01', '2012-08-01')
 events <- as.Date(events)
 
-# boxplot
+# line plots
 p1 <- ggplot(toplo, aes(x = date, y = value)) +
   geom_line() + 
-  geom_point() +
-  facet_wrap(~ StationCode, ncol = 1, scales = 'free_y') +
+  geom_point(aes(fill = Event), pch = 21, size = 2) +
+  facet_wrap(~ StationCode, ncol = 1) +
   scale_y_log10(ylab) +
   geom_vline(xintercept = as.numeric(events), colour = 'lightgreen', alpha = 0.6, size = 3) +
+  scale_fill_brewer(palette = 'Paired') +
+  guides(fill = guide_legend(ncol = 6)) +
   theme_bw() +
   theme(
-    legend.position = 'none', 
+    legend.position = 'top', 
     axis.title.x = element_blank(),
     strip.background = element_blank()
   )
@@ -399,8 +457,11 @@ grid.arrange(p1, p2, ncol = 1)
 %%%%%%
 % tables
 
+% Table 1, time periods
+
+\setcounter{table}{1}
 % summary charactistics table
-<<summtab, echo = FALSE>>=
+<<Table2, echo = FALSE>>=
 
 data(nut_dat)
 data(wq_dat)
@@ -448,7 +509,7 @@ totab <- rbind(wq_dat, nut_dat) %>%
 tab <- totab[, -c(1, 2)]
 tab <- round(tab, 2)
 rows <- totab[, 2]
-cap <- 'Site summaries of water quality (hourly) and nutrient (monthly) observations from 2005 to 2015.  Units are mg L$^{-1}$ for all variables, except Chl-\\textit{a} as $\\mu$g L$^{-1}$, DO\\textit{sat} as percent, pH from 0-12, and salinity as psu. Nutrient summaries are based on maximum likelihood estimates for left-censored data.  Sites are BC: Bayou Cumbest, BH: Bayou Heron (no nutrient data), BL: Bangs Lake, BN: Bangs North (no water quality data), and PC: Point aux Chenes.'
+cap <- 'Site summaries of water quality (hourly) and nutrient (monthly) observations from 2005 to 2015.  Units are mg L$^{-1}$ for all variables, except Chl-\\textit{a} as $\\mu$g L$^{-1}$, DO\\textit{sat} as percent, pH from 0-12, and salinity as psu. Nutrient summaries are based on maximum likelihood estimates for left-censored data and summary values less than the detection limit (0.01 mg/L) are estimated accordingly.  Sites are BC: Bayou Cumbest, BH: Bayou Heron (no nutrient data), BL: Bangs Lake, BN: Bangs North (no water quality data), and PC: Point aux Chenes.'
 rgrps <- unique(totab$var) %>% 
   factor(., 
     levels = c('CHLA_N', 'do_pct', 'NH4F', 'NO23F', 'ph', 'PO4F', 'sal'), 
@@ -470,10 +531,8 @@ latex(
   )
 
 @
+
 \clearpage
-
-\setcounter{table}{2}
-
 % kendall tests, phosphate
 <<Table3, echo = FALSE>>=
 data(nut_dat)

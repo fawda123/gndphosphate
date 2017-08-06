@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.8.29)  7 JUL 2017 11:03
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.8.29)  6 AUG 2017 11:52
 entering extended mode
 **gnd_plots.tex
 (M:\docs\manuscripts\gndphosphate\gnd_plots.tex
@@ -656,11 +656,11 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 
 
  <M:/docs/manuscripts/gndphosphate/figs/Fig3.pdf>]
-<figs/Fig4.pdf, id=37, 542.025pt x 433.62pt>
+<figs/Fig4.pdf, id=37, 542.025pt x 505.89pt>
 File: figs/Fig4.pdf Graphic file (type pdf)
  <use figs/Fig4.pdf>
 Package pdftex.def Info: figs/Fig4.pdf used on input line 124.
-(pdftex.def)             Requested size: 469.75502pt x 375.81718pt.
+(pdftex.def)             Requested size: 469.75502pt x 438.45337pt.
  [3
 
  <M:/docs/manuscripts/gndphosphate/figs/Fig4.pdf>]
@@ -680,12 +680,12 @@ Package pdftex.def Info: figs/Fig6.pdf used on input line 147.
  <M:/docs/manuscripts/gndphosphate/figs/Fig5.pdf>] [5 <M:/docs/manuscripts/gndp
 hosphate/figs/Fig6.pdf>]
 
-LaTeX Warning: Float too large for page by 0.56937pt on input line 213.
+LaTeX Warning: Float too large for page by 15.06937pt on input line 216.
 
 [6] [7] <figs/FigS1.pdf, id=92, 578.16pt x 433.62pt>
 File: figs/FigS1.pdf Graphic file (type pdf)
  <use figs/FigS1.pdf>
-Package pdftex.def Info: figs/FigS1.pdf used on input line 256.
+Package pdftex.def Info: figs/FigS1.pdf used on input line 257.
 (pdftex.def)             Requested size: 469.75502pt x 352.31538pt.
 
 [8
@@ -696,31 +696,31 @@ Package pdftex.def Info: figs/FigS1.pdf used on input line 256.
 <figs/FigS2.pdf, id=104, 578.16pt x 433.62pt>
 File: figs/FigS2.pdf Graphic file (type pdf)
  <use figs/FigS2.pdf>
-Package pdftex.def Info: figs/FigS2.pdf used on input line 268.
+Package pdftex.def Info: figs/FigS2.pdf used on input line 269.
 (pdftex.def)             Requested size: 469.75502pt x 352.31538pt.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 329.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 330.
  [9
 
  <M:/docs/manuscripts/gndphosphate/figs/FigS2.pdf>] [10]
 Package atenddvi Info: Last page = 11.
  [11]
-Package atveryend Info: Executing hook `AfterLastShipout' on input line 329.
+Package atveryend Info: Executing hook `AfterLastShipout' on input line 330.
 
 (M:\docs\manuscripts\gndphosphate\gnd_plots.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 329.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 329.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 330.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 330.
 Package rerunfilecheck Info: File `gnd_plots.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 329.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 330.
  ) 
 Here is how much of TeX's memory you used:
  10763 strings out of 493921
  175197 string characters out of 3147282
- 310547 words of memory out of 3000000
+ 311547 words of memory out of 3000000
  13880 multiletter control sequences out of 15000+200000
  7389 words of font info for 26 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 44i,10n,42p,822b,405s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 44i,10n,42p,808b,405s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Pr
 ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbxti10.pfb><C:/Program 
 Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Program Files/Mi
@@ -729,7 +729,7 @@ fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTeX 2.9/fonts/typ
 e1/public/amsfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/
 amsfonts/cm/cmsy8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/
 cm/cmti12.pfb>
-Output written on gnd_plots.pdf (11 pages, 406097 bytes).
+Output written on gnd_plots.pdf (11 pages, 409123 bytes).
 PDF statistics:
  158 PDF objects out of 1000 (max. 8388607)
  23 named destinations out of 1000 (max. 500000)
