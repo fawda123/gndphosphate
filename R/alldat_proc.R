@@ -14,6 +14,7 @@ library(ggplot2)
 library(agricolae)
 library(SWMPr)
 library(reshape2)
+library(lubridate)
 
 # import
 raw_data <- read.csv('ignore/PO4modified2005-Aug2015grabs.csv', stringsAsFactors = F)
@@ -239,19 +240,30 @@ insites <- nut_dat %>%
   mutate(
     ests = map(data, function(x){
  
+      tocmp <- x %>% 
+        mutate(
+          yr = year(date),
+          qrt = quarter(date)
+        ) %>%
+        unite('yrqrt', yr, qrt, sep = '-') %>% 
+        group_by(yrqrt, TimeFrame) %>% 
+        summarise(
+          logvalue = median(logvalue, na.rm = T)
+          )
+      
       # pairwise comparisons with mann-whitney (wilcox)
-      grps <- unique(x$TimeFrame)
+      grps <- unique(tocmp$TimeFrame)
       grps <- combn(grps, 2)
       pval <- rep(NA, ncol(grps))
       for(col in 1:ncol(grps)){
-        grp <- x$TimeFrame %in% grps[, col, drop = TRUE]
-        res <- wilcox.test(logvalue ~ TimeFrame, data = x[grp, ], exact = FALSE, 
+        grp <- tocmp$TimeFrame %in% grps[, col, drop = TRUE]
+        res <- wilcox.test(logvalue ~ TimeFrame, data = tocmp[grp, ], exact = FALSE, 
           alternative = 'two.sided')
         pval[col] <- res$p.value
       }
       
       # adjust p-values using holm sequential bonferroni 
-      pval <- p.adjust(pval, method = 'holm')
+      pval <- pval #p.adjust(pval, method = 'holm')
       
       # pval as t/f using bonferroni correction
       vecs <- rep(FALSE, ncol(grps))
@@ -284,19 +296,30 @@ intimes<- nut_dat %>%
   mutate(
     ests = map(data, function(x){
  
+      tocmp <- x %>% 
+        mutate(
+          yr = year(date),
+          qrt = quarter(date)
+        ) %>%
+        unite('yrqrt', yr, qrt, sep = '-') %>% 
+        group_by(yrqrt, StationCode) %>% 
+        summarise(
+          logvalue = median(logvalue, na.rm = T)
+        )
+      
       # pairwise comparisons with mann-whitney (wilcox)
-      grps <- unique(x$StationCode)
+      grps <- unique(tocmp$StationCode)
       grps <- combn(grps, 2)
       pval <- rep(NA, ncol(grps))
       for(col in 1:ncol(grps)){
-        grp <- x$StationCode %in% grps[, col, drop = TRUE]
-        res <- wilcox.test(logvalue ~ StationCode, data = x[grp, ], exact = FALSE, 
+        grp <- tocmp$StationCode %in% grps[, col, drop = TRUE]
+        res <- wilcox.test(logvalue ~ StationCode, data = tocmp[grp, ], exact = FALSE, 
           alternative = 'two.sided')
         pval[col] <- res$p.value
       }
       
       # adjust p-values using holm sequential bonferroni 
-      pval <- p.adjust(pval, method = 'holm')
+      pval <- pval #p.adjust(pval, method = 'holm')
       
       # pval as t/f using bonferroni correction
       vecs <- rep(FALSE, ncol(grps))
