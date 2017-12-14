@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6350 64-bit) (preloaded format=pdflatex 2017.9.18)  13 DEC 2017 08:56
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6350 64-bit) (preloaded format=pdflatex 2017.9.18)  14 DEC 2017 13:37
 entering extended mode
 **./gnd_plots.tex
 (gnd_plots.tex
@@ -840,43 +840,39 @@ File: figs/Fig6.pdf Graphic file (type pdf)
  <use figs/Fig6.pdf>
 Package pdftex.def Info: figs/Fig6.pdf used on input line 147.
 (pdftex.def)             Requested size: 469.75502pt x 536.87161pt.
+
+<figs/Fig7.pdf, id=53, 578.16pt x 433.62pt>
+File: figs/Fig7.pdf Graphic file (type pdf)
+ <use figs/Fig7.pdf>
+Package pdftex.def Info: figs/Fig7.pdf used on input line 158.
+(pdftex.def)             Requested size: 469.75502pt x 352.31538pt.
+
+<figs/Fig8.pdf, id=54, 578.16pt x 433.62pt>
+File: figs/Fig8.pdf Graphic file (type pdf)
+ <use figs/Fig8.pdf>
+Package pdftex.def Info: figs/Fig8.pdf used on input line 169.
+(pdftex.def)             Requested size: 469.75502pt x 352.31538pt.
  [4
 
- <./figs/Fig5.pdf>] [5 <./figs/Fig6.pdf>]
+ <./figs/Fig5.pdf>] [5 <./figs/Fig6.pdf>] [6 <./figs/Fig7.pdf>] [7 <./figs/Fig8
+.pdf>]
 
-LaTeX Warning: Float too large for page by 15.06937pt on input line 216.
+LaTeX Warning: Float too large for page by 15.06937pt on input line 238.
 
-[6] [7] <figs/FigS1.pdf, id=92, 578.16pt x 433.62pt>
-File: figs/FigS1.pdf Graphic file (type pdf)
- <use figs/FigS1.pdf>
-Package pdftex.def Info: figs/FigS1.pdf used on input line 257.
-(pdftex.def)             Requested size: 469.75502pt x 352.31538pt.
-
-[8
-
-
-
- <./figs/FigS1.pdf>] <figs/FigS2.pdf, id=104, 578.16pt x 433.62pt>
-File: figs/FigS2.pdf Graphic file (type pdf)
-
-<use figs/FigS2.pdf>
-Package pdftex.def Info: figs/FigS2.pdf used on input line 269.
-(pdftex.def)             Requested size: 469.75502pt x 352.31538pt.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 330.
- [9
-
- <./figs/FigS2.pdf>] [10] [11]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 330.
+[8] [9]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 327.
+ [10] [11]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 327.
  (gnd_plots.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 330.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 330.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 327.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 327.
 Package rerunfilecheck Info: File `gnd_plots.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 330.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 327.
  ) 
 Here is how much of TeX's memory you used:
  18894 strings out of 493323
- 342764 string characters out of 3139036
+ 342746 string characters out of 3139036
  450289 words of memory out of 3000000
  22227 multiletter control sequences out of 15000+200000
  534021 words of font info for 34 fonts, out of 3000000 for 9000
@@ -890,7 +886,7 @@ fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTeX 2.9/fonts/typ
 e1/public/amsfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/
 amsfonts/cm/cmsy8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/
 cm/cmti12.pfb>
-Output written on gnd_plots.pdf (11 pages, 408972 bytes).
+Output written on gnd_plots.pdf (11 pages, 408976 bytes).
 PDF statistics:
  158 PDF objects out of 1000 (max. 8388607)
  23 named destinations out of 1000 (max. 500000)

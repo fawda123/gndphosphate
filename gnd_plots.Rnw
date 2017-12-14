@@ -452,6 +452,150 @@ p2 <- ggplot(toplo, aes(x = StationCode, y = value)) +
 grid.arrange(p1, p2, ncol = 1)
 @
 
+<<Fig7, fig.width = 8, fig.height = 6, fig.cap = 'Boxplot summaries of nutrient data for sites grouped by time periods. Boxplots within each panel that do not share a letter have significantly different concentrations. Insufficient chlorophyll data were removed for E1A and E1C. Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC).  Time frames are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), event 2 chronic (E2C), and non-impact 2 (NI2).', echo = FALSE>>=
+
+data(nut_dat)
+data(intimes)
+
+# remove phosphorus, prep plot data
+toplo <- filter(nut_dat, nutrient != 'PO4F') 
+toplo$nutrient <- droplevels(toplo$nutrient)
+intimes <- filter(intimes, nutrient != 'PO4F') %>% 
+  select(-length, -medval, -minval) %>% 
+  rename(value = maxval) %>% 
+  group_by(nutrient) %>% 
+  mutate(value = max(value)) %>% 
+  ungroup %>% 
+  mutate(
+    lets = paste0('italic(', lets, ')'),
+    StationCode = factor(StationCode, levels = c('BN', 'BL', 'PC', 'BC'))
+    )
+
+# get nutrient/site/timeframe medians then merge with toplo for colors
+meds <- group_by(toplo, StationCode, nutrient, TimeFrame) %>% 
+  summarise(meds = median(value, na.rm = TRUE))
+meds <- split(meds, meds$nutrient)
+meds <- lapply(meds, function(x){
+  
+  x$rnks <- scales::rescale(x$meds, c(0, 1))
+  return(x)
+  
+  })
+meds <- do.call('rbind', meds)
+
+toplo <- left_join(toplo, meds, by = c('StationCode', 'nutrient', 'TimeFrame'))
+toplo$StationCode <- factor(toplo$StationCode, levels = c('BN', 'BL', 'PC', 'BC'))
+    
+# setup facet labels
+facet1_names <- list(
+  'E1A' = 'E1A',
+  'E1C' = 'E1C',
+  'NI1' =  'NI1',
+  'E2A' = 'E2A',
+  'E2C' = 'E2C',
+  'NI2' = 'NI2'
+  )
+facet2_names <- list(
+  'NH4F' = expression(paste('Ammonium (mg/L)')), 
+  'NO23F' = expression(paste('Nitrite + Nitrate (mg N/L)')),
+  'CHLA_N' = expression(paste('Chlorophyll-a (ug/L)'))
+  )
+
+plot_labeller <- function(variable,value){
+  if (variable=='TimeFrame')
+    return(facet1_names[value])
+  if (variable=='nutrient')
+    return(facet2_names[value])
+  }
+
+# boxplot
+p1 <- ggplot(toplo, aes(x = StationCode, y = value)) +
+  geom_boxplot(aes(fill = rnks)) + 
+  geom_text(data = intimes, aes(label = lets), nudge_y = 0.2, parse = T) + 
+  facet_grid(nutrient ~ TimeFrame, scales = 'free_y', labeller = plot_labeller) +
+  scale_y_log10() +
+  theme_bw() + 
+  theme(
+    legend.position = 'none',
+    strip.background = element_blank()
+    ) + 
+  scale_x_discrete('Event') +
+  scale_fill_gradientn(colours = RColorBrewer::brewer.pal(9, 'BuGn')[3:9]) 
+p1
+
+@
+
+<<Fig8, fig.width = 8, fig.height = 6, fig.cap = 'Boxplot summaries of nutrient data for time periods grouped by site. Boxplots within each panel that do not share a letter have significantly different concentrations. Insufficient chlorophyll data were removed for E1A and E1C. Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC).  Time frames are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), event 2 chronic (E2C), and non-impact 2 (NI2).', echo = FALSE>>=
+
+data(nut_dat)
+data(insites)
+
+# remove phosphorus, prep plot data
+toplo <- filter(nut_dat, nutrient != 'PO4F') 
+toplo$nutrient <- droplevels(toplo$nutrient)
+insites <- filter(insites, nutrient != 'PO4F') %>% 
+  select(-length, -medval, -minval) %>% 
+  rename(value = maxval) %>% 
+  group_by(nutrient) %>% 
+  mutate(value = max(value)) %>% 
+  ungroup %>% 
+  mutate(
+    lets = paste0('italic(', lets, ')'),
+    StationCode = factor(StationCode, levels = c('BN', 'BL', 'PC', 'BC'))
+    )
+
+# get nutrient/site/timeframe medians then merge with toplo for colors
+meds <- group_by(toplo, StationCode, nutrient, TimeFrame) %>% 
+  summarise(meds = median(value, na.rm = TRUE))
+meds <- split(meds, meds$nutrient)
+meds <- lapply(meds, function(x){
+  
+  x$rnks <- scales::rescale(x$meds, c(0, 1))
+  return(x)
+  
+  })
+meds <- do.call('rbind', meds)
+
+toplo <- left_join(toplo, meds, by = c('StationCode', 'nutrient', 'TimeFrame'))
+toplo$StationCode <- factor(toplo$StationCode, levels = c('BN', 'BL', 'PC', 'BC'))
+    
+# setup facet labels
+facet1_names <- list(
+  'BN' = 'BN',
+  'BL' = 'BL',
+  'PC' =  'PC',
+  'BC' = 'BC'
+  )
+facet2_names <- list(
+  'NH4F' = expression(paste('Ammonium (mg/L)')), 
+  'NO23F' = expression(paste('Nitrite + Nitrate (mg N/L)')),
+  'CHLA_N' = expression(paste('Chlorophyll-a (ug/L)'))
+  )
+
+plot_labeller <- function(variable,value){
+  if (variable=='StationCode')
+    return(facet1_names[value])
+  if (variable=='nutrient')
+    return(facet2_names[value])
+  }
+
+# boxplot
+p1 <- ggplot(toplo, aes(x = TimeFrame, y = value)) +
+  geom_boxplot(aes(fill = rnks)) + 
+  geom_text(data = insites, aes(label = lets), nudge_y = 0.2, parse = T) + 
+  facet_grid(nutrient ~ StationCode, scales = 'free_y', labeller = plot_labeller) +
+  scale_y_log10() +
+  theme_bw() + 
+  theme(
+    legend.position = 'none',
+    strip.background = element_blank()
+    ) + 
+  scale_x_discrete('Event') +
+  scale_fill_gradientn(colours = RColorBrewer::brewer.pal(9, 'BuGn')[3:9]) 
+p1
+
+@
+
 \clearpage
 
 %%%%%%
@@ -617,156 +761,8 @@ for(nut in names(nutnms)){
 @
 \clearpage
 
-% supplements
-\beginsupplement
-
-<<FigS1, fig.width = 8, fig.height = 6, fig.cap = 'Boxplot summaries of nutrient data for time periods grouped by site. Boxplots within each panel that do not share a letter have significantly different concentrations. Insufficient chlorophyll data were removed for E1A and E1C. Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC).  Time frames are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), event 2 chronic (E2C), and non-impact 2 (NI2).', echo = FALSE>>=
-
-data(nut_dat)
-data(insites)
-
-# remove phosphorus, prep plot data
-toplo <- filter(nut_dat, nutrient != 'PO4F') 
-toplo$nutrient <- droplevels(toplo$nutrient)
-insites <- filter(insites, nutrient != 'PO4F') %>% 
-  select(-length, -medval, -minval) %>% 
-  rename(value = maxval) %>% 
-  group_by(nutrient) %>% 
-  mutate(value = max(value)) %>% 
-  ungroup %>% 
-  mutate(
-    lets = paste0('italic(', lets, ')'),
-    StationCode = factor(StationCode, levels = c('BN', 'BL', 'PC', 'BC'))
-    )
-
-# get nutrient/site/timeframe medians then merge with toplo for colors
-meds <- group_by(toplo, StationCode, nutrient, TimeFrame) %>% 
-  summarise(meds = median(value, na.rm = TRUE))
-meds <- split(meds, meds$nutrient)
-meds <- lapply(meds, function(x){
-  
-  x$rnks <- scales::rescale(x$meds, c(0, 1))
-  return(x)
-  
-  })
-meds <- do.call('rbind', meds)
-
-toplo <- left_join(toplo, meds, by = c('StationCode', 'nutrient', 'TimeFrame'))
-toplo$StationCode <- factor(toplo$StationCode, levels = c('BN', 'BL', 'PC', 'BC'))
-    
-# setup facet labels
-facet1_names <- list(
-  'BN' = 'BN',
-  'BL' = 'BL',
-  'PC' =  'PC',
-  'BC' = 'BC'
-  )
-facet2_names <- list(
-  'NH4F' = expression(paste('Ammonium (mg/L)')), 
-  'NO23F' = expression(paste('Nitrite + Nitrate (mg N/L)')),
-  'CHLA_N' = expression(paste('Chlorophyll-a (ug/L)'))
-  )
-
-plot_labeller <- function(variable,value){
-  if (variable=='StationCode')
-    return(facet1_names[value])
-  if (variable=='nutrient')
-    return(facet2_names[value])
-  }
-
-# boxplot
-p1 <- ggplot(toplo, aes(x = TimeFrame, y = value)) +
-  geom_boxplot(aes(fill = rnks)) + 
-  geom_text(data = insites, aes(label = lets), nudge_y = 0.2, parse = T) + 
-  facet_grid(nutrient ~ StationCode, scales = 'free_y', labeller = plot_labeller) +
-  scale_y_log10() +
-  theme_bw() + 
-  theme(
-    legend.position = 'none',
-    strip.background = element_blank()
-    ) + 
-  scale_x_discrete('Event') +
-  scale_fill_gradientn(colours = RColorBrewer::brewer.pal(9, 'BuGn')[3:9]) 
-p1
-
-@
-\clearpage
-
-<<FigS2, fig.width = 8, fig.height = 6, fig.cap = 'Boxplot summaries of nutrient data for sites grouped by time periods. Boxplots within each panel that do not share a letter have significantly different concentrations. Insufficient chlorophyll data were removed for E1A and E1C. Sites are Bangs Lake (BL), Bangs North (BN), and Point aux Chenes (PC), and Bayou Cumbest (BC).  Time frames are event 1 acute (E1A), event 1 chronic (E1C), non-impact 1 (NI1), event 2 acute (E2A), event 2 chronic (E2C), and non-impact 2 (NI2).', echo = FALSE>>=
-
-data(nut_dat)
-data(intimes)
-
-# remove phosphorus, prep plot data
-toplo <- filter(nut_dat, nutrient != 'PO4F') 
-toplo$nutrient <- droplevels(toplo$nutrient)
-intimes <- filter(intimes, nutrient != 'PO4F') %>% 
-  select(-length, -medval, -minval) %>% 
-  rename(value = maxval) %>% 
-  group_by(nutrient) %>% 
-  mutate(value = max(value)) %>% 
-  ungroup %>% 
-  mutate(
-    lets = paste0('italic(', lets, ')'),
-    StationCode = factor(StationCode, levels = c('BN', 'BL', 'PC', 'BC'))
-    )
-
-# get nutrient/site/timeframe medians then merge with toplo for colors
-meds <- group_by(toplo, StationCode, nutrient, TimeFrame) %>% 
-  summarise(meds = median(value, na.rm = TRUE))
-meds <- split(meds, meds$nutrient)
-meds <- lapply(meds, function(x){
-  
-  x$rnks <- scales::rescale(x$meds, c(0, 1))
-  return(x)
-  
-  })
-meds <- do.call('rbind', meds)
-
-toplo <- left_join(toplo, meds, by = c('StationCode', 'nutrient', 'TimeFrame'))
-toplo$StationCode <- factor(toplo$StationCode, levels = c('BN', 'BL', 'PC', 'BC'))
-    
-# setup facet labels
-facet1_names <- list(
-  'E1A' = 'E1A',
-  'E1C' = 'E1C',
-  'NI1' =  'NI1',
-  'E2A' = 'E2A',
-  'E2C' = 'E2C',
-  'NI2' = 'NI2'
-  )
-facet2_names <- list(
-  'NH4F' = expression(paste('Ammonium (mg/L)')), 
-  'NO23F' = expression(paste('Nitrite + Nitrate (mg N/L)')),
-  'CHLA_N' = expression(paste('Chlorophyll-a (ug/L)'))
-  )
-
-plot_labeller <- function(variable,value){
-  if (variable=='TimeFrame')
-    return(facet1_names[value])
-  if (variable=='nutrient')
-    return(facet2_names[value])
-  }
-
-# boxplot
-p1 <- ggplot(toplo, aes(x = StationCode, y = value)) +
-  geom_boxplot(aes(fill = rnks)) + 
-  geom_text(data = intimes, aes(label = lets), nudge_y = 0.2, parse = T) + 
-  facet_grid(nutrient ~ TimeFrame, scales = 'free_y', labeller = plot_labeller) +
-  scale_y_log10() +
-  theme_bw() + 
-  theme(
-    legend.position = 'none',
-    strip.background = element_blank()
-    ) + 
-  scale_x_discrete('Event') +
-  scale_fill_gradientn(colours = RColorBrewer::brewer.pal(9, 'BuGn')[3:9]) 
-p1
-
-@
-
 % kendall tests, nh4, chla
-<<TablesS1S2, echo = FALSE>>=
+<<Tables45, echo = FALSE>>=
 data(nut_dat)
 
 trnds <- nut_dat %>% 
@@ -844,4 +840,5 @@ for(nut in names(nutnms)){
 }
 
 @
+
 \end{document}
