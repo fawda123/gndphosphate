@@ -805,8 +805,8 @@ trnds <- nut_dat %>%
   group_by(nutrient) %>% 
   nest
 
-nutnms <- c('Chl-\\textit{a} ($\\mu$g/L)', 'NH$_4^+$ (mg N/L)')
-names(nutnms) <- c('CHLA_N', 'NH4F')
+nutnms <- c('NH$_4^+$ (mg N/L)', 'Chl-\\textit{a} ($\\mu$g/L)')
+names(nutnms) <- c('NH4F', 'CHLA_N')
       
 for(nut in names(nutnms)){
     
