@@ -240,16 +240,7 @@ insites <- nut_dat %>%
   mutate(
     ests = map(data, function(x){
  
-      tocmp <- x %>% 
-        mutate(
-          yr = year(date),
-          qrt = quarter(date)
-        ) %>%
-        unite('yrqrt', yr, qrt, sep = '-') %>% 
-        group_by(yrqrt, TimeFrame) %>% 
-        summarise(
-          logvalue = median(logvalue, na.rm = T)
-          )
+      tocmp <- x 
       
       # pairwise comparisons with mann-whitney (wilcox)
       grps <- unique(tocmp$TimeFrame)
@@ -263,7 +254,7 @@ insites <- nut_dat %>%
       }
       
       # adjust p-values using holm sequential bonferroni 
-      pval <- pval #p.adjust(pval, method = 'holm')
+      pval <- p.adjust(pval, method = 'holm')
       
       # pval as t/f using bonferroni correction
       vecs <- rep(FALSE, ncol(grps))
@@ -296,16 +287,7 @@ intimes<- nut_dat %>%
   mutate(
     ests = map(data, function(x){
  
-      tocmp <- x %>% 
-        mutate(
-          yr = year(date),
-          qrt = quarter(date)
-        ) %>%
-        unite('yrqrt', yr, qrt, sep = '-') %>% 
-        group_by(yrqrt, StationCode) %>% 
-        summarise(
-          logvalue = median(logvalue, na.rm = T)
-        )
+      tocmp <- x 
       
       # pairwise comparisons with mann-whitney (wilcox)
       grps <- unique(tocmp$StationCode)
@@ -319,7 +301,7 @@ intimes<- nut_dat %>%
       }
       
       # adjust p-values using holm sequential bonferroni 
-      pval <- pval #p.adjust(pval, method = 'holm')
+      pval <- p.adjust(pval, method = 'holm')
       
       # pval as t/f using bonferroni correction
       vecs <- rep(FALSE, ncol(grps))
@@ -327,7 +309,7 @@ intimes<- nut_dat %>%
       names(vecs) <- paste(grps[1, ], grps[2, ], sep = '-')
       
       # group membership based on multiple comparisons
-      lets <- multcompLetters(vecs)$Letters
+      lets <- multcompLetters(vecs, reversed = T)$Letters
       
       # standard summary stats
       sums <- group_by(x, StationCode) %>% 
