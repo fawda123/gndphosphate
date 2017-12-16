@@ -145,11 +145,15 @@ p1 <- ggplot(toplo_wq, aes(x = date, y = value)) +
     axis.text.x = element_blank(), 
     axis.ticks.x = element_blank(),
     plot.margin = mars1, 
-    strip.background = element_blank()
+    strip.background = element_blank(),
+    panel.grid.minor = element_blank()
     ) +
-  scale_x_date(limits = lims) + 
+  scale_x_date(limits = lims, date_breaks = '1 year') + 
   stat_smooth(data = filter(toplo_wq, variable %in% c('Salinity', 'pH')),
     method = 'loess', span = 0.1, n = 2000, se = FALSE, size = 1, colour = 'lightblue')
+
+cls <- RColorBrewer::brewer.pal(6, 'BrBG')
+cls <- c(cls[1:3], cls[c(6, 5, 4)])
 p2 <- ggplot(toplo_nut, aes(x = date, y = 10 ^ value)) + 
   geom_point(alpha = 0.8, size = 3, pch = 21,
     aes(fill = Event)) +
@@ -160,11 +164,12 @@ p2 <- ggplot(toplo_nut, aes(x = date, y = 10 ^ value)) +
     axis.title.x = element_blank(), 
     axis.title.y = element_blank(),
     plot.margin = mars2, 
-    strip.background = element_blank()
+    strip.background = element_blank(), 
+    panel.grid.minor = element_blank()
     ) + 
-  scale_x_date(limits = lims) + 
-  scale_fill_brewer(palette = 'Paired') +
-  scale_y_log10() 
+  scale_x_date(limits = lims, date_breaks = '1 year', date_labels = '%Y') + 
+  scale_fill_manual(values = cls) +
+  scale_y_log10(ylab, breaks = c(0.01, 0.1, 1, 5))
 pleg <- g_legend(p2)
 p2 <- p2 + theme(legend.position = 'none')
 
@@ -203,7 +208,9 @@ met_proc <- select(met_dat, datetimestamp, totprcp)
 # combine wq with met and nut
 toplo <- filter(wq_dat, StationCode == 'BL') %>% 
   select(-StationCode) %>% 
-  filter(turb < 250) %>%  # remove anom value
+  mutate(
+    turb = ifelse(turb < 250, turb, NA)# remove anom value
+  ) %>% 
   left_join(., met_supp_all, by = c('datetimestamp', 'TimeFrame')) %>% 
   select(datetimestamp, TimeFrame, sal, ph, turb, depth, totprcp) %>% 
   gather('variable', 'value', sal:totprcp) %>% 
@@ -237,34 +244,45 @@ toplo <- rbind(toplo1, toplo2)
 
 # precip
 toplopr <- filter(toplo, variable %in% 'Daily precipitation (cm/d)')
+txt <- data.frame(
+  Event = c('E1A', 'E2A'), 
+  labs = c('2005', '2012'), 
+  x = c(subdts[1], subdts[3]), 
+  y = 15
+)
 p1 <- ggplot() + 
   geom_rect(data = events, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
-    fill = 'lightgreen', alpha = 0.6) +
-  geom_vline(xintercept = as.numeric(spill), colour = 'tomato', alpha = 0.6, size = 1) +
+            fill = 'lightgreen', alpha = 0.6) +
+  geom_vline(xintercept = as.numeric(spill), colour = 'tomato', alpha = 0.8, size = 1.3, linetype = 'dotted') +
   geom_bar(data = na.omit(toplopr), aes(x = datetimestamp, y = 0.1 + value),
-    stat = 'identity') +
+           stat = 'identity') +
   scale_y_continuous('Daily precipitation (cm/d)') + 
   facet_wrap(~ Event, scales = 'free_x', ncol = 2) +
+  geom_label(data = txt, aes(group = Event, label = labs, x = x, y = y), hjust = 0.4, vjust = 1) +
   theme_bw() +
   theme(
     axis.title.x = element_blank(), 
-    strip.background = element_blank()
-  )
+    strip.background = element_blank(), 
+    panel.grid.minor = element_blank()
+  ) + 
+  scale_x_datetime(date_breaks = '1 week', date_labels = '%b %d')
 
 # depth
 toplodp<- filter(toplo, variable %in% 'Sensor depth (m)')
 p2 <- ggplot() + 
   geom_rect(data = events, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
     fill = 'lightgreen', alpha = 0.6) +
-  geom_vline(xintercept = as.numeric(spill), colour = 'tomato', alpha = 0.6, size = 1) +
-  geom_line(data = na.omit(toplodp), aes(x = datetimestamp, y = value)) +
+  geom_vline(xintercept = as.numeric(spill), colour = 'tomato', alpha = 0.8, size = 1.3, linetype = 'dotted') +
+  geom_line(data = toplodp, aes(x = datetimestamp, y = value)) +
   scale_y_continuous('Sensor depth (m)') + 
   facet_wrap(~ Event, scales = 'free_x', ncol = 2) +
   theme_bw() +
   theme(
     axis.title.x = element_blank(), 
-    strip.background = element_blank()
-  )
+    strip.background = element_blank(), 
+    panel.grid.minor = element_blank()
+  ) + 
+  scale_x_datetime(date_breaks = '1 week', date_labels = '%b %d')
 
 
 # salinity
@@ -272,45 +290,51 @@ toplosl <- filter(toplo, variable %in% 'Salinity')
 p3 <- ggplot() + 
   geom_rect(data = events, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
     fill = 'lightgreen', alpha = 0.6) +
-  geom_vline(xintercept = as.numeric(spill), colour = 'tomato', alpha = 0.6, size = 1) +
-  geom_line(data = na.omit(toplosl), aes(x = datetimestamp, y = value)) +
+  geom_vline(xintercept = as.numeric(spill), colour = 'tomato', alpha = 0.8, size = 1.3, linetype = 'dotted') +
+  geom_line(data = toplosl, aes(x = datetimestamp, y = value)) +
   scale_y_continuous('Salinity') + 
   facet_wrap(~ Event, scales = 'free_x', ncol = 2) +
   theme_bw() +
   theme(
     axis.title.x = element_blank(), 
-    strip.background = element_blank()
-  )
+    strip.background = element_blank(), 
+    panel.grid.minor = element_blank()
+  ) + 
+  scale_x_datetime(date_breaks = '1 week', date_labels = '%b %d')
 
-# salinity
+# turbidity
 toplotr <- filter(toplo, variable %in% 'Turbidity (NTU)')
 p4 <- ggplot() + 
   geom_rect(data = events, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
     fill = 'lightgreen', alpha = 0.6) +
-  geom_vline(xintercept = as.numeric(spill), colour = 'tomato', alpha = 0.6, size = 1) +
-  geom_line(data = na.omit(toplotr), aes(x = datetimestamp, y = value)) +
+  geom_vline(xintercept = as.numeric(spill), colour = 'tomato', alpha = 0.8, size = 1.3, linetype = 'dotted') +
+  geom_line(data = toplotr, aes(x = datetimestamp, y = value)) +
   scale_y_continuous('Turbidity (NTU)') + 
   facet_wrap(~ Event, scales = 'free_x', ncol = 2) +
   theme_bw() +
   theme(
     axis.title.x = element_blank(), 
-    strip.background = element_blank()
-  )
+    strip.background = element_blank(), 
+    panel.grid.minor = element_blank()
+  ) + 
+  scale_x_datetime(date_breaks = '1 week', date_labels = '%b %d')
 
 # salinity
 toploph <- filter(toplo, variable %in% 'pH')
 p5 <- ggplot() + 
   geom_rect(data = events, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
     fill = 'lightgreen', alpha = 0.6) +
-  geom_vline(xintercept = as.numeric(spill), colour = 'tomato', alpha = 0.6, size = 1) +
-  geom_line(data = na.omit(toploph), aes(x = datetimestamp, y = value)) +
+  geom_vline(xintercept = as.numeric(spill), colour = 'tomato', alpha = 0.8, size = 1.3, linetype = 'dotted') +
+  geom_line(data = toploph, aes(x = datetimestamp, y = value)) +
   scale_y_continuous('pH') + 
   facet_wrap(~ Event, scales = 'free_x', ncol = 2) +
   theme_bw() +
   theme(
     axis.title.x = element_blank(), 
-    strip.background = element_blank()
-  )
+    strip.background = element_blank(), 
+    panel.grid.minor = element_blank()
+  ) + 
+  scale_x_datetime(date_breaks = '1 week', date_labels = '%b %d')
 
 grid.arrange(p1, p2, p3, p4, p5, ncol = 1)
 
@@ -329,7 +353,6 @@ toplo <- filter(nut_dat, nutrient == 'PO4F') %>%
   mutate(Event = factor(Event, levels = timeframes))
 
 
-
 ylab <- expression(paste('Orthophosphate (mg P/L)'))
 
 toplo$StationCode <- factor(toplo$StationCode, levels = c('BN', 'BL', 'PC', 'BC'))
@@ -338,19 +361,24 @@ toplo$StationCode <- factor(toplo$StationCode, levels = c('BN', 'BL', 'PC', 'BC'
 events <- c('2005-04-01', '2012-08-01')
 events <- as.Date(events)
 
+cls <- RColorBrewer::brewer.pal(6, 'BrBG')
+cls <- c(cls[1:3], cls[c(6, 5, 4)])
+
 # line plots
 p1 <- ggplot(toplo, aes(x = date, y = value)) +
   geom_line() + 
-  geom_point(aes(fill = Event), pch = 21, size = 2) +
+  geom_point(aes(fill = Event), pch = 21, size = 2.5) +
   facet_wrap(~ StationCode, ncol = 1) +
-  scale_y_log10(ylab) +
+  scale_y_log10(ylab, breaks = c(0.01, 0.1, 1, 5)) +
   geom_vline(xintercept = as.numeric(events), colour = 'lightgreen', alpha = 0.6, size = 3) +
-  scale_fill_brewer(palette = 'Paired') +
+  scale_fill_manual(values = cls) +
+  scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   guides(fill = guide_legend(ncol = 6)) +
   theme_bw() +
   theme(
     legend.position = 'top', 
     axis.title.x = element_blank(),
+    panel.grid.minor = element_blank(),
     strip.background = element_blank()
   )
 p1
