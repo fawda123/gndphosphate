@@ -230,7 +230,7 @@ data(nut_dat)
 
 # remove stat_nut, E1A/E1C time frames from chla
 nut_dat <- nut_dat %>% 
-  select(-stat_nut) %>% 
+  dplyr::select(-stat_nut) %>% 
   filter(!(nutrient == 'CHLA_N' & TimeFrame %in% c('E1A', 'E1C')))
 
 # multiple comparisons of time frames within sites, all nutrients
@@ -248,7 +248,7 @@ insites <- nut_dat %>%
       pval <- rep(NA, ncol(grps))
       for(col in 1:ncol(grps)){
         grp <- tocmp$TimeFrame %in% grps[, col, drop = TRUE]
-        res <- wilcox.test(logvalue ~ TimeFrame, data = tocmp[grp, ], exact = FALSE, 
+        res <- wilcox.test(value ~ TimeFrame, data = tocmp[grp, ], exact = FALSE, 
           alternative = 'two.sided')
         pval[col] <- res$p.value
       }
@@ -277,7 +277,7 @@ insites <- nut_dat %>%
       
     })
   ) %>% 
-  select(-data) %>% 
+  dplyr::select(-data) %>% 
   unnest
 
 # multiple comparisons of sites within time frames, all nutrients
@@ -295,7 +295,7 @@ intimes<- nut_dat %>%
       pval <- rep(NA, ncol(grps))
       for(col in 1:ncol(grps)){
         grp <- tocmp$StationCode %in% grps[, col, drop = TRUE]
-        res <- wilcox.test(logvalue ~ StationCode, data = tocmp[grp, ], exact = FALSE, 
+        res <- wilcox.test(value ~ StationCode, data = tocmp[grp, ], exact = FALSE, 
           alternative = 'two.sided')
         pval[col] <- res$p.value
       }
@@ -324,7 +324,7 @@ intimes<- nut_dat %>%
       
     })
   ) %>% 
-  select(-data) %>% 
+  dplyr::select(-data) %>% 
   unnest
 
 save(insites, file = 'data/insites.RData', compress = 'xz')
