@@ -36,7 +36,7 @@ dat <- nut_dat %>%
   )
 # dat$sets
 
-pdf('autocor.pdf', family = 'serif', height = 12, width = 12)
+tiff('autocor.tif', height = 9, width = 9, units = 'in', compression = 'lzw', res = 300, family = 'serif')
 par(mfrow = c(4, 4))
 for(i in 1:nrow(dat)){
 
