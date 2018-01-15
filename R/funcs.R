@@ -87,7 +87,7 @@ iscoplot3 <- function(graph.dat, title, cols = NULL, cex = 1.5, lwd = 1) {
   points(graph.dat$DateTime, graph.dat$PO4, bg = cols[1], pch = 21, cex = cex)
   axis(2, at=c(0,1000),lwd=1, labels = F)
   axis(2, ylim=c(0,0.25),lwd=1, tcl = -0.4, cex.axis = 0.95, mgp = c(3, 0.6, 0))
-  mtext(2,text=expression("PO"[4]^"3-"*" (mg P/L)"), line=1.6)
+  mtext(2,text=expression("PO"[4]^"3-"*" (mg P/l)"), line=1.6)
   
   #we just did two lines calling the y-axis because R will automatically
   #make tick marks at certain intervals, and R wants to stop the axis at a tick mark

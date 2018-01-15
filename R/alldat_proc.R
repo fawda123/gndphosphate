@@ -389,3 +389,127 @@ intimes <- intimes %>%
 
 save(insites, file = 'data/insites.RData', compress = 'xz')
 save(intimes, file = 'data/intimes.RData', compress = 'xz')
+
+# # detailed results for insites/intimes
+# 
+# # multiple comparisons of time frames within sites, all nutrients
+# insites <- nut_dat %>%
+#   group_by(StationCode, nutrient) %>%
+#   nest %>%
+#   mutate(
+#     ests = map(data, function(x){
+#       
+#       # remove seasonal
+#       tocmp <- data.frame(x, stringsAsFactors = F) %>%
+#         decomp_cj(param = 'value', date_col = 'date', vals_out = T) %>%
+#         mutate(
+#           TimeFrame = cut(
+#             as.numeric(Time),
+#             breaks = c(-Inf, as.numeric(dts), Inf),
+#             labels = timeframes,
+#             right = F
+#           ),
+#           vals = original - seasonal
+#         ) %>%
+#         filter(TimeFrame %in% timeframes[table(TimeFrame) > 1])
+#       
+#       # pairwise comparisons with mann-whitney (wilcox)
+#       grps <- unique(tocmp$TimeFrame)
+#       grps <- combn(grps, 2, simplify = F) %>%
+#         lapply(as.character) %>%
+#         do.call('rbind', .)
+#       wval <- rep(NA, nrow(grps))
+#       pval <- rep(NA, nrow(grps))
+#       for(col in 1:nrow(grps)){
+#         grp <- tocmp$TimeFrame %in% grps[col, , drop = TRUE]
+#         res <- wilcox.test(vals ~ TimeFrame, data = tocmp[grp, ], exact = FALSE,
+#                            alternative = 'two.sided')
+#         wval[col] <- res$statistic
+#         pval[col] <- res$p.value
+#       }
+#       
+#       # adjust p-values using holm sequential bonferroni
+#       pval <- p.adjust(pval, method = 'holm')
+#       
+#       # pval as t/f using bonferroni correction
+#       vecs <- rep(FALSE, nrow(grps))
+#       vecs[pval < 0.05] <- TRUE
+#       names(vecs) <- paste(grps[, 1], grps[, 2], sep = '-')
+#       
+#       # group membership based on multiple comparisons
+#       lets <- multcompLetters(vecs)$Letters
+#       
+#       data.frame(grps, wval, pval, stringsAsFactors = F)
+#       
+#     })
+#   ) %>%
+#   dplyr::select(-data) %>%
+#   unnest
+# 
+# 
+# ##
+# # multiple comparisons of sites within time frames, all nutrients
+# intimes<- nut_dat %>% 
+#   group_by(StationCode, nutrient) %>% 
+#   nest %>% 
+#   mutate(
+#     data = map(data, function(x){
+#       
+#       # remove seasonal
+#       tocmp <- data.frame(x, stringsAsFactors = F) %>% 
+#         decomp_cj(param = 'value', date_col = 'date', vals_out = T) %>%
+#         mutate(
+#           TimeFrame = cut(
+#             as.numeric(Time),
+#             breaks = c(-Inf, as.numeric(dts), Inf),
+#             labels = timeframes,
+#             right = F
+#           ),
+#           vals = original - seasonal
+#         ) %>% 
+#         filter(TimeFrame %in% timeframes[table(TimeFrame) > 1]) 
+#       
+#       return(tocmp)
+#       
+#     })
+#   ) %>% 
+#   unnest %>% 
+#   group_by(TimeFrame, nutrient) %>% 
+#   nest %>% 
+#   mutate(
+#     data = map(data, function(x){
+#       
+#       tocmp <- x 
+#       
+#       # pairwise comparisons with mann-whitney (wilcox)
+#       grps <- unique(tocmp$StationCode)
+#       grps <- combn(grps, 2, simplify = F) %>% 
+#         lapply(as.character) %>% 
+#         do.call('rbind', .)
+#       wval <- rep(NA, nrow(grps))
+#       pval <- rep(NA, nrow(grps))
+#       for(col in 1:nrow(grps)){
+#         grp <- tocmp$StationCode %in% grps[col, , drop = TRUE]
+#         res <- wilcox.test(vals ~ StationCode, data = tocmp[grp, ], exact = FALSE, 
+#                            alternative = 'two.sided')
+#         wval[col] <- res$statistic
+#         pval[col] <- res$p.value
+#       }
+#       
+#       # adjust p-values using holm sequential bonferroni 
+#       pval <- p.adjust(pval, method = 'holm')
+#       
+#       # pval as t/f using bonferroni correction
+#       vecs <- rep(FALSE, nrow(grps))
+#       vecs[pval < 0.05] <- TRUE
+#       names(vecs) <- paste(grps[, 1], grps[, 2], sep = '-')
+#       
+#       # group membership based on multiple comparisons
+#       lets <- multcompLetters(vecs, reversed = T)$Letters
+#       
+#       data.frame(grps, wval, pval, stringsAsFactors = F)
+#       
+#     })
+#   ) %>% 
+#   unnest
+
